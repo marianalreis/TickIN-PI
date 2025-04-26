@@ -62,9 +62,11 @@ User Stories são descrições curtas e informais de uma funcionalidade desejada
 #### US03 | Visualizar lista de inscritos
 > Como organizador de eventos, quero visualizar a lista de participantes inscritos, para que eu possa organizar o check-in e o controle de presença no evento.
 >
-> <div align="center">
+<div align="center">
   <sub>TABELA 1 - INVEST (US01)</sub><br>
-## Análise INVEST (US01)
+  Análise INVEST (US01)
+</div>
+
 | Critério | Justificativa |
 |:---|:---|
 | **I – Independente** | A inscrição rápida é uma funcionalidade que não depende diretamente de outras (como lembretes ou painel de gerenciamento). |
@@ -73,8 +75,9 @@ User Stories são descrições curtas e informais de uma funcionalidade desejada
 | **E – Estimável** | Pode ser estimada em termos de esforço: integrar formulário simples, botão de confirmação, e banco de dados para armazenar a inscrição. |
 | **S – Pequena** | A US é pequena e objetiva, podendo ser implementada em poucos dias de desenvolvimento. |
 | **T – Testável** | Pode ser testada verificando se o usuário consegue se inscrever em poucos passos e se a inscrição é salva corretamente. |
----
-<sup>Fonte: Material produzido pela autora, 2025</sup>
+
+<div align="center">
+  <sup>Fonte: Material produzido pela autora, 2025</sup>
 </div>
 
 ## <a name="c3"></a>3. Projeto da Aplicação Web
