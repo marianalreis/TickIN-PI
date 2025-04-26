@@ -52,14 +52,14 @@ As personas desenvolvidas para o projeto TickIN representam dois perfis-chave de
 
 User Stories são descrições curtas e informais de uma funcionalidade desejada, escritas do ponto de vista do usuário, que ajudam a capturar requisitos de forma colaborativa e incremental; geralmente seguem o formato "Como [tipo de usuário], quero [objetivo], para que [benefício]", permitindo que equipes de desenvolvimento mantenham o foco nas necessidades reais dos usuários. Para garantir a qualidade das User Stories, aplica-se o critério INVEST[²](#5-referências), que estabelece que cada história deve ser Independente, Negociável, Valiosa, Estimável, Pequena e Testável, princípios que, segundo Cohn (2004), aumentam significativamente a eficácia da comunicação entre times de produto, desenvolvimento e stakeholders.
 
-### US01 | Inscrição rápida
+#### US01 | Inscrição rápida
 > Como participante interessado, quero me inscrever em eventos com poucos cliques, para que eu possa garantir minha vaga rapidamente sem complicações.
 
-### US02 | Gerenciamento de inscrições
+#### US02 | Gerenciamento de inscrições
 > Como usuário inscrito, quero visualizar e gerenciar minhas inscrições em um painel, para que eu tenha controle sobre os eventos que participarei.
 
 
-### US03 | Visualizar lista de inscritos
+#### US03 | Visualizar lista de inscritos
 > Como organizador de eventos, quero visualizar a lista de participantes inscritos, para que eu possa organizar o check-in e o controle de presença no evento.
 >
 > <div align="center">
@@ -139,6 +139,8 @@ User Stories são descrições curtas e informais de uma funcionalidade desejada
 ## <a name="c5"></a>5. Referências
 
 ¹ INTERACTION DESIGN FOUNDATION. Personas – A Simple Introduction. [S.l.], 2022. Disponível em: https://www.interaction-design.org/literature/topics/personas. Acesso em: 25 abr. 2025.
+
+
 ² COHN, Mike. User Stories Applied: For Agile Software Development. Boston: Addison-Wesley, 2004.
 
 <br>
