@@ -50,7 +50,7 @@ As personas desenvolvidas para o projeto TickIN representam dois perfis-chave de
 
 ### 2.2. User Stories (Semana 01)
 
-User Stories são descrições curtas e informais de uma funcionalidade desejada, escritas do ponto de vista do usuário, que ajudam a capturar requisitos de forma colaborativa e incremental; geralmente seguem o formato "Como [tipo de usuário], quero [objetivo], para que [benefício]", permitindo que equipes de desenvolvimento mantenham o foco nas necessidades reais dos usuários. Para garantir a qualidade das User Stories, aplica-se o critério INVEST[²](#5-referências), que estabelece que cada história deve ser Independente, Negociável, Valiosa, Estimável, Pequena e Testável, princípios que, segundo Cohn (2004), aumentam significativamente a eficácia da comunicação entre times de produto, desenvolvimento e stakeholders.
+User Stories são descrições curtas e informais de uma funcionalidade desejada, escritas do ponto de vista do usuário, que ajudam a capturar requisitos de forma colaborativa e incremental; geralmente seguem o formato "Como [tipo de usuário], quero [objetivo], para que [benefício]", permitindo que equipes de desenvolvimento mantenham o foco nas necessidades reais dos usuários. Para garantir a qualidade das User Stories, aplica-se o critério INVEST, que estabelece que cada história deve ser Independente, Negociável, Valiosa, Estimável, Pequena e Testável, princípios que, segundo Cohn (2004)[²](#5-referências), aumentam significativamente a eficácia da comunicação entre times de produto, desenvolvimento e stakeholders.
 
 #### US01 | Inscrição rápida
 > Como participante interessado, quero me inscrever em eventos com poucos cliques, para que eu possa garantir minha vaga rapidamente sem complicações.
@@ -64,7 +64,6 @@ User Stories são descrições curtas e informais de uma funcionalidade desejada
 >
 <div align="center">
   <sub>TABELA 1 - INVEST (US01)</sub><br>
-  Análise INVEST (US01)
 </div>
 
 | Critério | Justificativa |
