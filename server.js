@@ -4,7 +4,7 @@ const PORT = 3000;
 
 app.use(express.json()); // permite receber dados no formato JSON
 
-const routes = require('./routes/index');
+const routes = require('./routesn/index');
 app.use('/', routes);
 
 app.listen(PORT, () => {
