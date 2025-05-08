@@ -92,6 +92,7 @@ meu-projeto/
 ├── assets/                # Arquivos públicos como imagens e fontes
 ├── scripts/               # Arquivos de JavaScript públicos
 ├── styles/                # Arquivos CSS públicos
+├── views/                #  Views da aplicação (se aplicável)
 ├── tests/                 # Arquivos de testes unitários
 │   └── example.test.js
 ├── .gitignore             # Arquivo para ignorar arquivos no Git
@@ -99,7 +100,7 @@ meu-projeto/
 ├── jest.config.js         # Arquivo de configuração do Jest
 ├── package-lock.json      # Gerenciador de dependências do Node.js
 ├── package.json           # Gerenciador de dependências do Node.js
-├── readme.md              # Documentação do projeto (Markdown)
+├── README.md              # Documentação do projeto (Markdown)
 ├── rest.http              # Teste de endpoints (opcional)
 └── server.js              # Arquivo principal que inicializa o servidor
 ```
