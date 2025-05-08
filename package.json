@@ -1,0 +1,23 @@
+{
+  "name": "tickin",
+  "version": "1.0.0",
+  "description": "Se você for das turmas 15, 17 ou 19, acesse este enunciado aqui para realizar as ponderadas de Computação: [https://github.com/InteliContent/ponderadaM2-B/blob/main/README.md](https://github.com/InteliContent/ponderadaM2-B/blob/main/README.md)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marianalreis/TickIN-PI.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marianalreis/TickIN-PI/issues"
+  },
+  "homepage": "https://github.com/marianalreis/TickIN-PI#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
