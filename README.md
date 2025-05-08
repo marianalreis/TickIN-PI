@@ -1,45 +1,114 @@
-# Projeto Individual Integrado - Módulo 2025-1B
+# tickIN
+## 📜 Descrição
 
-### Antes de começar: ###
+Este projeto tem como objetivo o desenvolvimento de uma aplicação web para gestão de eventos, permitindo que usuários realizem inscrições, acompanhem informações dos eventos e tenham sua presença registrada de forma prática e automatizada. A plataforma oferece uma experiência simplificada para quem deseja participar de eventos e uma interface eficiente para quem os organiza.
 
-Se você for das turmas 15, 17 ou 19, acesse este enunciado aqui para realizar as ponderadas de Computação: [https://github.com/InteliContent/ponderadaM2-B/blob/main/README.md](https://github.com/InteliContent/ponderadaM2-B/blob/main/README.md)
+Além de facilitar o controle de inscrições, a aplicação contribui para o gerenciamento inteligente da participação e da comunicação com os inscritos, por meio do envio de lembretes e registro de presença. Com isso, o sistema promove organização, economia de tempo e maior engajamento dos participantes.
 
----
+Adicionalmente, a plataforma possibilita que organizadores associem eventos a seus dados, permitindo a identificação de responsáveis e colaborando para a rastreabilidade e transparência na gestão de cada atividade.
 
-Neste projeto, você será responsável por desenvolver um sistema web completo, com banco de dados, backend e frontend integrados. O objetivo é aplicar os conceitos do módulo e construir um projeto que possa ser incluído no seu portfólio profissional. Quem sabe você poderá apresentá-lo em um processo seletivo para estágio! 🚀
+##  Modelo Relacional do Banco de Dados
 
-Você deve escolher um entre os tipos de sistema abaixo para desenvolver:
-- Opção 1: Gerenciador de tarefas para organização e produtividade.
-- Opção 2: Sistema de reserva de salas para agendamentos. 
-- Opção 3: Plataforma de eventos com gerenciamento de inscrições. 
+A imagem abaixo representa a modelagem relacional utilizada na aplicação TickIN:
 
-Seu projeto será desenvolvido progressivamente ao longo das semanas, por meio de entregas parciais (autoestudos ponderados 1, 2, 3 e 4), garantindo que cada etapa do sistema seja construída de forma estruturada.
+![Modelo Relacional](./assets/modelo-banco.jpg)
 
-## Requisitos:
-Para que o sistema seja considerado completo, ele deverá incluir:
 
- ✅ Banco de Dados: Estrutura relacional ou não-relacional para armazenamento das informações.
+## 🧱 Arquitetura do Projeto (MVC)
 
- ✅ Backend: Implementação da lógica de negócio e conexão com o banco de dados.
+Este projeto segue a arquitetura MVC (Model-View-Controller) com Node.js e Express.js, utilizando PostgreSQL como sistema gerenciador de banco de dados. A separação de responsabilidades entre as camadas facilita a manutenção e a escalabilidade da aplicação:
+- Model: parte que armazena o modelo de negócios da aplicação;
+- View: armazena a parte visual da aplicação;
+- Controller: funciona como um intermediário entre Model e View.
 
- ✅ Frontend: Interface intuitiva para interação do usuário.
+O banco de dados é estruturado com base em um modelo relacional, que contempla entidades como `usuarios`, `eventos`, `inscricoes`, `organizadores`, entre outras.
 
- ✅ Integração: Comunicação entre frontend e backend utilizando API.
+## Requisitos
 
- ✅ Documentação e código no GitHub: O código-fonte deve ser documentado e armazenado em um repositório público no seu perfil do GitHub.
+- Node.js 
+- PostgreSQL 
 
- ## Entregas Parciais
+## Instalação
 
-[Semana 01 (UX Parte 1): Personas e US](UX_Ponderada1.md)  
+Caso você queira apenas acessar essa aplicação web basta clicar no link abaixo:
 
-[Semana 02 (COMP Parte 1): Base do Projeto](Comp_Ponderada1.md)  
+[Acessar aplicação](https://marianalreis.github.io/TickIN-PI/)
 
-[Semana 03 (UX Parte 2): Wireframes](UX_Ponderada2.md)  
+Se precisar clonar o projeto individualmente, você deve:
+1. **Clonar o repositório:**
 
-[Semana 04 (COMP Parte 2): Conectando Banco de Dados e Servidor](Comp_Ponderada2.md)  
+```bash
+   git clone https://github.com/seu-usuario/seu-projeto.git
+   cd seu-projeto
+```
 
-[Semana 05 (UX Parte 3): Protótipo de Alta](UX_Ponderada3.md)  
+2. **Instalar as dependências:**
+    
+```bash
+npm install
+```
+    
+3. **Configurar o arquivo `.env`:**
+    
+Renomeie o arquivo `.env.example` para `.env` e configure as variáveis de ambiente necessárias, como as configurações do banco de dados PostgreSQL.
+    
 
-[Semana 06 (COMP Parte 3): Sistema Completo com Funcionalidades e Interface](Comp_Ponderada3.md)  
+Configuração do Banco de Dados
+-----------------------------
 
-[Semana 07 (COMP Parte 4): Demonstração e Documentação](Comp_Ponderada4.md)  
+1. **Criar banco de dados:**
+    
+    Crie um banco de dados PostgreSQL com o nome especificado no seu arquivo `.env`.
+    
+2. **Executar o script SQL de inicialização:**
+    
+```bash
+npm run init-db
+```
+    
+Isso criará as tabelas definidas no schema SQL (`modelo-dados.sql`) conforme o modelo físico do banco de dados da aplicação, incluindo entidades como `usuários`, `eventos`, `inscricoes`, entre outras.
+
+    
+
+
+Estrutura de Diretórios
+-----------------------
+```
+meu-projeto/
+│
+├── config/                # Arquivos de configuração (ex: conexão com banco)
+│   └── database.js
+├── controllers/           # Lógica de controle das requisições
+│   └── HomeController.js
+├── documents/             # Arquivos relacionados ao WAD(Web Design Document)
+│   └── assets/            # Assets do WAD
+│   └── PI-WAD.md         
+├── models/                # Definição de modelos de dados (estrutura do banco)
+│   └── User.js
+├── routes/                # Definição das rotas do sistema
+│   └── index.js
+├── services/              # Serviços auxiliares do sistema
+│   └── userService.js
+├── assets/                # Arquivos públicos como imagens e fontes
+├── scripts/               # Arquivos de JavaScript públicos
+├── styles/                # Arquivos CSS públicos
+├── tests/                 # Arquivos de testes unitários
+│   └── example.test.js
+├── .gitignore             # Arquivo para ignorar arquivos no Git
+├── .env.example           # Arquivo de exemplo para variáveis de ambiente
+├── jest.config.js         # Arquivo de configuração do Jest
+├── package-lock.json      # Gerenciador de dependências do Node.js
+├── package.json           # Gerenciador de dependências do Node.js
+├── readme.md              # Documentação do projeto (Markdown)
+├── rest.http              # Teste de endpoints (opcional)
+└── server.js              # Arquivo principal que inicializa o servidor
+```
+
+
+
+Licença
+-------
+
+Este projeto está licenciado sob a Licença MIT.
+
+Este README.md fornece uma visão geral clara do boilerplate, incluindo instruções de instalação, configuração do banco de dados, funcionalidades principais, scripts disponíveis, estrutura de diretórios, como contribuir e informações de licença. Certifique-se de personalizar as seções com detalhes específicos do seu projeto conforme necessário.
