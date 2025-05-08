@@ -92,7 +92,7 @@ meu-projeto/
 ├── assets/                # Arquivos públicos como imagens e fontes
 ├── scripts/               # Arquivos de JavaScript públicos
 ├── styles/                # Arquivos CSS públicos
-├── views/                #  Views da aplicação (se aplicável)
+├── views/                 #  Views da aplicação (se aplicável)
 ├── tests/                 # Arquivos de testes unitários
 │   └── example.test.js
 ├── .gitignore             # Arquivo para ignorar arquivos no Git
