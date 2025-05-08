@@ -82,10 +82,23 @@ User Stories são descrições curtas e informais de uma funcionalidade desejada
 ## <a name="c3"></a>3. Projeto da Aplicação Web
 
 ### 3.1. Modelagem do banco de dados  (Semana 3)
+Modelagem de banco de dados é o processo de representar de maneira estruturada os dados e suas relações, com o objetivo de garantir organização, integridade e eficiência no armazenamento e recuperação de informações em sistemas computacionais. Essa prática permite que desenvolvedores e analistas visualizem como os dados se interconectam antes de implementá-los fisicamente, facilitando decisões técnicas e de negócio. A modelagem geralmente ocorre em três níveis: conceitual (representação abstrata com entidades e relacionamentos), lógico (ajuste ao modelo de dados do SGBD) e físico (estrutura real no banco). Segundo o Instituto de Ciências Matemáticas e de Computação da USP (ICMC-USP)[³](#5-referências), essa abordagem contribui para a construção de sistemas robustos e escaláveis, além de promover uma comunicação clara entre os stakeholders envolvidos no projeto.
 
-*Posicione aqui os diagramas de modelos relacionais do seu banco de dados, apresentando todos os esquemas de tabelas e suas relações. Utilize texto para complementar suas explicações, se necessário.*
+<div align="center">
+  <sub>FIGURA 3 - Modelagem banco de dados</sub><br>
+  <img src= "assets/modelo-banco.jpg" width="100%" 
+  alt="Modelagem banco de dados"><br>
+  <sup>Fonte: Material produzido pela autora, 2025</sup>
+</div>
 
-*Posicione também o modelo físico com o Schema do BD (arquivo .sql)*
+[Clique aqui para acessar o schema do banco de dados no SQL](config/modelo-dados.sql)
+
+A modelagem do banco de dados do sistema TickIN foi estruturada para gerenciar eventos, inscrições e controle de presença. O modelo possui seis tabelas principais (usuarios, eventos, inscricoes, presencas, lembretes, organizadores), interligadas por chaves primárias(PK) e estrangeiras(FK), garantindo integridade e rastreabilidade.
+
+O CPF identifica unicamente os usuários, que podem se inscrever em eventos, receber lembretes e ter presença registrada. Organizadores estão associados aos eventos e também aos usuários. A estrutura foi planejada para ser clara, normalizada e pronta para expansão, permitindo operações como consulta de eventos por usuário, controle de presenças e envio de mensagens automáticas.
+
+
+
 
 ### 3.1.1 BD e Models (Semana 5)
 *Descreva aqui os Models implementados no sistema web*
@@ -145,6 +158,7 @@ User Stories são descrições curtas e informais de uma funcionalidade desejada
 
 ² COHN, Mike. User Stories Applied: For Agile Software Development. Boston: Addison-Wesley, 2004.
 
+³ UNIVERSIDADE DE SÃO PAULO. Instituto de Ciências Matemáticas e de Computação – Banco de Dados I. São Carlos: ICMC-USP, 2021. Disponível em: https://www.icmc.usp.br. Acesso em: 8 maio 2025.
 <br>
 
 ---
