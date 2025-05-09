@@ -25,8 +25,8 @@ O banco de dados é estruturado com base em um modelo relacional, que contempla 
 
 ## Requisitos
 
-- Node.js 
-- PostgreSQL 
+- Node.js (versão X.X.X) 
+- PostgreSQL (versão X.X.X)
 
 ## Instalação
 
@@ -38,7 +38,7 @@ Se precisar clonar o projeto individualmente, você deve:
 1. **Clonar o repositório:**
 
 ```bash
-   git clone https://github.com/seu-usuario/seu-projeto.git
+   git clone https://github.com/marianalreis/TickIN-PI.git
    cd seu-projeto
 ```
 
@@ -105,7 +105,10 @@ meu-projeto/
 └── server.js              # Arquivo principal que inicializa o servidor
 ```
 
+Contribuição
+------------
 
+Contribuições são bem-vindas! Sinta-se à vontade para abrir um issue ou enviar um pull request.
 
 Licença
 -------
