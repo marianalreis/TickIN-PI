@@ -93,10 +93,21 @@ Modelagem de banco de dados é o processo de representar de maneira estruturada 
 
 [Clique aqui para acessar o schema do banco de dados no SQL](config/modelo-dados.sql)
 
-A modelagem do banco de dados do sistema TickIN foi estruturada para gerenciar eventos, inscrições e controle de presença. O modelo possui seis tabelas principais (usuarios, eventos, inscricoes, presencas, lembretes, organizadores), interligadas por chaves primárias(PK) e estrangeiras(FK), garantindo integridade e rastreabilidade.
+A modelagem do banco de dados do sistema **TickIN** foi desenvolvida com o objetivo de garantir uma estrutura organizada, normalizada e escalável para o gerenciamento de eventos, inscrições, presenças, lembretes e usuários. A estrutura é composta por seis tabelas principais: `usuarios`, `eventos`, `inscricoes`, `presencas`, `lembretes` e `organizadores`.
 
-O CPF identifica unicamente os usuários, que podem se inscrever em eventos, receber lembretes e ter presença registrada. Organizadores estão associados aos eventos e também aos usuários. A estrutura foi planejada para ser clara, normalizada e pronta para expansão, permitindo operações como consulta de eventos por usuário, controle de presenças e envio de mensagens automáticas.
+A tabela `usuarios` armazena os dados essenciais dos participantes e organizadores, sendo identificados unicamente pelo CPF. Entre os atributos presentes, estão o nome, e-mail, telefone e o tipo de usuário (participante ou organizador), permitindo o controle de acesso e personalização das funcionalidades oferecidas pelo sistema.
 
+A tabela `eventos` registra os eventos disponíveis no sistema. Cada evento possui um identificador único, um título, uma descrição, a data de realização e um campo que referencia o organizador responsável (relacionado à tabela `usuarios`). Essa associação caracteriza uma relação do tipo um-para-muitos (1:N), na qual um usuário organizador pode ser responsável por vários eventos.
+
+A tabela `inscricoes` estabelece a relação entre usuários e eventos, indicando quais participantes estão inscritos em quais eventos. Cada inscrição referencia um usuário e um evento, formando assim uma estrutura que permite consultas como "eventos por usuário" ou "participantes por evento".
+
+Para controle de participação, a tabela `presencas` está vinculada diretamente às inscrições. Ela registra se o participante compareceu ao evento, criando uma relação um-para-um (1:1) com a tabela `inscricoes`. Isso garante que cada inscrição possa ter, no máximo, um registro de presença vinculado.
+
+A tabela `lembretes` complementa o sistema com a funcionalidade de comunicação automatizada. Ela armazena mensagens programadas para os inscritos em determinados eventos, promovendo maior engajamento. Cada lembrete está relacionado a um evento específico, configurando outra relação do tipo 1:N.
+
+Por fim, a tabela `organizadores` é utilizada para vincular usuários responsáveis por eventos. Essa estrutura reforça a separação entre participantes e administradores, garantindo maior segurança e rastreabilidade no sistema.
+
+Todas essas tabelas estão interligadas por meio de chaves primárias(PK) e estrangeiras(FK), garantindo integridade referencial e suporte a operações complexas de consulta, inserção e exclusão sem perda de consistência. As relações foram pensadas para permitir a expansão futura do sistema, como a adição de funcionalidades de notificação em tempo real, histórico de eventos ou múltiplos organizadores por evento.
 
 
 
