@@ -22,8 +22,11 @@
   },
   "homepage": "https://github.com/marianalreis/TickIN-PI#readme",
   "dependencies": {
+    "dotenv": "^16.5.0",
+    "ejs": "^3.1.10",
     "express": "^5.1.0",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "pg": "^8.15.6"
   },
   "directories": {
     "test": "tests"

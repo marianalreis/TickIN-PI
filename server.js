@@ -1,12 +1,23 @@
 const express = require('express');
 const app = express();
-const PORT = 3000;
+const path = require('path');
 
-app.use(express.json()); // permite receber dados no formato JSON
+require('dotenv').config();
 
-const routes = require('./routes/index');
-app.use('/', routes);
+// View engine EJS
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
+// Body parser
+app.use(express.urlencoded({ extended: true }));
+
+// Rota de teste
+app.get('/', (req, res) => {
+  res.send('Servidor funcionando com Node.js + Express!');
+});
+
+// Inicia servidor
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Servidor rodando em http://localhost:${3000}`);
 });
