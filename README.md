@@ -1,4 +1,5 @@
 # tickIN
+#### [Mariana Lacerda Reis](https://www.linkedin.com/in/marianalacerdareis/)
 ##  Descrição
 
 Este projeto tem como objetivo o desenvolvimento de uma aplicação web para gestão de eventos, permitindo que usuários realizem inscrições, acompanhem informações dos eventos e tenham sua presença registrada de forma prática e automatizada. A plataforma oferece uma experiência simplificada para quem deseja participar de eventos e uma interface eficiente para quem os organiza.
