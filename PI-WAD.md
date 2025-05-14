@@ -2,7 +2,7 @@
 
 ## TickIN
 
-#### Mariana Lacerda Reis
+#### [Mariana Lacerda Reis](https://www.linkedin.com/in/marianalacerdareis/)
 
 ## Sumário
 
