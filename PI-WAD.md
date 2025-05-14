@@ -52,13 +52,15 @@ As personas desenvolvidas para o projeto TickIN representam dois perfis-chave de
 
 User Stories são descrições curtas e informais de uma funcionalidade desejada, escritas do ponto de vista do usuário, que ajudam a capturar requisitos de forma colaborativa e incremental; geralmente seguem o formato "Como [tipo de usuário], quero [objetivo], para que [benefício]", permitindo que equipes de desenvolvimento mantenham o foco nas necessidades reais dos usuários. Para garantir a qualidade das User Stories, aplica-se o critério INVEST, que estabelece que cada história deve ser Independente, Negociável, Valiosa, Estimável, Pequena e Testável, princípios que, segundo Cohn (2004)[²](#5-referências), aumentam significativamente a eficácia da comunicação entre times de produto, desenvolvimento e stakeholders.
 
-#### US01 | Inscrição rápida
+<a id="US01"></a> 
+ #### US01 | Inscrição rápida
 > Como participante interessado, quero me inscrever em eventos com poucos cliques, para que eu possa garantir minha vaga rapidamente sem complicações.
 
+<a id="US02"></a>
 #### US02 | Gerenciamento de inscrições
 > Como usuário inscrito, quero visualizar e gerenciar minhas inscrições em um painel, para que eu tenha controle sobre os eventos que participarei.
 
-
+<a id="US03"></a>
 #### US03 | Visualizar lista de inscritos
 > Como organizador de eventos, quero visualizar a lista de participantes inscritos, para que eu possa organizar o check-in e o controle de presença no evento.
 >
@@ -127,7 +129,50 @@ Todas essas tabelas estão interligadas por meio de chaves primárias(PK) e estr
 
 ### 3.3. Wireframes (Semana 03)
 
-*Posicione aqui as imagens do wireframe construído para sua solução e, opcionalmente, o link para acesso (mantenha o link sempre público para visualização).*
+Wireframe é uma representação visual simplificada da estrutura de uma interface, utilizada no processo de design para mapear a disposição e hierarquia dos elementos de navegação, entrada e saída de dados em uma aplicação digital. Essa técnica permite que equipes de desenvolvimento, design e stakeholders validem rapidamente a lógica de funcionamento do sistema antes da implementação gráfica ou técnica. Os wireframes podem variar em fidelidade, de esboços manuais até versões digitais mais detalhadas, e são fundamentais para garantir clareza, eficiência e alinhamento entre os envolvidos no projeto. Segundo a Interaction Design Foundation[⁴](#5-referências), wireframes funcionam como o “esqueleto” de uma interface, ajudando a identificar problemas de usabilidade ainda nas fases iniciais do desenvolvimento, o que reduz retrabalho e melhora a experiência do usuário final.
+
+<div align="center">
+  <sub>FIGURA X - Wireframes do TickIN</sub><br>
+  <img src="assets/Wireframes.png" width="100%" alt="Wireframes do TickIN"><br>
+  <sup>Fonte: Material produzido pela autora, 2025</sup>
+</div>
+
+Esses wireframes representam o fluxo de navegação da aplicação Web TickIN, contemplando tanto a visão do participante quanto do organizador de eventos. O objetivo é estruturar de forma clara e funcional as principais interações da plataforma, com foco na inscrição, visualização de eventos, confirmação de presença e gestão de participantes.
+
+As telas foram desenhadas em baixa fidelidade, sem elementos gráficos finais, priorizando a estrutura e posicionamento dos elementos da interface. A navegação foi planejada com base nas [User Stories](#22-user-stories-semana-01) 
+
+#### Telas apresentadas e suas funcionalidades:
+
+1. **Tela de Login**  
+   Acesso ao sistema por e-mail e senha (presente em todos os fluxos).
+
+2. **Listagem de eventos**  
+   Exibição de eventos disponíveis com botão de inscrição rápida.  
+   [US01](#us01--inscrição-rápida) – Inscrição rápida
+
+3. **Detalhes do evento**  
+   Visualização do organizador, informações e botão para inscrição.  
+   [US01](#us01--inscrição-rápida)
+
+4. **Minhas inscrições** (visão do participante)  
+   Exibe eventos nos quais o usuário está inscrito, com opções para baixar ticket e confirmar presença.  
+   [US02](#US02)  – Gerenciamento de inscrições
+
+5. **Registrar evento** (visão do organizador)  
+   Tela de cadastro de evento com campos essenciais e envio de imagens.  
+   Etapa inicial da [US03](#us03--visualizar-lista-de-inscritos)
+
+6. **Meus eventos**  
+   Lista de eventos criados pelo organizador com opção de acessar participantes.  
+   [US03](#us03--visualizar-lista-de-inscritos)
+
+7. **Participantes inscritos**  
+   Visualização dos nomes, status de confirmação e botões para contato direto com os inscritos.  
+   [US03](#us03--visualizar-lista-de-inscritos) – Lista de participantes
+
+
+[ Clique aqui para acessar os wireframes digitais no Figma](https://www.figma.com/design/QKcpPYIEc1QaPUepKMleID/Wireframe--tickIN?node-id=0-1&t=CWrtH7aFNK75SHtu-1)
+
 
 ### 3.4. Guia de estilos (Semana 05)
 
@@ -171,6 +216,8 @@ Todas essas tabelas estão interligadas por meio de chaves primárias(PK) e estr
 
 ³ UNIVERSIDADE DE SÃO PAULO. Instituto de Ciências Matemáticas e de Computação – Banco de Dados I. São Carlos: ICMC-USP, 2021. Disponível em: https://www.icmc.usp.br. Acesso em: 8 maio 2025.
 <br>
+
+⁴ INTERACTION DESIGN FOUNDATION. Wireframing: The Beginner’s Guide. 2023. Disponível em: https://www.interaction-design.org/literature/topics/wireframing. Acesso em: 13 maio 2025.
 
 ---
 ---
