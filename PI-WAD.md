@@ -175,13 +175,102 @@ As telas foram desenhadas em baixa fidelidade, sem elementos gráficos finais, p
 
 
 ### 3.4. Guia de estilos (Semana 05)
+Guia de estilos é um documento essencial no processo de design de interfaces, reunindo de forma organizada os principais elementos visuais e funcionais de um produto — como tipografia, paleta de cores, espaçamentos, componentes e ícones. Ele serve como referência unificada para equipes de design, desenvolvimento e produto, garantindo consistência visual, eficiência na construção de interfaces e coerência na comunicação da marca em diferentes contextos. Além de padronizar, o guia ajuda a reduzir retrabalho e a facilitar a manutenção de produtos escaláveis e responsivos. Segundo a Nielsen Norman Group[⁵](#5-referências), guias de estilo promovem uniformidade e melhoram a colaboração entre disciplinas, contribuindo diretamente para a usabilidade e a experiência final do usuário.
 
-*Descreva aqui orientações gerais para o leitor sobre como utilizar os componentes do guia de estilos de sua solução.*
+<div align="center">
+  <sub>FIGURA X - Guia de estilos</sub><br>
+  <img src="assets/styleGuide.png" width="100%" alt="Guia de estilos do TickIN"><br>
+  <sup>Fonte: Material produzido pela autora, 2025</sup>
+</div>
 
+O guia de estilo da plataforma tickIN foi desenvolvido para garantir consistência visual, clareza tipográfica e harmonia entre os elementos da interface. Ele define regras claras para o uso de cores, tipografia, grid, componentes e ícones, servindo como base para o design e desenvolvimento de experiências coesas e escaláveis.
+
+#### Tipografia
+A fonte adotada é Poppins, uma sans-serif moderna e versátil, ideal para interfaces digitais. A hierarquia tipográfica foi organizada da seguinte forma:
+
+H1 Black – 48px / Line-height: 120%
+
+H2 ExtraBold / Bold / Itálicos – 32px / Line-height: 140%
+
+Body Regular / Medium – 16px / Line-height: 150%
+
+Caption Light / ExtraLight / Thin – 12px / Line-height: 140%
+
+Estilos itálicos estão presentes na mesma formatação.
+
+### Cores
+A paleta cromática é dividida em três categorias:
+
+**Primárias e secundárias:**
+
+Vermelho (Principal): #B30303
+
+Coral (Destaque): #F88379
+
+**Neutras:**
+
+Tons de cinza para textos e fundos: #7A7A7A, #FFFFFF e #000000
+
+As cores foram selecionadas para garantir contraste adequado, acessibilidade e hierarquia visual clara.
+
+#### Grid e Layout
+O layout segue uma estrutura de 12 colunas com espaçamento definido:
+
+Gutter: 16px
+
+Margens laterais mínimas: 24px
+
+Margens verticais mínimas: 40px
+
+Altura-base modular: múltiplos de 8px
+
+A grid de linhas foi definida com 6 linhas para facilitar o ritmo vertical.
+
+#### Botões
+Os botões foram padronizados com base em função e hierarquia:
+
+Primário (vermelho): para ações principais
+
+Secundário (outline ou coral): para ações complementares
+
+Tertiário (texto): para ações sutis
+
+Tamanhos recomendados: Altura 48px, padding interno 16px 24px
+
+Estados: normal, hover, desabilitado (em desenvolvimento)
+
+#### Ícones e componentes
+Os ícones seguem tamanho padrão de 24px e estão centralizados em layouts com Auto Layout no Figma. A padronização foi feita para garantir alinhamento e harmonia visual.
+
+#### Logotipo
+O logotipo foi aplicado em variações com fundo transparente e versões em branco, vermelho, azul institucional e coral para diferentes contextos (claro, escuro e institucional). Ele é compatível com espaços de header e materiais promocionais.
 
 ### 3.5. Protótipo de alta fidelidade (Semana 05)
 
-*Posicione aqui algumas imagens demonstrativas de seu protótipo de alta fidelidade e o link para acesso ao protótipo completo (mantenha o link sempre público para visualização).*
+Protótipos são representações interativas de uma interface digital, utilizadas para simular a navegação, o comportamento e a experiência do usuário em um produto ainda em desenvolvimento. Eles variam em fidelidade, desde fluxos simples com links clicáveis até simulações completas com transições, microinterações e respostas dinâmicas. Prototipar permite validar decisões de design, testar fluxos de uso, comunicar ideias de forma visual e reduzir falhas antes da implementação técnica. Segundo a Interaction Design Foundation⁶, protótipos funcionam como “laboratórios visuais” que facilitam a descoberta de problemas de usabilidade, fortalecem o alinhamento entre equipes e usuários e tornam o processo iterativo mais eficiente e acessível.
+
+<div align="center">
+  <sub>FIGURA X - Protótipos de alta fidelidade</sub><br>
+  <img src="assets/prototypes.png" width="100%" alt="Protótipos da Aplicação WEB"><br>
+  <sup>Fonte: Material produzido pela autora, 2025</sup>
+</div>
+O protótipo da plataforma tickIN apresenta um fluxo completo para gerenciamento de eventos, com interfaces voltadas tanto para organizadores quanto para participantes. A navegação é intuitiva e baseada em uma identidade visual consistente, com uso predominante das cores vermelho e coral, tipografia Poppins e componentes reutilizáveis.
+
+O fluxo contempla:
+
+- Tela de login e cadastro, com campos simples e acessíveis.
+
+- Cadastro de evento, onde o organizador insere informações como nome, descrição, valor, endereço, horário e imagens ilustrativas.
+
+- Listagem de eventos, destacando dados do evento e permitindo ações como "Inscrever-se", "Confirmar presença" ou visualizar detalhes.
+
+- Gestão de participantes inscritos, com tabela de status (confirmado, ainda não, cancelado) e ação rápida de contato.
+
+- Visão pública do evento, com informações completas, imagem destacada e botão de inscrição visível.
+
+- Área do participante, exibindo seus eventos inscritos com status atualizado e ações disponíveis.
+
+O protótipo foi desenvolvido com foco em clareza visual, fluxo objetivo e usabilidade, simulando a jornada real de usuários em um sistema de ingressos digital.
 
 ### 3.6. WebAPI e endpoints (Semana 05)
 
@@ -219,5 +308,11 @@ As telas foram desenhadas em baixa fidelidade, sem elementos gráficos finais, p
 
 ⁴ INTERACTION DESIGN FOUNDATION. Wireframing: The Beginner’s Guide. 2023. Disponível em: https://www.interaction-design.org/literature/topics/wireframing. Acesso em: 13 maio 2025.
 
----
+⁵ NIELSEN NORMAN GROUP. Style Guides for Interfaces. 2007. Disponível em: https://www.nngroup.com/articles/style-guides/. Acesso em: 22 maio 2025.
+
+⁶ INTERACTION DESIGN FOUNDATION. Prototyping. Disponível em: https://www.interaction-design.org/literature/topics/prototyping. Acesso em: 22 maio 2025.
+
+
+
+
 ---
