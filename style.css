@@ -1,0 +1,62 @@
+body {
+  background-color: #B30303;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.centralizada {
+  display: block;
+  margin: 20px auto 10px auto;
+}
+
+.h1 {
+  color: #FFFFFF;
+  font-size: 32px;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.caixa {
+  background-color: #3c0000;
+  width: 350px;
+  padding: 40px 20px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.caixa-input {
+  background-image: url('imagens/caixatexto.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+
+  width: 300px;
+  height: 60px;
+  border: none;
+  padding: 0 20px;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 15px;
+  outline: none;
+}
+
+.botao {
+  background-color: #ff7f7f;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 30px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
