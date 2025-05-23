@@ -1,12 +1,18 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const routes = require('./routes');
+
 const app = express();
-const PORT = 3000;
+const port = 3000;
 
-app.use(express.json()); // permite receber dados no formato JSON
+// Middlewares
+app.use(cors());
+app.use(bodyParser.json());
 
-const routes = require('./routes/index');
-app.use('/', routes);
+// Usando as rotas definidas
+app.use('/api', routes);
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+app.listen(port, () => {
+  console.log(`Servidor rodando na porta ${port}`);
 });

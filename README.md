@@ -1,5 +1,6 @@
 # tickIN
-## 📜 Descrição
+#### [Mariana Lacerda Reis](https://www.linkedin.com/in/marianalacerdareis/)
+##  Descrição
 
 Este projeto tem como objetivo o desenvolvimento de uma aplicação web para gestão de eventos, permitindo que usuários realizem inscrições, acompanhem informações dos eventos e tenham sua presença registrada de forma prática e automatizada. A plataforma oferece uma experiência simplificada para quem deseja participar de eventos e uma interface eficiente para quem os organiza.
 
@@ -14,7 +15,7 @@ A imagem abaixo representa a modelagem relacional utilizada na aplicação TickI
 ![Modelo Relacional](./assets/modelo-banco.jpg)
 
 
-## 🧱 Arquitetura do Projeto (MVC)
+##  Arquitetura do Projeto (MVC)
 
 Este projeto segue a arquitetura MVC (Model-View-Controller) com Node.js e Express.js, utilizando PostgreSQL como sistema gerenciador de banco de dados. A separação de responsabilidades entre as camadas facilita a manutenção e a escalabilidade da aplicação:
 - Model: parte que armazena o modelo de negócios da aplicação;
@@ -25,8 +26,8 @@ O banco de dados é estruturado com base em um modelo relacional, que contempla 
 
 ## Requisitos
 
-- Node.js 
-- PostgreSQL 
+- Node.js (versão X.X.X) 
+- PostgreSQL (versão X.X.X)
 
 ## Instalação
 
@@ -38,7 +39,7 @@ Se precisar clonar o projeto individualmente, você deve:
 1. **Clonar o repositório:**
 
 ```bash
-   git clone https://github.com/seu-usuario/seu-projeto.git
+   git clone https://github.com/marianalreis/TickIN-PI.git
    cd seu-projeto
 ```
 
@@ -105,7 +106,10 @@ meu-projeto/
 └── server.js              # Arquivo principal que inicializa o servidor
 ```
 
+Contribuição
+------------
 
+Contribuições são bem-vindas! Sinta-se à vontade para abrir um issue ou enviar um pull request.
 
 Licença
 -------
