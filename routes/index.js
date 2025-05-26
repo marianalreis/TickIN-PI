@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const TarefaController = require('../controllers/TarefaController');
+const UserController = require('../controllers/UserController');
 
-router.post('/tarefas', TarefaController.criarTarefa);
-router.get('/tarefas', TarefaController.listarTarefas);
-router.put('/tarefas/:id', TarefaController.editarTarefa);
-router.delete('/tarefas/:id', TarefaController.excluirTarefa);
+// Rotas para o CRUD de usuários
+router.post('/users', UserController.criarUsuario);
+router.get('/users', UserController.listarUsuarios);
+router.put('/users/:id', UserController.editarUsuario);
+router.delete('/users/:id', UserController.excluirUsuario);
 
 module.exports = router;

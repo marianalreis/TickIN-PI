@@ -112,20 +112,144 @@ Por fim, a tabela `organizadores` é utilizada para vincular usuários responsá
 Todas essas tabelas estão interligadas por meio de chaves primárias(PK) e estrangeiras(FK), garantindo integridade referencial e suporte a operações complexas de consulta, inserção e exclusão sem perda de consistência. As relações foram pensadas para permitir a expansão futura do sistema, como a adição de funcionalidades de notificação em tempo real, histórico de eventos ou múltiplos organizadores por evento.
 
 
-
 ### 3.1.1 BD e Models (Semana 5)
-*Descreva aqui os Models implementados no sistema web*
 
-### 3.2. Arquitetura (Semana 5)
+#### Execução das Migrações
 
-*Posicione aqui o diagrama de arquitetura da sua solução de aplicação web. Atualize sempre que necessário.*
+As migrações foram realizadas diretamente pela interface web do Supabase, utilizando a aba de SQL Editor para criação da tabela `users`. Alternativamente, também é possível executar o script SQL localmente, caso esteja utilizando um arquivo como `init.sql`.
 
-**Instruções para criação do diagrama de arquitetura**  
-- **Model**: A camada que lida com a lógica de negócios e interage com o banco de dados.
-- **View**: A camada responsável pela interface de usuário.
-- **Controller**: A camada que recebe as requisições, processa as ações e atualiza o modelo e a visualização.
-  
-*Adicione as setas e explicações sobre como os dados fluem entre o Model, Controller e View.*
+No Supabase, o processo de migração consiste em:
+
+1. Acessar o projeto no [Supabase](https://app.supabase.com/)
+2. Navegar até a aba **SQL Editor**
+3. Executar o script de criação da tabela:
+
+```sql
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL
+);
+```
+
+Caso o projeto utilize migração local via terminal, o seguinte comando deve ser executado:
+
+```bash
+npm run init-db
+```
+
+Esse comando deve estar configurado no `package.json` para rodar o arquivo de migração que cria a estrutura básica do banco.
+
+
+#### Testes da API
+
+Os testes da API podem ser realizados utilizando o Postman, Insomnia ou outro cliente HTTP.
+
+A base URL da API em ambiente local é:
+
+```
+http://localhost:3000/api/users
+```
+
+**Criar usuário (POST)**
+```http
+POST /api/users
+Content-Type: application/json
+```
+Body:
+```json
+{
+  "name": "Mariana Reis",
+  "email": "mari@email.com"
+}
+```
+
+**Listar usuários (GET)**
+```http
+GET /api/users
+```
+
+**Atualizar usuário (PUT)**
+```http
+PUT /api/users/:id
+```
+Body:
+```json
+{
+  "name": "Mariana Atualizada",
+  "email": "nova@email.com"
+}
+```
+
+#### Deletar usuário (DELETE)
+```http
+DELETE /api/users/:id
+```
+
+As respostas são retornadas em formato **JSON**, seguindo os princípios de uma API.
+
+#### Explicação DB e Models
+
+O sistema utiliza o banco de dados PostgreSQL, hospedado na plataforma Supabase, como solução de persistência de dados.
+
+Nesta etapa, foi implementado um model dedicado, representado pelo arquivo `models/User.js`, responsável por realizar todas as operações com a tabela `users`. Essa abordagem proporciona maior modularização e facilita a manutenção e reutilização da lógica de acesso aos dados.
+
+A tabela `users` contém os seguintes campos principais:
+
+- `id`: identificador único do usuário (chave primária, auto-incremento)
+- `name`: nome completo do usuário (texto)
+- `email`: endereço de e-mail (texto)
+
+O model `User` encapsula os métodos de acesso ao banco de dados, utilizando o pacote `pg` por meio da conexão configurada em `config/database.js`. As principais operações implementadas são:
+
+- `getAll()`: retorna todos os usuários cadastrados;
+- `getById(id)`: retorna um usuário específico pelo ID;
+- `create(data)`: insere um novo usuário na base de dados;
+- `update(id, data)`: atualiza os dados de um usuário existente;
+- `delete(id)`: remove um usuário da base de dados.
+
+A separação entre o model e o controller garante maior organização no código, alinhando-se às boas práticas do padrão arquitetural MVC.
+
+
+### 3.2 Arquitetura (Semana 5)
+
+A aplicação segue a arquitetura **MVC (Model-View-Controller)**, com o objetivo de garantir organização, separação de responsabilidades e escalabilidade no desenvolvimento do sistema.
+
+- **Model**: responsável pela camada de dados da aplicação. Está representado pelo arquivo `models/User.js`, que centraliza todas as operações de leitura, escrita, atualização e remoção de registros da tabela `users` no banco de dados PostgreSQL (hospedado no Supabase). A conexão com o banco é feita por meio do módulo `pg`, configurado no arquivo `config/database.js`, que utiliza variáveis de ambiente do `.env`.
+
+- **Controller**: é a camada que recebe as requisições HTTP, valida os dados recebidos, aciona os métodos do Model e envia as respostas apropriadas. Essa lógica está implementada nos arquivos como `controllers/UserController.js`, que se comunicam diretamente com `models/User.js`.
+
+- **View**: neste projeto, a camada de visualização é representada pelas respostas em formato JSON geradas pelos controllers. Elas podem ser consumidas por ferramentas de teste como o Postman, ou futuramente por uma interface front-end.
+
+Essa separação facilita a manutenção do código, a expansão do sistema e o trabalho em equipe, permitindo que diferentes partes da aplicação evoluam de forma independente.
+
+#### Diagrama de Componentes (Fluxo MVC)
+
+```mermaid
+flowchart TD
+    subgraph View
+        Client[Cliente / Postman]
+    end
+
+    subgraph Controller
+        Router --> UserController
+    end
+
+    subgraph Model
+        UserModel[models/User.js]
+        configDB[config/database.js]
+        DB[(Supabase - PostgreSQL)]
+    end
+
+    Client -->|HTTP Request| Router
+    UserController -->|Chama métodos do Model| UserModel
+    UserModel -->|Executa consultas| configDB
+    configDB --> DB
+    UserController -->|Resposta JSON| Client
+```
+
+Esse diagrama representa a estrutura em camadas da aplicação, demonstrando o fluxo de dados da requisição até a resposta, e a separação entre responsabilidades, conforme os princípios do padrão arquitetural MVC.
+
 
 ### 3.3. Wireframes (Semana 03)
 

@@ -33,3 +33,5 @@ VALUES
   ('Rose Thompson', 'rose.thompson@example.com'),
   ('Samuel Perez', 'samuel.perez@example.com'),
   ('Tara Scott', 'tara.scott@example.com');
+
+-- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
