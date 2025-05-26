@@ -116,6 +116,23 @@ Todas essas tabelas estão interligadas por meio de chaves primárias(PK) e estr
 
 #### Execução das Migrações
 
+Para que a aplicação se conecte corretamente ao banco de dados PostgreSQL no Supabase, é necessário criar um arquivo chamado `.env` na raiz do projeto com as seguintes variáveis:
+
+```env
+DB_HOST=your-supabase-host.supabase.co
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=sua_senha_segura
+DB_NAME=postgres
+```
+Substitua os valores acima pelos dados reais do seu projeto no Supabase.
+A tabela utilizada neste projeto está em `config/modelo-dados.sql`, é necessário subir para o supabase.
+O sistema utiliza o pacote `dotenv` para carregar essas variáveis no momento da execução. A configuração é feita automaticamente no arquivo `config/database.js` com o seguinte trecho:
+
+```js
+require('dotenv').config();
+```
+
 As migrações foram realizadas diretamente pela interface web do Supabase, utilizando a aba de SQL Editor para criação da tabela `users`. Alternativamente, também é possível executar o script SQL localmente, caso esteja utilizando um arquivo como `init.sql`.
 
 No Supabase, o processo de migração consiste em:
@@ -222,7 +239,10 @@ A aplicação segue a arquitetura **MVC (Model-View-Controller)**, com o objetiv
 - **View**: neste projeto, a camada de visualização é representada pelas respostas em formato JSON geradas pelos controllers. Elas podem ser consumidas por ferramentas de teste como o Postman, ou futuramente por uma interface front-end.
 
 Essa separação facilita a manutenção do código, a expansão do sistema e o trabalho em equipe, permitindo que diferentes partes da aplicação evoluam de forma independente.
-
+A ordem de fluxo é:
+```text
+Cliente → Rota → Controller → Model → Banco de Dados → Resposta (JSON) → Cliente
+```
 #### Diagrama de Componentes (Fluxo MVC)
 
 ```mermaid
