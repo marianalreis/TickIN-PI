@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalhes do Evento</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="tela">
+    <!-- Aqui você pode adicionar o conteúdo da página de detalhes -->
+    <div class="evento-detalhes">
+      <h1>Detalhes do Evento</h1>
+      <!-- Conteúdo do evento -->
+    </div>
+    
+    <!-- Sistema de avaliação por estrelas -->
+    <div class="avaliacao-container">
+      <h2>Avalie este evento</h2>
+      <div id="star-rating" class="star-container" data-config-id="star-rating-animation"></div>
+    </div>
+  </div>
+
+  <script>
+    const max = 5;
+    let value = 0;
+
+    let animationParams = {
+      duration: 0.2,
+      easing: 'ease-in-out',
+      scale: 1.1,
+    };
+
+    const container = document.getElementById('star-rating');
+
+    function renderStars() {
+      container.innerHTML = '';
+      for (let i = 1; i <= max; i++) {
+        const star = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        star.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        star.setAttribute("viewBox", "0 0 24 24");
+        star.classList.add("star", i <= value ? "filled" : "empty");
+        star.setAttribute("fill", i <= value ? "#facc15" : "#d1d5db");
+        star.style.transition = `transform ${animationParams.duration}s ${animationParams.easing}`;
+
+        star.innerHTML = `
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+        `;
+
+        star.addEventListener('click', () => {
+          value = i;
+          renderStars();
+        });
+
+        container.appendChild(star);
+      }
+    }
+
+    container.addEventListener('animation:update', (event) => {
+      animationParams = event.detail;
+      renderStars();
+    });
+
+    renderStars();
+  </script>
+</body>
+</html>
