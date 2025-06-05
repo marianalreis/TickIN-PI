@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Usuários Inscritos - TickIN</title>
+    <link rel="stylesheet" href="../css/registered-users.css" />
+  </head>
+  <body>
+    <!-- Include the header -->
+    <div id="header-placeholder"></div>
+
+    <div class="container">
+      <h1 class="page-title">Usuários Inscritos</h1>
+
+      <div class="event-info">
+        <div class="event-header">
+          <img src="<%= event.image %>" alt="<%= event.title %>" class="event-image">
+          <div class="event-details">
+            <h2><%= event.title %></h2>
+            <div class="event-meta">
+              <div class="meta-item">
+                <img src="/assets/calendar.png" alt="Data" class="meta-icon">
+                <span><%= event.date %></span>
+              </div>
+              <div class="meta-item">
+                <img src="/assets/clock.png" alt="Horário" class="meta-icon">
+                <span><%= event.time %></span>
+              </div>
+              <div class="meta-item">
+                <img src="/assets/location.png" alt="Local" class="meta-icon">
+                <span><%= event.location %></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <% if (registrations && registrations.length > 0) { %>
+        <div class="registrations-table">
+          <div class="table-header">
+            <div>Usuário</div>
+            <div>Data de Inscrição</div>
+            <div>Status</div>
+            <div>Ação</div>
+          </div>
+          <% registrations.forEach(registration => { %>
+            <div class="table-row">
+              <div class="user-info">
+                <img src="<%= registration.user.avatar || '/assets/user-default.png' %>" alt="<%= registration.user.name %>" class="user-avatar">
+                <div>
+                  <div class="user-name"><%= registration.user.name %></div>
+                  <div class="user-email"><%= registration.user.email %></div>
+                </div>
+              </div>
+              <div><%= new Date(registration.createdAt).toLocaleDateString('pt-BR') %></div>
+              <div>
+                <span class="status-badge status-<%= registration.status.toLowerCase() %>">
+                  <%= registration.status %>
+                </span>
+              </div>
+              <div>
+                <a href="mailto:<%= registration.user.email %>" class="action-button contact-button">
+                  Contatar
+                </a>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <div class="empty-state">
+          <img src="/assets/empty-registrations.png" alt="Sem inscrições">
+          <h2>Nenhuma inscrição ainda</h2>
+          <p>Compartilhe seu evento para atrair participantes!</p>
+        </div>
+      <% } %>
+    </div>
+
+    <script>
+      // Carregar o header
+      fetch('../partials/header.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('header-placeholder').innerHTML = data;
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meus Eventos - TickIN</title>
+    <link rel="stylesheet" href="../css/my-events.css" />
+  </head>
+  <body>
+    <!-- Include the header -->
+    <div id="header-placeholder"></div>
+
+    <div class="container">
+      <h1 class="page-title">Meus Eventos</h1>
+
+      <% if (events && events.length > 0) { %>
+        <div class="events-grid">
+          <% events.forEach(event => { %>
+            <div class="event-card">
+              <img src="<%= event.image %>" alt="<%= event.title %>" class="event-image">
+              <div class="event-content">
+                <h3 class="event-title"><%= event.title %></h3>
+                <p class="event-description"><%= event.description %></p>
+                <div class="event-info">
+                  <div class="info-item">
+                    <img src="/assets/calendar.png" alt="Data" class="info-icon">
+                    <span><%= event.date %></span>
+                  </div>
+                  <div class="info-item">
+                    <img src="/assets/clock.png" alt="Horário" class="info-icon">
+                    <span><%= event.time %></span>
+                  </div>
+                  <div class="info-item">
+                    <img src="/assets/location.png" alt="Local" class="info-icon">
+                    <span><%= event.location %></span>
+                  </div>
+                </div>
+                <div class="event-actions">
+                  <a href="/usuarios-inscritos/<%= event.id %>" class="action-button view-button">
+                    <img src="/assets/users.png" alt="Ver inscritos" class="action-icon">
+                    Ver Inscritos
+                  </a>
+                  <a href="/editar-evento/<%= event.id %>" class="action-button edit-button">
+                    <img src="/assets/edit.png" alt="Editar" class="action-icon">
+                    Editar
+                  </a>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <div class="empty-state">
+          <img src="/assets/empty-events.png" alt="Nenhum evento">
+          <h2>Você ainda não tem eventos</h2>
+          <p>Comece criando seu primeiro evento!</p>
+          <a href="/registrar" class="create-button">Criar Evento</a>
+        </div>
+      <% } %>
+    </div>
+
+    <script>
+      // Carregar o header
+      fetch('../partials/header.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('header-placeholder').innerHTML = data;
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,261 @@
+/* Estilos comuns para páginas de eventos */
+:root {
+  --primary-color: #B30303;
+  --secondary-color: #F88379;
+  --text-color: #333;
+  --border-color: #ddd;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  margin: 0;
+  padding-top: 70px; /* Espaço para o header fixo */
+  background-color: #f5f5f5;
+}
+
+/* Container de pesquisa */
+.search-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.search-box {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--text-color);
+  background-color: white;
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.search-button {
+  width: 48px;
+  height: 48px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+  background-color: #990000;
+}
+
+.search-button img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1); /* Torna o ícone branco */
+}
+
+/* Grid de eventos */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 1rem;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+/* Card de evento */
+.event-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  margin-bottom: 1rem;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+}
+
+.event-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.event-content {
+  padding: 1.5rem;
+}
+
+.event-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.event-info {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  color: #666;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.info-icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.7;
+}
+
+.event-price {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #B30303;
+  margin-bottom: 1.5rem;
+}
+
+.event-button {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background-color: #B30303;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.event-button:hover {
+  background-color: #990000;
+}
+
+/* Organizador */
+.organizer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.organizer img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.organizer-info {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Formulário de registro de evento */
+.event-form {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--box-shadow);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .search-container {
+    padding: 1rem;
+  }
+
+  .search-box {
+    gap: 0.5rem;
+  }
+
+  .search-input {
+    padding: 0.5rem 1rem;
+  }
+
+  .search-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .search-button img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .events-grid {
+    grid-template-columns: 1fr;
+    padding: 0.5rem;
+  }
+
+  .event-card {
+    margin-bottom: 1rem;
+  }
+
+  .event-title {
+    font-size: 1.25rem;
+  }
+
+  .event-price {
+    font-size: 1.25rem;
+  }
+
+  .event-button {
+    padding: 0.5rem 1rem;
+  }
+
+  .event-form {
+    margin: 1rem;
+    padding: 1rem;
+  }
+} 

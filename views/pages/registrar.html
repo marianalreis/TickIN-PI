@@ -1,51 +1,172 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="../css/globals.css" />
-    <link rel="stylesheet" href="../css/styleguide.css" />
-    <link rel="stylesheet" href="../css/style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registrar Evento - TickIN</title>
+    <link rel="stylesheet" href="../css/register-event.css" />
   </head>
   <body>
-    <div class="tela">
-      <div class="overlap">
-        <div class="group">
-          <div class="overlap-group"><img class="user" src="img/user.svg" /></div>
-          <div class="div-wrapper"><div class="text-wrapper">Registrar evento</div></div>
-          <div class="div"><div class="text-wrapper-2">Enviar imagens</div></div>
-          <img class="logo" src="../../assets/logo_tickINVer.png" />
-          <div class="overlap-group-2">
-            <div class="frame">
-              <div class="rectangle"></div>
-              <div class="rectangle"></div>
-              <div class="rectangle"></div>
-              <div class="rectangle"></div>
-              <div class="rectangle"></div>
-              <div class="text-wrapper-3">Descrição</div>
-              <div class="text-wrapper-4">Valor</div>
-              <div class="text-wrapper-5">Endereço</div>
-              <div class="text-wrapper-6">Horário</div>
-            </div>
-            <div class="text-wrapper-7">Nome</div>
-          </div>
-          <div class="text-wrapper-8">Adicionar arquivo</div>
-          <img class="folder-plus" src="img/folder-plus.svg" />
-          <img class="img" src="img/chatgpt-image-22-de-mai-de-2025-15-00-48-1.png" />
-          <img class="chatgpt-image-de-2" src="img/chatgpt-image-22-de-mai-de-2025-15-03-36-1.png" />
-          <img class="chatgpt-image-de-3" src="img/chatgpt-image-22-de-mai-de-2025-15-08-59-1.png" />
-          <div class="in-cio-eventos-saldo">
-            início&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eventos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            saldo
-          </div>
+    <!-- Include the header -->
+    <div id="header-placeholder"></div>
+
+    <div class="container">
+      <h1 class="page-title">Registrar Novo Evento</h1>
+
+      <div class="form-container">
+        <div class="success-message" id="successMessage">
+          Evento registrado com sucesso!
         </div>
-        <img class="x-circle" src="img/x-circle-3.svg" />
-        <img class="x-circle-2" src="img/x-circle-4.svg" />
-        <img class="x-circle-3" src="img/x-circle.svg" />
-        <img class="x-circle-4" src="img/image.svg" />
-        <img class="x-circle-5" src="img/x-circle-2.svg" />
-        <img class="plus-square" src="img/plus-square.svg" />
+        <div class="error-message" id="errorMessage"></div>
+
+        <form id="eventForm">
+          <div class="form-group">
+            <label for="title">Nome do Evento</label>
+            <input type="text" id="title" name="title" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Descrição</label>
+            <textarea id="description" name="description" class="form-control" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="date">Data</label>
+            <input type="date" id="date" name="date" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label for="time">Horário</label>
+            <input type="time" id="time" name="time" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label for="location">Local</label>
+            <input type="text" id="location" name="location" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label for="price">Valor</label>
+            <input type="number" id="price" name="price" class="form-control" min="0" step="0.01" required>
+          </div>
+
+          <div class="form-group">
+            <label>Imagens do Evento</label>
+            <div class="image-upload" onclick="document.getElementById('images').click()">
+              <p>Clique ou arraste imagens aqui</p>
+              <input type="file" id="images" name="images" accept="image/*" multiple style="display: none">
+            </div>
+            <div id="imagePreviewContainer"></div>
+          </div>
+
+          <button type="submit" class="submit-button">Registrar Evento</button>
+        </form>
       </div>
     </div>
+
+    <script>
+      // Carregar o header
+      fetch('../partials/header.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('header-placeholder').innerHTML = data;
+        });
+
+      // Image preview functionality
+      const imageInput = document.getElementById('images');
+      const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+
+      imageInput.addEventListener('change', function(e) {
+        imagePreviewContainer.innerHTML = '';
+        const files = Array.from(e.target.files);
+
+        files.forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'image-preview';
+            img.style.display = 'block';
+            imagePreviewContainer.appendChild(img);
+          }
+          reader.readAsDataURL(file);
+        });
+      });
+
+      // Form submission
+      document.getElementById('eventForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const images = formData.getAll('images');
+        
+        try {
+          const response = await fetch('/api/events', {
+            method: 'POST',
+            body: formData
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            setTimeout(() => {
+              window.location.href = '/meus-eventos';
+            }, 2000);
+          } else {
+            document.getElementById('errorMessage').textContent = result.message || 'Erro ao registrar evento';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+          }
+        } catch (error) {
+          console.error('Erro:', error);
+          document.getElementById('errorMessage').textContent = 'Erro ao processar sua solicitação';
+          document.getElementById('errorMessage').style.display = 'block';
+          document.getElementById('successMessage').style.display = 'none';
+        }
+      });
+
+      // Drag and drop functionality
+      const dropZone = document.querySelector('.image-upload');
+      const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+      });
+
+      function preventDefaults (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, highlight, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+      });
+
+      function highlight(e) {
+        dropZone.style.borderColor = primaryColor;
+      }
+
+      function unhighlight(e) {
+        dropZone.style.borderColor = '#ddd';
+      }
+
+      dropZone.addEventListener('drop', handleDrop, false);
+
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        imageInput.files = files;
+        
+        const event = new Event('change');
+        imageInput.dispatchEvent(event);
+      }
+    </script>
   </body>
 </html>

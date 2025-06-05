@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minhas Inscrições - TickIN</title>
+    <link rel="stylesheet" href="../css/my-registrations.css" />
+  </head>
+  <body>
+    <!-- Include the header -->
+    <div id="header-placeholder"></div>
+
+    <div class="container">
+      <h1 class="page-title">Minhas Inscrições</h1>
+
+      <% if (registrations && registrations.length > 0) { %>
+        <div class="registrations-grid">
+          <% registrations.forEach(registration => { %>
+            <div class="registration-card">
+              <img src="<%= registration.event.image %>" alt="<%= registration.event.title %>" class="event-image">
+              <div class="event-content">
+                <h3 class="event-title"><%= registration.event.title %></h3>
+                <div class="event-info">
+                  <div class="info-item">
+                    <img src="/assets/calendar.png" alt="Data" class="info-icon">
+                    <span><%= registration.event.date %></span>
+                  </div>
+                  <div class="info-item">
+                    <img src="/assets/clock.png" alt="Horário" class="info-icon">
+                    <span><%= registration.event.time %></span>
+                  </div>
+                  <div class="info-item">
+                    <img src="/assets/location.png" alt="Local" class="info-icon">
+                    <span><%= registration.event.location %></span>
+                  </div>
+                </div>
+                <div class="status-badge status-<%= registration.status.toLowerCase() %>">
+                  <%= registration.status %>
+                </div>
+                <div class="action-buttons">
+                  <a href="/evento/<%= registration.event.id %>" class="action-button view-button">
+                    Ver Evento
+                  </a>
+                  <% if (registration.status !== 'Cancelado') { %>
+                    <button 
+                      class="action-button cancel-button"
+                      onclick="cancelRegistration('<%= registration.id %>')"
+                    >
+                      Cancelar
+                    </button>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <div class="empty-state">
+          <img src="/assets/empty-state.png" alt="Nenhuma inscrição">
+          <h2>Você ainda não tem inscrições</h2>
+          <p>Explore nossos eventos e encontre algo que você goste!</p>
+          <a href="/eventos" class="browse-button">Explorar Eventos</a>
+        </div>
+      <% } %>
+    </div>
+
+    <script>
+      // Carregar o header
+      fetch('../partials/header.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('header-placeholder').innerHTML = data;
+        });
+
+      async function cancelRegistration(registrationId) {
+        if (!confirm('Tem certeza que deseja cancelar sua inscrição?')) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`/api/registrations/${registrationId}/cancel`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            window.location.reload();
+          } else {
+            alert(result.message || 'Erro ao cancelar inscrição');
+          }
+        } catch (error) {
+          console.error('Erro:', error);
+          alert('Erro ao processar sua solicitação');
+        }
+      }
+    </script>
+  </body>
+</html>

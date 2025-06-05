@@ -1,60 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="../css/globals.css" />
-    <link rel="stylesheet" href="../css/styleguide.css" />
-    <link rel="stylesheet" href="../css/style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pesquisar Eventos - TickIN</title>
+    <link rel="stylesheet" href="../css/events.css" />
   </head>
   <body>
-    <div class="tela">
-      <div class="overlap"><img class="user" src="img/user.svg" /></div>
-      <div class="overlap-group">
-        <div class="text-wrapper">Pesquisar evento</div>
-        <img class="search" src="img/search.svg" />
-      </div>
-      <img class="chatgpt-image-de" src="img/chatgpt-image-22-de-mai-de-2025-14-35-17-1.png" />
-      <div class="in-cio-eventos-saldo">
-        início&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eventos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        saldo
-      </div>
-      <div class="group">
-        <div class="div">
-          <div class="overlap-wrapper">
-            <div class="overlap-2">
-              <div class="group-2">
-                <div class="overlap-group-wrapper">
-                  <div class="div-wrapper"><div class="text-wrapper-2">Inscrever-se</div></div>
-                </div>
-                <div class="text-wrapper-3">R$99,90</div>
-              </div>
-              <div class="venha-para-uma-noite-wrapper">
-                <p class="venha-para-uma-noite">
-                  Venha para uma noite de inspiração, conexões e aprendizados com quem está transformando o mercado de
-                  tecnologia e entretenimento!<br />🗓 Data: 27 de junho de 2025<br />🕖 Horário: 19h às 21h<br />📍
-                  Local: Centro de Convenções Nova Era – Auditório Principal
-                </p>
-              </div>
-            </div>
-          </div>
-          <img class="img" src="img/chatgpt-image-22-de-mai-de-2025-15-08-59-1.png" />
-          <p class="p">Palestra com CEO — Inovação, Liderança e o Futuro dos Eventos</p>
-        </div>
-      </div>
-      <div class="group-3">
-        <div class="div">
-          <div class="group-4">
-            <div class="chatgpt-image-de-wrapper">
-              <img class="chatgpt-image-de-2" src="img/chatgpt-image-22-de-mai-de-2025-15-00-48-1.png" />
-            </div>
-            <div class="group-5">
-              <div class="div-wrapper"><div class="text-wrapper-4">Inscritos</div></div>
-            </div>
-          </div>
-          <div class="text-wrapper-5">Liderar 2025</div>
-        </div>
+    <!-- Include the header -->
+    <div id="header-placeholder"></div>
+
+    <div class="search-container">
+      <div class="search-box">
+        <input 
+          type="text" 
+          placeholder="Pesquisar eventos..." 
+          class="search-input" 
+          id="searchInput"
+        >
+        <button class="search-button" aria-label="Buscar">
+          <img src="/assets/search.png" alt="Buscar">
+        </button>
       </div>
     </div>
+
+    <div class="events-grid" id="eventsContainer">
+      <!-- Events will be dynamically inserted here -->
+    </div>
+
+    <script>
+      // Carregar o header
+      fetch('../partials/header.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('header-placeholder').innerHTML = data;
+        });
+
+      // Function to format date
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric'
+        });
+      }
+
+      // Function to create event card
+      function createEventCard(event) {
+        return `
+          <div class="event-card">
+            <img src="${event.image}" alt="${event.title}" class="event-image">
+            <div class="event-content">
+              <h3 class="event-title">${event.title}</h3>
+              <p class="event-details">
+                🗓 Data: ${formatDate(event.date)}<br>
+                🕖 Horário: ${event.time}<br>
+                📍 Local: ${event.location}
+              </p>
+              <div class="event-price">R$ ${event.price.toFixed(2)}</div>
+              <button class="event-button" onclick="window.location.href='/evento/${event.id}'">
+                Inscrever-se
+              </button>
+              <div class="organizer">
+                <img src="${event.organizer.image}" alt="${event.organizer.name}">
+                <div class="organizer-info">
+                  <div>Organizado por</div>
+                  <div><strong>${event.organizer.name}</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Function to fetch and display events
+      async function fetchEvents(searchTerm = '') {
+        try {
+          const response = await fetch(`/api/events?search=${encodeURIComponent(searchTerm)}`);
+          const events = await response.json();
+          
+          const eventsContainer = document.getElementById('eventsContainer');
+          eventsContainer.innerHTML = events.map(event => createEventCard(event)).join('');
+        } catch (error) {
+          console.error('Erro ao buscar eventos:', error);
+        }
+      }
+
+      // Search functionality
+      const searchInput = document.getElementById('searchInput');
+      let searchTimeout;
+
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          fetchEvents(e.target.value);
+        }, 300);
+      });
+
+      // Initial load
+      fetchEvents();
+    </script>
   </body>
 </html>
