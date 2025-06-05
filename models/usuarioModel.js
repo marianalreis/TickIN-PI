@@ -1,4 +1,5 @@
 const pool = require("../config/database");
+const bcrypt = require("bcryptjs");
 
 class Usuario {
   static async findAll() {
@@ -20,37 +21,45 @@ class Usuario {
   }
 
   static async create(usuario) {
-    const { CPF, nome, email, endereco, telefone } = usuario;
+    const { nome, email, telefone, senha, tipo_usuario } = usuario;
+    
+    // Hash da senha antes de salvar
+    const salt = await bcrypt.genSalt(10);
+    const senhaHash = await bcrypt.hash(senha, salt);
+    
     const query =
-      "INSERT INTO usuarios (CPF, nome, email, endereco, telefone) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+      "INSERT INTO usuarios (nome, email, telefone, senha, tipo_usuario) VALUES ($1, $2, $3, $4, $5) RETURNING *";
     const { rows } = await pool.query(query, [
-      CPF,
       nome,
       email,
-      endereco,
       telefone,
+      senhaHash,
+      tipo_usuario
     ]);
     return rows[0];
   }
 
-  static async update(cpf, usuario) {
-    const { nome, email, endereco, telefone } = usuario;
+  static async update(email, usuario) {
+    const { nome, telefone, tipo_usuario } = usuario;
     const query =
-      "UPDATE usuarios SET nome = $1, email = $2, endereco = $3, telefone = $4 WHERE CPF = $5 RETURNING *";
+      "UPDATE usuarios SET nome = $1, telefone = $2, tipo_usuario = $3 WHERE email = $4 RETURNING *";
     const { rows } = await pool.query(query, [
       nome,
-      email,
-      endereco,
       telefone,
-      cpf,
+      tipo_usuario,
+      email,
     ]);
     return rows[0];
   }
 
-  static async delete(cpf) {
-    const query = "DELETE FROM usuarios WHERE CPF = $1 RETURNING *";
-    const { rows } = await pool.query(query, [cpf]);
+  static async delete(email) {
+    const query = "DELETE FROM usuarios WHERE email = $1 RETURNING *";
+    const { rows } = await pool.query(query, [email]);
     return rows[0];
+  }
+
+  static async validatePassword(senha, senhaHash) {
+    return await bcrypt.compare(senha, senhaHash);
   }
 }
 

@@ -1,15 +1,26 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-const isSSL = process.env.DB_SSL === 'true';
-
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-  ssl: isSSL ? { rejectUnauthorized: false } : false,
+  user: 'postgres',
+  host: 'localhost',
+  database: 'tickin',
+  password: 'sua_senha', // Você precisará alterar isso para sua senha
+  port: 5432,
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
 });
 
-module.exports = pool;
+// Teste de conexão
+pool.connect((err, client, release) => {
+  if (err) {
+    console.error('Erro ao conectar ao banco:', err.stack);
+  } else {
+    console.log('Conectado ao banco de dados PostgreSQL!');
+    release();
+  }
+});
+
+module.exports = {
+  query: (text, params) => pool.query(text, params),
+  pool
+};

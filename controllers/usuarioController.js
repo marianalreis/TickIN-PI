@@ -11,9 +11,9 @@ const usuarioController = {
     }
   },
 
-  getUsuarioByCPF: async (req, res) => {
+  getUsuarioByEmail: async (req, res) => {
     try {
-      const usuario = await Usuario.findByCPF(req.params.cpf);
+      const usuario = await Usuario.findByEmail(req.params.email);
       if (!usuario) {
         return res.status(404).json({ message: "Usuário não encontrado" });
       }
@@ -25,7 +25,23 @@ const usuarioController = {
 
   createUsuario: async (req, res) => {
     try {
-      const usuario = await Usuario.create(req.body);
+      // Verificar se o email já existe
+      const existingUser = await Usuario.findByEmail(req.body.email);
+      if (existingUser) {
+        return res.status(400).json({ message: "Email já cadastrado" });
+      }
+
+      const usuario = await Usuario.create({
+        nome: req.body.name,
+        email: req.body.email,
+        telefone: req.body.phone,
+        senha: req.body.password,
+        tipo_usuario: req.body.userType
+      });
+
+      // Remove a senha do objeto retornado
+      delete usuario.senha;
+      
       res.status(201).json(usuario);
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -34,7 +50,7 @@ const usuarioController = {
 
   updateUsuario: async (req, res) => {
     try {
-      const usuario = await Usuario.update(req.params.cpf, req.body);
+      const usuario = await Usuario.update(req.params.email, req.body);
       if (!usuario) {
         return res.status(404).json({ message: "Usuário não encontrado" });
       }
@@ -46,7 +62,7 @@ const usuarioController = {
 
   deleteUsuario: async (req, res) => {
     try {
-      const usuario = await Usuario.delete(req.params.cpf);
+      const usuario = await Usuario.delete(req.params.email);
       if (!usuario) {
         return res.status(404).json({ message: "Usuário não encontrado" });
       }
@@ -56,8 +72,6 @@ const usuarioController = {
     }
   },
 
-  // Método de login - Por enquanto, vamos usar o CPF como senha temporariamente
-  // Em produção, você deveria ter um campo senha na tabela usuarios
   loginUsuario: async (req, res) => {
     try {
       const { email, password } = req.body;
@@ -69,31 +83,30 @@ const usuarioController = {
         return res.status(401).json({ message: "Email ou senha incorretos" });
       }
 
-      // Por enquanto, vamos validar usando o CPF como senha (temporário)
-      // Em produção, você deveria ter um hash da senha
-      if (password !== usuario.cpf) {
+      // Validar senha
+      const senhaValida = await Usuario.validatePassword(password, usuario.senha);
+      if (!senhaValida) {
         return res.status(401).json({ message: "Email ou senha incorretos" });
       }
 
       // Login bem-sucedido - salvar na sessão
-      req.session.userId = usuario.cpf;
+      req.session.userId = usuario.id;
       req.session.userEmail = usuario.email;
       req.session.userName = usuario.nome;
+      req.session.userType = usuario.tipo_usuario;
+
+      // Remove a senha do objeto retornado
+      delete usuario.senha;
 
       res.json({
         message: "Login realizado com sucesso",
-        user: {
-          cpf: usuario.cpf,
-          nome: usuario.nome,
-          email: usuario.email,
-        },
+        user: usuario
       });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
   },
 
-  // Método de logout
   logoutUsuario: (req, res) => {
     req.session.destroy((err) => {
       if (err) {

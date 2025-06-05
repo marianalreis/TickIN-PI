@@ -1,0 +1,196 @@
+/* Importar fonte Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+/* Authentication Pages Styles */
+:root {
+  --primary-color: #B30303;
+  --secondary-color: #F88379;
+  --text-color: #FFFFFF;
+  --input-bg: rgba(245, 245, 245, 0.54);
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+* {
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--primary-color);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  flex: 1;
+}
+
+.logo {
+  width: 350px;
+  margin-bottom: 2rem;
+}
+
+.auth-box {
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 20px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 500px;
+}
+
+.auth-title {
+  color: var(--text-color);
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 1rem;
+  padding-left: 3rem;
+  border: none;
+  border-radius: 40px;
+  background-color: var(--input-bg);
+  font-size: 1rem;
+  color: #000;
+}
+
+.input-group input::placeholder {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.input-group .icon {
+  position: absolute;
+  left: 1rem;
+  width: 24px;
+  height: 24px;
+}
+
+.radio-group {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.radio-group input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--text-color);
+  border-radius: 50%;
+  margin: 0;
+  cursor: pointer;
+}
+
+.radio-group input[type="radio"]:checked {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.submit-button {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 40px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 2rem;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #ff9289;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.auth-footer a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+.error-message, .success-message {
+  display: none;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.error-message {
+  background-color: rgba(255, 0, 0, 0.2);
+  color: #ff0000;
+}
+
+.success-message {
+  background-color: rgba(76, 175, 80, 0.9);
+  color: white;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .logo {
+    width: 280px;
+  }
+  
+  .auth-box {
+    padding: 1.5rem;
+  }
+
+  .auth-title {
+    font-size: 2rem;
+  }
+
+  .radio-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+} 
