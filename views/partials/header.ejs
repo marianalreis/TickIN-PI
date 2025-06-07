@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TickIN</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <a href="/" class="logo">
+            <img src="/assets/logo_tickIN.png" alt="TickIN">
+        </a>
+        <nav class="nav">
+            <% if (locals.userType === 'organizador') { %>
+                <a href="/meusEventos" class="nav-link">Meus Eventos</a>
+                <a href="/registrar" class="nav-link">Criar Evento</a>
+            <% } else { %>
+                <a href="/pesquisar" class="nav-link">Pesquisar</a>
+                <a href="/minhas-inscricoes" class="nav-link">Minhas Inscrições</a>
+            <% } %>
+            <div class="profile-icon">
+                <img src="/assets/user.png" alt="Perfil">
+            </div>
+        </nav>
+    </header>
+
+    <!-- Scripts -->
+    <link rel="stylesheet" href="/css/header.css">
+    <script src="/js/header.js"></script>
+</body>
+</html> 

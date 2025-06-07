@@ -35,7 +35,7 @@ function setupHeader() {
 function checkAuth() {
     const token = sessionStorage.getItem('token');
     if (!token) {
-        window.location.href = '/pages/login.html';
+        window.location.href = '/login';  // Removido a extensão .html para usar o template .ejs
     }
 }
 
@@ -49,4 +49,41 @@ function logout() {
 document.addEventListener('DOMContentLoaded', () => {
     checkAuth();
     setupHeader();
+
+    // Links de navegação
+    const inicioLink = document.getElementById('inicioLink');
+    const eventosLink = document.getElementById('eventosLink');
+    const saldoLink = document.getElementById('saldoLink');
+    const perfilLink = document.getElementById('perfilLink');
+
+    // Configurar navegação
+    inicioLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = '/';
+    });
+
+    eventosLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = '/meusEventos';
+    });
+
+    saldoLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = '/saldo';
+    });
+
+    perfilLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = '/perfil';
+    });
+
+    // Marcar link ativo baseado na URL atual
+    const currentPath = window.location.pathname;
+    const links = document.querySelectorAll('.nav-link');
+    
+    links.forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+            link.classList.add('active');
+        }
+    });
 }); 

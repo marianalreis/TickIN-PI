@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - TickIN</title>
+  <link rel="stylesheet" href="../css/auth.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <img class="logo" src="../../assets/logo_tickIN.png" alt="Logo TickIN">
+    <div class="auth-box">
+      <h1 class="auth-title">Login</h1>
+      <form id="loginForm">
+        <div class="success-message"></div>
+        <div class="error-message"></div>
+        <div class="loading-spinner"></div>
+        
+        <div class="form-group">
+          <label>Email</label>
+          <div class="input-group">
+            <img src="../../assets/user.png" alt="Email" class="icon">
+            <input type="email" name="email" placeholder="Digite seu email" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Senha</label>
+          <div class="input-group">
+            <img src="../../assets/key.png" alt="Senha" class="icon">
+            <input type="password" name="password" placeholder="Digite sua senha" required>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-button">Entrar</button>
+      </form>
+    </div>
+    <div class="auth-footer">
+      <a href="/cadastro">Não tem uma conta? Cadastre-se</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const form = e.target;
+      const formData = new FormData(form);
+      const data = {
+        email: formData.get('email'),
+        password: formData.get('password')
+      };
+
+      try {
+        // Simulação de verificação no banco de dados
+        const isOrganizador = data.email.includes('org');
+        
+        if (isOrganizador) {
+          // Simulação de dados do organizador
+          const organizador = {
+            organizador_ID: 1,
+            nome: 'Organizador Teste',
+            colaboradores: 'Equipe de Suporte',
+            funcao: 'Administrador',
+            CPF: '12345678900'
+          };
+          
+          localStorage.setItem('userType', 'organizador');
+          localStorage.setItem('userName', organizador.nome);
+          localStorage.setItem('userEmail', data.email);
+          localStorage.setItem('userId', organizador.CPF);
+          localStorage.setItem('organizadorId', organizador.organizador_ID);
+          
+          window.location.href = '/meusEventos';
+        } else {
+          // Simulação de dados do cliente
+          localStorage.setItem('userType', 'cliente');
+          localStorage.setItem('userName', 'Cliente Teste');
+          localStorage.setItem('userEmail', data.email);
+          localStorage.setItem('userId', '98765432100');
+          
+          window.location.href = '/pesquisar';
+        }
+        
+        // Mostrar mensagem de sucesso
+        const successDiv = form.querySelector('.success-message');
+        successDiv.textContent = 'Login realizado com sucesso! Redirecionando...';
+        successDiv.style.display = 'block';
+        
+      } catch (error) {
+        console.error('Erro:', error);
+        const errorDiv = form.querySelector('.error-message');
+        errorDiv.textContent = 'Email ou senha incorretos';
+        errorDiv.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,45 +1,223 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criar Conta - TickIN</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/auth.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro - TickIN</title>
+  <link rel="stylesheet" href="../css/auth.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-box">
-            <h1>Criar conta</h1>
-            
-            <!-- Mensagem de erro -->
-            <div class="error-message" style="display: none; color: red; margin-bottom: 1rem;"></div>
-
-            <form>
-                <div class="input-group">
-                    <label for="nome">Nome completo</label>
-                    <input type="text" id="nome" name="nome" required>
-                </div>
-
-                <div class="input-group">
-                    <label for="telefone">Telefone</label>
-                    <input type="tel" id="telefone" name="telefone" required>
-                </div>
-
-                <div class="input-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-
-                <button type="submit" class="btn-primary">Criar conta</button>
-            </form>
-
-            <p class="auth-link">
-                Já tem uma conta? <a href="/login">Faça login</a>
-            </p>
+  <div class="container">
+    <img class="logo" src="/assets/logo_tickIN.png" alt="Logo TickIN">
+    <div class="auth-box">
+      <h1 class="auth-title">Criar conta</h1>
+      <form id="registerForm">
+        <div class="success-message"></div>
+        <div class="error-message"></div>
+        <div class="loading-spinner"></div>
+        
+        <div class="form-group">
+          <label>CPF</label>
+          <div class="input-group">
+            <img src="/assets/user.png" alt="CPF" class="icon">
+            <input type="text" name="cpf" placeholder="Digite seu CPF" required>
+          </div>
         </div>
-    </div>
 
-    <script src="/js/cadastro.js"></script>
+        <div class="form-group">
+          <label>Nome completo</label>
+          <div class="input-group">
+            <img src="/assets/user.png" alt="Usuário" class="icon">
+            <input type="text" name="nome" placeholder="Digite seu nome completo" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <div class="input-group">
+            <img src="/assets/email.png" alt="Email" class="icon">
+            <input type="email" name="email" placeholder="Digite seu email" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Endereço</label>
+          <div class="input-group">
+            <img src="/assets/location.png" alt="Endereço" class="icon">
+            <input type="text" name="endereco" placeholder="Digite seu endereço" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Telefone</label>
+          <div class="input-group">
+            <img src="/assets/phone.png" alt="Telefone" class="icon">
+            <input type="tel" name="telefone" placeholder="Digite seu telefone" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Senha</label>
+          <div class="input-group">
+            <img src="/assets/key.png" alt="Senha" class="icon">
+            <input type="password" name="password" placeholder="Digite sua senha" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Confirmar senha</label>
+          <div class="input-group">
+            <img src="/assets/key.png" alt="Confirmar Senha" class="icon">
+            <input type="password" name="confirmPassword" placeholder="Confirme sua senha" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Tipo de conta</label>
+          <div class="radio-group">
+            <label>
+              <input type="radio" name="userType" value="cliente" checked>
+              Cliente
+            </label>
+            <label>
+              <input type="radio" name="userType" value="organizador">
+              Organizador
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-button">Cadastrar</button>
+      </form>
+    </div>
+    <div class="auth-footer">
+      <a href="/login">Já possui conta? Entre</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const form = e.target;
+      const submitButton = form.querySelector('.submit-button');
+      const loadingSpinner = form.querySelector('.loading-spinner');
+      const successDiv = form.querySelector('.success-message');
+      const errorDiv = form.querySelector('.error-message');
+      
+      // Reset messages
+      successDiv.style.display = 'none';
+      errorDiv.style.display = 'none';
+      
+      // Show loading state
+      form.classList.add('loading');
+      submitButton.disabled = true;
+      loadingSpinner.style.display = 'block';
+      
+      const formData = new FormData(form);
+      const data = {
+        cpf: formData.get('cpf').replace(/\D/g, ''),
+        nome: formData.get('nome'),
+        email: formData.get('email'),
+        endereco: formData.get('endereco'),
+        telefone: formData.get('telefone').replace(/\D/g, ''),
+        password: formData.get('password'),
+        confirmPassword: formData.get('confirmPassword'),
+        userType: formData.get('userType')
+      };
+
+      // Log para debug
+      console.log('Dados a serem enviados:', data);
+
+      // Validação antes de enviar
+      if (!data.cpf || !data.nome || !data.email || !data.endereco || !data.telefone || !data.password || !data.userType) {
+        errorDiv.textContent = 'Todos os campos são obrigatórios';
+        errorDiv.style.display = 'block';
+        form.classList.remove('loading');
+        submitButton.disabled = false;
+        loadingSpinner.style.display = 'none';
+        return;
+      }
+
+      if (data.password !== data.confirmPassword) {
+        errorDiv.textContent = 'As senhas não coincidem';
+        errorDiv.style.display = 'block';
+        form.classList.remove('loading');
+        submitButton.disabled = false;
+        loadingSpinner.style.display = 'none';
+        return;
+      }
+
+      try {
+        console.log('Enviando requisição para:', '/api/usuarios/register');
+        console.log('Dados completos:', JSON.stringify(data, null, 2));
+        
+        const response = await fetch('/api/usuarios/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify(data)
+        });
+
+        console.log('Status da resposta:', response.status);
+        const result = await response.json();
+        console.log('Resposta completa do servidor:', result);
+
+        if (response.ok) {
+          successDiv.textContent = 'Cadastro realizado com sucesso! Redirecionando...';
+          successDiv.style.display = 'block';
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 2000);
+        } else {
+          console.error('Erro retornado pelo servidor:', result);
+          errorDiv.textContent = result.message || 'Erro ao criar conta';
+          if (result.error) {
+            console.error('Detalhes do erro:', result.error);
+            console.error('Detalhes adicionais:', result.details);
+          }
+          errorDiv.style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Erro completo:', error);
+        console.error('Stack trace:', error.stack);
+        errorDiv.textContent = 'Erro ao conectar ao servidor. Por favor, tente novamente.';
+        errorDiv.style.display = 'block';
+      } finally {
+        form.classList.remove('loading');
+        submitButton.disabled = false;
+        loadingSpinner.style.display = 'none';
+      }
+    });
+
+    // Máscara para CPF
+    const cpfInput = document.querySelector('input[name="cpf"]');
+    cpfInput.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length <= 11) {
+        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        e.target.value = value;
+      }
+    });
+
+    // Máscara para telefone
+    const telefoneInput = document.querySelector('input[name="telefone"]');
+    telefoneInput.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length <= 11) {
+        if (value.length > 2) {
+          value = '(' + value.substring(0,2) + ') ' + value.substring(2);
+        }
+        if (value.length > 10) {
+          value = value.substring(0,10) + '-' + value.substring(10);
+        }
+        e.target.value = value;
+      }
+    });
+  </script>
 </body>
-</html> 
+</html>
