@@ -1,52 +1,56 @@
 /* Importar fonte Poppins */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
+/* Reset CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 /* Definir fonte padrão */
 * {
     font-family: 'Poppins', sans-serif;
 }
 
+/* Header styles */
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.25rem 2rem;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1000;
-    height: 60px; /* Fixed height */
-}
-
-.header-logo {
-    height: 100%;
+    height: 80px;
+    background-color: #ffffff;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    position: relative;
+    padding: 0 40px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
 }
 
-.header-logo img {
-    height: 110%; /* Reduced from 140% to 110% */
+/* Logo styles */
+.logo {
+    height: 40px;
+}
+
+.logo img {
+    height: 100%;
     width: auto;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
 }
 
-.header-nav {
+/* Navigation styles */
+.nav {
     display: flex;
-    gap: 2.5rem;
+    gap: 40px;
     align-items: center;
 }
 
 .nav-link {
     text-decoration: none;
-    color: #333;
+    color: #000000;
+    font-size: 16px;
     font-weight: 500;
-    font-size: 1rem;
     transition: color 0.3s ease;
 }
 
@@ -54,26 +58,27 @@
     color: #B30303;
 }
 
+/* Profile icon styles */
 .profile-icon {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background-color: #B30303;
+    background-color: #f0f0f0;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.profile-icon:hover {
-    background-color: #990000;
 }
 
 .profile-icon img {
-    width: 18px;
-    height: 18px;
-    filter: brightness(0) invert(1);
+    width: 24px;
+    height: 24px;
+}
+
+/* Main content padding to account for fixed header */
+body {
+    padding-top: 80px;
+    font-family: 'Poppins', sans-serif;
 }
 
 /* Responsividade */
