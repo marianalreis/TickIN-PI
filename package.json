@@ -13,5 +13,13 @@
     "migrate": "node migrations/migrate.js",
     "kill-port": "node scripts/killPort.js",
     "start:clean": "node scripts/killPort.js && node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "method-override": "^3.0.0",
+    "nodemon": "^3.1.10"
   }
 }
