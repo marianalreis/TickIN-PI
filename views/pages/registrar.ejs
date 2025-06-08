@@ -4,7 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= locals.isEditing ? 'Editar' : 'Registrar' %> Evento - TickIN</title>
-    <link rel="stylesheet" href="/css/my-events.css" />
+    <link rel="stylesheet" href="/css/register-event.css" />
+    <link rel="stylesheet" href="/css/header.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   </head>
   <body>
     <!-- Include the header -->
@@ -14,12 +16,15 @@
       <h1 class="page-title"><%= locals.isEditing ? 'Editar' : 'Registrar Novo' %> Evento</h1>
 
       <div class="form-container">
-        <div class="success-message" id="successMessage">
+        <div class="success-message" id="successMessage" style="display: none;">
           Evento <%= locals.isEditing ? 'atualizado' : 'registrado' %> com sucesso!
         </div>
-        <div class="error-message" id="errorMessage"></div>
+        <div class="error-message" id="errorMessage" style="display: none;"></div>
 
-        <form id="eventForm" enctype="multipart/form-data">
+        <form id="eventForm" 
+              data-is-editing="<%= locals.isEditing ? 'true' : 'false' %>"
+              data-evento-id="<%= locals.event ? event.id : '' %>"
+              data-api-url="/api/eventos">
           <div class="form-group">
             <label for="title">Nome do Evento</label>
             <input type="text" id="title" name="title" class="form-control" required 
@@ -50,12 +55,6 @@
           </div>
 
           <div class="form-group">
-            <label for="price">Valor</label>
-            <input type="number" id="price" name="price" class="form-control" min="0" step="0.01" required
-              value="<%= locals.event ? event.price : '' %>">
-          </div>
-
-          <div class="form-group">
             <label>Imagens do Evento</label>
             <div class="image-upload" onclick="document.getElementById('images').click()">
               <p>Clique ou arraste imagens aqui</p>
@@ -71,104 +70,16 @@
       </div>
     </div>
 
+    <!-- Adicionar o ID do organizador para o JavaScript -->
     <script>
-      // Image preview functionality
-      const imageInput = document.getElementById('images');
-      const imagePreviewContainer = document.getElementById('imagePreviewContainer');
-
-      imageInput.addEventListener('change', function(e) {
-        imagePreviewContainer.innerHTML = '';
-        const files = Array.from(e.target.files);
-
-        files.forEach(file => {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.className = 'image-preview';
-            imagePreviewContainer.appendChild(img);
-          }
-          reader.readAsDataURL(file);
-        });
-      });
-
-      // Form submission
-      document.getElementById('eventForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const formData = new FormData();
-        formData.append('title', document.getElementById('title').value);
-        formData.append('description', document.getElementById('description').value);
-        formData.append('date', document.getElementById('date').value);
-        formData.append('time', document.getElementById('time').value);
-        formData.append('location', document.getElementById('location').value);
-        formData.append('price', document.getElementById('price').value);
-
-        const images = document.getElementById('images').files;
-        for (let i = 0; i < images.length; i++) {
-          formData.append('images', images[i]);
-        }
-        
-        const isEditing = '<%= locals.isEditing %>' === 'true';
-        const eventId = '<%= locals.event ? event.id : null %>';
-        
-        try {
-          // Simulação de envio bem-sucedido
-          document.getElementById('successMessage').style.display = 'block';
-          document.getElementById('errorMessage').style.display = 'none';
-          
-          // Redirecionar para a página de meus eventos
-          setTimeout(() => {
-            window.location.href = '/meusEventos';
-          }, 2000);
-        } catch (error) {
-          console.error('Erro:', error);
-          document.getElementById('errorMessage').textContent = 'Erro ao processar sua solicitação';
-          document.getElementById('errorMessage').style.display = 'block';
-          document.getElementById('successMessage').style.display = 'none';
-        }
-      });
-
-      // Drag and drop functionality
-      const dropZone = document.querySelector('.image-upload');
-
-      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, preventDefaults, false);
-      });
-
-      function preventDefaults (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-
-      ['dragenter', 'dragover'].forEach(eventName => {
-        dropZone.addEventListener(eventName, highlight, false);
-      });
-
-      ['dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, unhighlight, false);
-      });
-
-      function highlight(e) {
-        dropZone.style.borderColor = '#B30303';
-        dropZone.style.backgroundColor = '#f1f1f1';
-      }
-
-      function unhighlight(e) {
-        dropZone.style.borderColor = '#ddd';
-        dropZone.style.backgroundColor = '#f8f8f8';
-      }
-
-      dropZone.addEventListener('drop', handleDrop, false);
-
-      function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        imageInput.files = files;
-        
-        const event = new Event('change');
-        imageInput.dispatchEvent(event);
-      }
+      window.organizadorId = '<%= locals.usuario && locals.usuario.id ? locals.usuario.id : "" %>';
+      window.apiUrl = '<%= locals.isEditing ? `/api/eventos/${locals.event.id}` : "/api/eventos" %>';
+      // Log para debug
+      console.log('ID do organizador:', window.organizadorId);
+      console.log('API URL:', window.apiUrl);
     </script>
+    
+    <!-- Scripts -->
+    <script src="/js/eventos.js"></script>
   </body>
 </html>

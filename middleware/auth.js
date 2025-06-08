@@ -1,38 +1,45 @@
 // Middleware para verificar se o usuário está autenticado
 function checkAuth(req, res, next) {
-  // Verificar se existe uma sessão de usuário
-  const userType = req.session.userType || localStorage.getItem('userType');
-  const userId = req.session.userId || localStorage.getItem('userId');
-  
-  if (!userId) {
-    return res.redirect('/login?error=auth_required');
+  if (!req.session.usuario) {
+    if (req.xhr || req.path.startsWith('/api/')) {
+      return res.status(401).json({ erro: 'Usuário não autenticado' });
+    }
+    return res.redirect('/login');
   }
-  
-  // Continuar para a próxima função
   next();
 }
 
 // Middleware para verificar se o usuário é um organizador
 function checkOrganizador(req, res, next) {
-  const userType = req.session.userType || localStorage.getItem('userType');
-  
-  if (userType !== 'organizador') {
-    return res.redirect('/login?error=unauthorized');
+  if (!req.session.usuario) {
+    if (req.xhr || req.path.startsWith('/api/')) {
+      return res.status(401).json({ erro: 'Usuário não autenticado' });
+    }
+    return res.redirect('/login');
   }
-  
-  // Continuar para a próxima função
+  if (req.session.usuario.tipo_usuario !== 'organizador') {
+    if (req.xhr || req.path.startsWith('/api/')) {
+      return res.status(403).json({ erro: 'Acesso permitido apenas para organizadores' });
+    }
+    return res.redirect('/pesquisar');
+  }
   next();
 }
 
 // Middleware para verificar se o usuário é um cliente
 function checkCliente(req, res, next) {
-  const userType = req.session.userType || localStorage.getItem('userType');
-  
-  if (userType !== 'cliente') {
-    return res.redirect('/login?error=unauthorized');
+  if (!req.session.usuario) {
+    if (req.xhr || req.path.startsWith('/api/')) {
+      return res.status(401).json({ erro: 'Usuário não autenticado' });
+    }
+    return res.redirect('/login');
   }
-  
-  // Continuar para a próxima função
+  if (req.session.usuario.tipo_usuario !== 'cliente') {
+    if (req.xhr || req.path.startsWith('/api/')) {
+      return res.status(403).json({ erro: 'Acesso permitido apenas para clientes' });
+    }
+    return res.redirect('/meusEventos');
+  }
   next();
 }
 

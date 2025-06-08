@@ -22,6 +22,16 @@ const presencaController = {
     }
   },
 
+  getPresencasByEvento: async (req, res) => {
+    try {
+      const presencas = await Presenca.findByEvento(req.params.eventoId);
+      res.json(presencas);
+    } catch (error) {
+      console.error('Erro ao buscar presenças do evento:', error);
+      res.status(500).json({ message: error.message });
+    }
+  },
+
   getPresencaByInscricao: async (req, res) => {
     try {
       const presenca = await Presenca.findByInscricao(req.params.compraId);
