@@ -97,9 +97,9 @@ Modelagem de banco de dados é o processo de representar de maneira estruturada 
 
 A modelagem do banco de dados do sistema **TickIN** foi desenvolvida com o objetivo de garantir uma estrutura organizada, normalizada e escalável para o gerenciamento de eventos, inscrições, presenças, lembretes e usuários. A estrutura é composta por seis tabelas principais: `usuarios`, `eventos`, `inscricoes`, `presencas`, `lembretes` e `organizadores`.
 
-A tabela `usuarios` armazena os dados essenciais dos participantes e organizadores, sendo identificados unicamente pelo CPF. Entre os atributos presentes, estão o nome, e-mail, telefone e o tipo de usuário (participante ou organizador), permitindo o controle de acesso e personalização das funcionalidades oferecidas pelo sistema.
+A tabela `usuarios` armazena os dados essenciais dos participantes e organizadores, sendo identificados unicamente pelo CPF. Entre os atributos presentes, estão o nome, e-mail, telefone e senha, permitindo o controle de acesso e personalização das funcionalidades oferecidas pelo sistema.
 
-A tabela `eventos` registra os eventos disponíveis no sistema. Cada evento possui um identificador único, um título, uma descrição, a data de realização e um campo que referencia o organizador responsável (relacionado à tabela `usuarios`). Essa associação caracteriza uma relação do tipo um-para-muitos (1:N), na qual um usuário organizador pode ser responsável por vários eventos.
+A tabela `eventos` registra os eventos disponíveis no sistema. Cada evento possui um identificador único, uma descrição, a data de realização, valor, local, horário e um campo que referencia o organizador responsável (relacionado à tabela `organizadores`). Essa associação caracteriza uma relação do tipo um-para-muitos (1:N), na qual um organizador pode ser responsável por vários eventos.
 
 A tabela `inscricoes` estabelece a relação entre usuários e eventos, indicando quais participantes estão inscritos em quais eventos. Cada inscrição referencia um usuário e um evento, formando assim uma estrutura que permite consultas como "eventos por usuário" ou "participantes por evento".
 
@@ -418,11 +418,140 @@ O protótipo foi desenvolvido com foco em clareza visual, fluxo objetivo e usabi
 
 ### 3.6. WebAPI e endpoints (Semana 05)
 
-*Utilize um link para outra página de documentação contendo a descrição completa de cada endpoint. Ou descreva aqui cada endpoint criado para seu sistema.*  
+A API do sistema TickIN foi desenvolvida seguindo os princípios RESTful, com endpoints organizados por recursos e operações CRUD. Abaixo estão os principais endpoints implementados:
+
+#### Usuários
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| GET | `/api/usuarios` | Retorna todos os usuários cadastrados |
+| GET | `/api/usuarios/:id` | Retorna um usuário específico por ID |
+| POST | `/api/usuarios` | Cria um novo usuário |
+| PUT | `/api/usuarios/:id` | Atualiza dados de um usuário existente |
+| DELETE | `/api/usuarios/:id` | Remove um usuário do sistema |
+
+#### Eventos
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| GET | `/api/eventos` | Lista todos os eventos disponíveis |
+| GET | `/api/eventos/:id` | Retorna detalhes de um evento específico |
+| GET | `/api/eventos/busca` | Busca eventos por termo ou categoria |
+| POST | `/api/eventos` | Cria um novo evento |
+| PUT | `/api/eventos/:id` | Atualiza informações de um evento |
+| DELETE | `/api/eventos/:id` | Remove um evento do sistema |
+
+#### Inscrições
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| GET | `/api/inscricoes` | Lista todas as inscrições |
+| GET | `/api/inscricoes/usuario/:id` | Retorna inscrições de um usuário específico |
+| GET | `/api/inscricoes/evento/:id` | Retorna inscrições para um evento específico |
+| POST | `/api/inscricoes` | Realiza uma nova inscrição |
+| PUT | `/api/inscricoes/:id` | Atualiza status de uma inscrição |
+| DELETE | `/api/inscricoes/:id` | Cancela uma inscrição |
+
+#### Presenças
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| GET | `/api/presencas/evento/:id` | Lista presenças confirmadas em um evento |
+| POST | `/api/presencas` | Registra presença de um participante |
+| DELETE | `/api/presencas/:id` | Remove registro de presença |
+
+A autenticação é realizada via tokens JWT, com endpoints específicos para login e refresh token:
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/api/auth/login` | Realiza autenticação e retorna token JWT |
+| POST | `/api/auth/refresh` | Atualiza token JWT expirado |
+| POST | `/api/auth/logout` | Invalida token atual |
+
+<div align="center">
+  <sub>FIGURA X - Documentação da API no Postman</sub><br>
+  <img src="assets/api-docs.png" width="100%" alt="Documentação da API no Postman"><br>
+  <sup>Fonte: Material produzido pela autora, 2025</sup>
+</div>
 
 ### 3.7 Interface e Navegação (Semana 07)
 
-*Descreva e ilustre aqui o desenvolvimento do frontend do sistema web, explicando brevemente o que foi entregue em termos de código e sistema. Utilize prints de tela para ilustrar.*
+A interface do TickIN foi desenvolvida seguindo o guia de estilos definido anteriormente, com foco em usabilidade e experiência do usuário. O frontend foi implementado utilizando HTML5, CSS3 e JavaScript, com templates EJS para renderização dinâmica das páginas.
+
+#### Principais telas implementadas:
+
+1. **Login e Cadastro**: Formulários de autenticação e registro de novos usuários, com validação de campos e feedback visual.
+
+<div align="center">
+  <sub>FIGURA X - Tela de Login</sub><br>
+  <img src="assets/login.png" width="100%" alt="Tela de Login do TickIN"><br>
+  <sup>Fonte: Material produzido pela autora, 2025</sup>
+</div>
+
+<div align="center">
+  <sub>FIGURA X - Tela de Login</sub><br>
+  <img src="assets/cadastro.1.png" width="100%" alt="Tela de Login do TickIN">
+   <img src="assets/cadastro.2.png" width="100%" alt="Tela de Login do TickIN"> <br>
+  <sup>Fonte: Material produzido pela autora, 2025</sup>
+</div>
+
+1. **Home/Dashboard**: Página inicial personalizada conforme o tipo de usuário (participante ou organizador), exibindo eventos ou inscrições feitas.
+
+<div align="center">
+  <sub>FIGURA X - Dashboard do Usuário</sub><br>
+  <img src="assets/dashboard.png" width="100%" alt="Dashboard do TickIN"><br>
+  <sup>Fonte: Material produzido pela autora, 2025</sup>
+</div>
+
+3. **Listagem de Eventos**: Exibição de eventos disponíveis com filtros e busca, permitindo inscrição rápida.
+
+<div align="center">
+  <sub>FIGURA X - Listagem de Eventos</sub><br>
+  <img src="assets/listagem-eventos.png" width="100%" alt="Listagem de Eventos do TickIN"><br>
+  <sup>Fonte: Material produzido pela autora, 2025</sup>
+</div>
+
+4. **Detalhes do Evento**: Visualização completa das informações de um evento, com opção de inscrição e compartilhamento.
+
+<div align="center">
+  <sub>FIGURA X - Detalhes do Evento</sub><br>
+  <img src="assets/detalhes-evento.png" width="100%" alt="Detalhes do Evento no TickIN"><br>
+  <sup>Fonte: Material produzido pela autora, 2025</sup>
+</div>
+
+5. **Gerenciamento de Inscrições**: Painel para visualização e controle das inscrições do usuário.
+
+<div align="center">
+  <sub>FIGURA X - Gerenciamento de Inscrições</sub><br>
+  <img src="assets/minhas-inscricoes.png" width="100%" alt="Gerenciamento de Inscrições no TickIN"><br>
+  <sup>Fonte: Material produzido pela autora, 2025</sup>
+</div>
+
+6. **Criação e Edição de Eventos**: Formulário completo para organizadores cadastrarem novos eventos ou editarem existentes.
+
+<div align="center">
+  <sub>FIGURA X - Criação de Evento</sub><br>
+  <img src="assets/criar-evento.png" width="100%" alt="Criação de Evento no TickIN"><br>
+  <sup>Fonte: Material produzido pela autora, 2025</sup>
+</div>
+
+7. **Gestão de Participantes**: Interface para organizadores visualizarem e gerenciarem inscritos em seus eventos.
+
+<div align="center">
+  <sub>FIGURA X - Gestão de Participantes</sub><br>
+  <img src="assets/participantes.png" width="100%" alt="Gestão de Participantes no TickIN"><br>
+  <sup>Fonte: Material produzido pela autora, 2025</sup>
+</div>
+
+#### Recursos de Frontend Implementados:
+
+- **Responsividade**: Layout adaptável para diferentes tamanhos de tela (desktop, tablet e mobile)
+- **Validação de Formulários**: Verificação em tempo real dos campos preenchidos pelo usuário
+- **Feedback Visual**: Mensagens de sucesso, erro e carregamento para melhorar a experiência
+- **Animações e Transições**: Elementos visuais que tornam a navegação mais fluida e agradável
+- **Integração com API**: Comunicação assíncrona com o backend via Fetch API
+
+O código frontend foi estruturado seguindo boas práticas de organização, com separação de arquivos CSS, JavaScript e templates EJS. A implementação priorizou a performance e acessibilidade, garantindo uma experiência consistente para todos os usuários.
 
 ---
 
