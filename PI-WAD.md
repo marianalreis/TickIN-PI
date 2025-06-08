@@ -495,11 +495,11 @@ A interface do TickIN foi desenvolvida seguindo o guia de estilos definido anter
   <sup>Fonte: Material produzido pela autora, 2025</sup>
 </div>
 
-1. **Home/Dashboard**: Página inicial personalizada conforme o tipo de usuário (participante ou organizador), exibindo eventos ou inscrições feitas.
+2. **Tela de registro**: Interface destinada exclusivamente ao organizador, permitindo o cadastro de novos eventos. Nessa tela, o organizador insere informações essenciais como nome do evento, data, local e descrição. Após o registro, os eventos passam a ser exibidos no Dashboard dos participantes elegíveis para inscrição. A tela possui validação de campos obrigatórios e confirmações visuais de sucesso ou erro no processo de cadastro.
 
 <div align="center">
-  <sub>FIGURA X - Dashboard do Usuário</sub><br>
-  <img src="assets/dashboard.png" width="100%" alt="Dashboard do TickIN"><br>
+  <sub>FIGURA X - Registro evento</sub><br>
+  <img src="assets/registrar.png" width="100%" alt="Dashboard do TickIN"><br>
   <sup>Fonte: Material produzido pela autora, 2025</sup>
 </div>
 
@@ -515,7 +515,7 @@ A interface do TickIN foi desenvolvida seguindo o guia de estilos definido anter
 
 <div align="center">
   <sub>FIGURA X - Detalhes do Evento</sub><br>
-  <img src="assets/detalhes-evento.png" width="100%" alt="Detalhes do Evento no TickIN"><br>
+  <img src="assets/detalhes.png" width="100%" alt="Detalhes do Evento no TickIN"><br>
   <sup>Fonte: Material produzido pela autora, 2025</sup>
 </div>
 
@@ -527,15 +527,8 @@ A interface do TickIN foi desenvolvida seguindo o guia de estilos definido anter
   <sup>Fonte: Material produzido pela autora, 2025</sup>
 </div>
 
-6. **Criação e Edição de Eventos**: Formulário completo para organizadores cadastrarem novos eventos ou editarem existentes.
 
-<div align="center">
-  <sub>FIGURA X - Criação de Evento</sub><br>
-  <img src="assets/criar-evento.png" width="100%" alt="Criação de Evento no TickIN"><br>
-  <sup>Fonte: Material produzido pela autora, 2025</sup>
-</div>
-
-7. **Gestão de Participantes**: Interface para organizadores visualizarem e gerenciarem inscritos em seus eventos.
+6. **Gestão de Participantes**: Interface para organizadores visualizarem e gerenciarem inscritos em seus eventos.
 
 <div align="center">
   <sub>FIGURA X - Gestão de Participantes</sub><br>
