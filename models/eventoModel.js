@@ -81,19 +81,25 @@ class Evento {
     try {
       console.log('Buscando evento por ID:', id);
       
+      console.log('Buscando evento com ID:', id);
+      
       const query = `
         SELECT e.evento_id, e.titulo, e.descricao, e.data, e.horario, e.local, e.usuario_id, e.imagem, 
-               u.nome as organizador_nome
+               u.nome as organizador_nome, u.id as organizador_id
         FROM eventos e
         LEFT JOIN usuarios u ON e.usuario_id = u.id
         WHERE e.evento_id = $1
       `;
       
+      console.log('Query SQL:', query);
+      
       const { rows } = await pool.query(query, [id]);
       console.log('Evento encontrado:', rows[0]);
       
+      console.log('Resultado da query:', rows[0]);
+      
       if (rows[0]) {
-        return {
+        const evento = {
           id: rows[0].evento_id,
           titulo: rows[0].titulo,
           descricao: rows[0].descricao,
@@ -102,8 +108,12 @@ class Evento {
           local: rows[0].local,
           usuario_id: rows[0].usuario_id,
           imagem: rows[0].imagem,
-          organizador_nome: rows[0].organizador_nome
+          organizador_nome: rows[0].organizador_nome,
+          organizador_id: rows[0].organizador_id
         };
+        
+        console.log('Evento formatado:', evento);
+        return evento;
       }
       return null;
     } catch (error) {

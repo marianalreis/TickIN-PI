@@ -2,26 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Evento = require('../models/eventoModel');
 const Inscricao = require('../models/inscricaoModel');
-
-// Middleware para verificar se é organizador
-function checkOrganizador(req, res, next) {
-    if (!req.session || !req.session.usuario || !req.session.usuario.id) {
-        if (req.xhr || req.path.startsWith('/api/')) {
-            return res.status(401).json({ erro: 'Usuário não autenticado. Por favor, faça login novamente.' });
-        }
-        return res.redirect('/login');
-    }
-
-    if (req.session.usuario.tipo_usuario !== 'organizador') {
-        if (req.xhr || req.path.startsWith('/api/')) {
-            return res.status(403).json({ erro: 'Acesso permitido apenas para organizadores' });
-        }
-        return res.redirect('/');
-    }
-
-    req.session.usuario.id = parseInt(req.session.usuario.id, 10);
-    next();
-}
+const { checkOrganizador } = require('../middleware/auth');
 
 // Rotas de renderização
 router.get('/registrar', checkOrganizador, (req, res) => {
@@ -67,24 +48,33 @@ router.get('/editar/:id', checkOrganizador, async (req, res) => {
 
 router.get('/inscritos/:id', checkOrganizador, async (req, res) => {
     try {
+        console.log('Acessando rota de inscritos. ID do evento:', req.params.id);
+        
         const evento = await Evento.findById(req.params.id);
+        console.log('Evento encontrado:', evento);
+        
         if (!evento) {
+            console.log('Evento não encontrado');
             return res.redirect('/meusEventos?error=' + encodeURIComponent('Evento não encontrado'));
         }
 
         if (evento.usuario_id !== req.session.usuario.id) {
+            console.log('Usuário não é o organizador. Usuario ID:', req.session.usuario.id, 'Evento usuario_id:', evento.usuario_id);
             return res.redirect('/meusEventos?error=' + encodeURIComponent('Você não tem permissão para ver os inscritos deste evento'));
         }
 
         const inscricoes = await Inscricao.findByEvento(req.params.id);
-        res.render('usuariosInscritos', {
+        console.log('Inscrições encontradas:', inscricoes);
+
+        res.render('pages/usuariosInscritos', {
             pageTitle: 'TickIN - Usuários Inscritos',
-            evento: evento,
+            event: evento,
             inscricoes: inscricoes,
             usuario: req.session.usuario
         });
     } catch (err) {
         console.error('Erro ao carregar inscritos:', err);
+        console.error('Stack trace:', err.stack);
         res.redirect('/meusEventos?error=' + encodeURIComponent('Erro ao carregar lista de inscritos'));
     }
 });

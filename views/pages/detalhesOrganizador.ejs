@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../css/header.css" />
     <link rel="stylesheet" href="../css/event-details.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   </head>
   <body>
     <%- include('../partials/header', { currentPage: 'evento' }) %>
@@ -49,52 +50,69 @@
 
       <div class="registration-card">
         <div class="success-message" id="successMessage" style="display: none;">
-          Inscrição realizada com sucesso!
+          Operação realizada com sucesso!
         </div>
-        <div class="price">Gratuito</div>
-        <button class="register-button" id="registerButton" <%= new Date(event.data) < new Date() ? 'disabled' : '' %>>
-          <%= new Date(event.data) < new Date() ? 'Evento Encerrado' : 'Inscrever-se' %>
-        </button>
-        <p style="color: #666; font-size: 0.9rem; text-align: center;">
-          Ao se inscrever, você concorda com os termos e condições do evento.
+        <div class="organizer-actions">
+          <a href="/eventos/editar/<%= event.id %>" class="action-button edit-button">
+            <i class="fas fa-edit"></i>
+            Editar Evento
+          </a>
+          <a href="/eventos/inscritos/<%= event.id %>" class="action-button view-registrations-button">
+            <i class="fas fa-users"></i>
+            Ver Inscritos
+          </a>
+        </div>
+        <p style="color: #666; font-size: 0.9rem; text-align: center; margin-top: 20px;">
+          Você é o organizador deste evento
         </p>
       </div>
     </div>
 
-    <script>
-      document.getElementById('registerButton').addEventListener('click', async () => {
-        try {
-          const response = await fetch('/api/inscricoes', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              evento_id: '<%= event.id %>'
-            })
-          });
+    <style>
+      .organizer-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
 
-          if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.erro || 'Erro ao realizar inscrição');
-          }
+      .action-button {
+        width: 100%;
+        padding: 15px;
+        border-radius: 5px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
 
-          const successMessage = document.getElementById('successMessage');
-          const registerButton = document.getElementById('registerButton');
-          
-          successMessage.style.display = 'block';
-          registerButton.disabled = true;
-          registerButton.textContent = 'Inscrito';
-          registerButton.style.backgroundColor = '#4CAF50';
-          
-          setTimeout(() => {
-            window.location.href = '/minhas-inscricoes';
-          }, 2000);
-        } catch (error) {
-          console.error('Erro:', error);
-          alert(error.message || 'Erro ao realizar inscrição. Por favor, tente novamente.');
-        }
-      });
-    </script>
+      .edit-button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+      }
+
+      .edit-button:hover {
+        background-color: #2980b9;
+      }
+
+      .view-registrations-button {
+        background-color: #2ecc71;
+        color: white;
+        border: none;
+      }
+
+      .view-registrations-button:hover {
+        background-color: #27ae60;
+      }
+
+      .fas {
+        font-size: 1.1em;
+      }
+    </style>
   </body>
-</html>
+</html> 
