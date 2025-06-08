@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erro - TickIN</title>
+    <link rel="stylesheet" href="/css/global.css">
+    <style>
+        .error-container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .error-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .error-title {
+            font-size: 24px;
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header', { currentPage: 'error' }) %>
+
+    <div class="error-container">
+        <div class="error-icon">😕</div>
+        <h1 class="error-title">Ops! Algo deu errado</h1>
+        <p class="error-message">
+            <%= message || 'Ocorreu um erro inesperado.' %>
+        </p>
+        <a href="/" class="back-button">Voltar para a página inicial</a>
+    </div>
+</body>
+</html> 
