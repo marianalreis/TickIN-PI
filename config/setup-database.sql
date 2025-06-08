@@ -1,54 +1,64 @@
--- Criar o banco de dados se não existir
+-- Criar banco de dados
 CREATE DATABASE IF NOT EXISTS tickin;
-
--- Usar o banco de dados
 USE tickin;
 
--- Criar tabela de usuários
-CREATE TABLE IF NOT EXISTS `usuarios` (
-  `CPF` varchar(255) PRIMARY KEY,
-  `nome` varchar(255),
-  `email` varchar(255),
-  `endereco` varchar(255),
-  `telefone` varchar(255),
-  `senha` varchar(255)
+-- Drop tables in reverse order to avoid foreign key conflicts
+DROP TABLE IF EXISTS presencas;
+DROP TABLE IF EXISTS lembretes;
+DROP TABLE IF EXISTS inscricoes;
+DROP TABLE IF EXISTS eventos;
+DROP TABLE IF EXISTS usuarios;
+
+-- Create tables in order
+CREATE TABLE IF NOT EXISTS usuarios (
+  id SERIAL PRIMARY KEY,
+  nome VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  telefone VARCHAR(20) NOT NULL,
+  senha VARCHAR(255) NOT NULL,
+  tipo_usuario VARCHAR(20) NOT NULL CHECK (tipo_usuario IN ('cliente', 'organizador')),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Criar tabela de eventos
-CREATE TABLE IF NOT EXISTS `eventos` (
-  `evento_ID` int AUTO_INCREMENT PRIMARY KEY,
-  `data` date,
-  `descricao` varchar(255),
-  `valor` decimal(10,2),
-  `local` varchar(255),
-  `horario` time,
-  `organizador_ID` int
+CREATE TABLE IF NOT EXISTS eventos (
+  evento_id SERIAL PRIMARY KEY,
+  titulo VARCHAR(255) NOT NULL,
+  descricao TEXT,
+  data DATE NOT NULL,
+  horario TIME NOT NULL,
+  local VARCHAR(255) NOT NULL,
+  capacidade INTEGER,
+  organizador_id INTEGER REFERENCES usuarios(id),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Criar tabela de organizadores
-CREATE TABLE IF NOT EXISTS `organizadores` (
-  `organizador_ID` int AUTO_INCREMENT PRIMARY KEY,
-  `nome` varchar(255),
-  `colaboradores` varchar(255),
-  `funcao` varchar(255),
-  `evento_ID` int,
-  `CPF` varchar(255)
+CREATE TABLE IF NOT EXISTS inscricoes (
+  inscricao_id SERIAL PRIMARY KEY,
+  usuario_id INTEGER REFERENCES usuarios(id),
+  evento_id INTEGER REFERENCES eventos(evento_id),
+  status VARCHAR(20) NOT NULL DEFAULT 'pendente' CHECK (status IN ('pendente', 'confirmado', 'cancelado')),
+  data_inscricao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Adicionar as chaves estrangeiras
-ALTER TABLE `eventos` 
-ADD FOREIGN KEY (`organizador_ID`) REFERENCES `organizadores` (`organizador_ID`);
+CREATE TABLE IF NOT EXISTS presencas (
+  presenca_id SERIAL PRIMARY KEY,
+  inscricao_id INTEGER REFERENCES inscricoes(inscricao_id),
+  presente BOOLEAN DEFAULT false,
+  horario_entrada TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-ALTER TABLE `organizadores` 
-ADD FOREIGN KEY (`CPF`) REFERENCES `usuarios` (`CPF`);
+CREATE TABLE IF NOT EXISTS lembretes (
+  lembrete_id SERIAL PRIMARY KEY,
+  evento_id INTEGER REFERENCES eventos(evento_id),
+  mensagem TEXT NOT NULL,
+  data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
--- Inserir dados de teste
-INSERT INTO `usuarios` (`CPF`, `nome`, `email`, `senha`) 
-VALUES ('12345678900', 'Usuário Teste', 'teste@teste.com', 'senha123')
-ON DUPLICATE KEY UPDATE
-`nome` = VALUES(`nome`);
-
-INSERT INTO `organizadores` (`organizador_ID`, `nome`, `funcao`, `CPF`) 
-VALUES (1, 'Organizador Teste', 'Admin', '12345678900')
-ON DUPLICATE KEY UPDATE
-`nome` = VALUES(`nome`); 
+-- Criar índices para melhor performance
+CREATE INDEX idx_usuarios_email ON usuarios(email);
+CREATE INDEX idx_eventos_organizador ON eventos(organizador_id);
+CREATE INDEX idx_inscricoes_usuario ON inscricoes(usuario_id);
+CREATE INDEX idx_inscricoes_evento ON inscricoes(evento_id);
+CREATE INDEX idx_presencas_inscricao ON presencas(inscricao_id);
+CREATE INDEX idx_lembretes_evento ON lembretes(evento_id); 

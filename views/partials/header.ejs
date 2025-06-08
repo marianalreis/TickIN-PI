@@ -1,32 +1,100 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TickIN</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
-<body>
-    <header class="header">
+<header class="header">
+    <div class="header-container">
         <a href="/" class="logo">
-            <img src="/assets/logo_tickIN.png" alt="TickIN">
+            <img src="/assets/logo_tickINVer.png" alt="TickIN">
         </a>
-        <nav class="nav">
-            <% if (locals.userType === 'organizador') { %>
-                <a href="/meusEventos" class="nav-link">Meus Eventos</a>
-                <a href="/registrar" class="nav-link">Criar Evento</a>
+        
+        <nav class="nav-menu">
+            <% if (locals.usuario && locals.usuario.tipo_usuario === 'organizador') { %>
+                <a href="/meusEventos" class="nav-link <%= locals.currentPage === 'meusEventos' ? 'active' : '' %>">
+                    Meus Eventos
+                </a>
+                <a href="/registrar" class="nav-link <%= locals.currentPage === 'registrar' ? 'active' : '' %>">
+                    Criar Evento
+                </a>
             <% } else { %>
-                <a href="/pesquisar" class="nav-link">Pesquisar</a>
-                <a href="/minhas-inscricoes" class="nav-link">Minhas Inscrições</a>
+                <a href="/pesquisar" class="nav-link <%= locals.currentPage === 'pesquisar' ? 'active' : '' %>">
+                    Pesquisar Eventos
+                </a>
+                <a href="/minhasInscricoes" class="nav-link <%= locals.currentPage === 'minhasInscricoes' ? 'active' : '' %>">
+                    Minhas Inscrições
+                </a>
             <% } %>
-            <div class="profile-icon">
-                <img src="/assets/user.png" alt="Perfil">
+
+            <div class="user-menu">
+                <button class="user-button" id="userMenuButton">
+                    <% if (locals.usuario && usuario.avatar) { %>
+                        <img src="<%= usuario.avatar %>" alt="Avatar">
+                    <% } else { %>
+                        <img src="/assets/user.png" alt="Perfil">
+                    <% } %>
+                    <span><%= locals.usuario ? usuario.nome : 'Usuário' %></span>
+                </button>
+
+                <div class="dropdown-menu" id="userDropdown">
+                    <a href="/perfil" class="dropdown-item">
+                        <img src="/assets/user.png" alt="Perfil">
+                        Meu Perfil
+                    </a>
+                    <a href="#" class="dropdown-item" id="logoutButton">
+                        <img src="/assets/exit.png" alt="Sair">
+                        Sair
+                    </a>
+                </div>
             </div>
         </nav>
-    </header>
 
-    <!-- Scripts -->
-    <link rel="stylesheet" href="/css/header.css">
-    <script src="/js/header.js"></script>
-</body>
-</html> 
+        <button class="mobile-menu-button" id="mobileMenuButton">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+</header>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const userMenuButton = document.getElementById('userMenuButton');
+    const userDropdown = document.getElementById('userDropdown');
+    const mobileMenuButton = document.getElementById('mobileMenuButton');
+    const navMenu = document.querySelector('.nav-menu');
+    const logoutButton = document.getElementById('logoutButton');
+
+    userMenuButton?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        userDropdown?.classList.toggle('active');
+    });
+
+    mobileMenuButton?.addEventListener('click', () => {
+        mobileMenuButton.classList.toggle('active');
+        navMenu?.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!userDropdown?.contains(e.target)) {
+            userDropdown?.classList.remove('active');
+        }
+    });
+
+    logoutButton?.addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                localStorage.removeItem('usuario');
+                window.location.href = '/login';
+            } else {
+                console.error('Erro ao fazer logout');
+            }
+        } catch (error) {
+            console.error('Erro ao fazer logout:', error);
+        }
+    });
+});
+</script>

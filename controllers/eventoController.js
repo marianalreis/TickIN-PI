@@ -1,9 +1,9 @@
-const eventoModel = require('../models/eventoModel');
+const Evento = require('../models/eventoModel');
 
 const eventoController = {
-  listarEventos: async (req, res) => {
+  getAllEventos: async (req, res) => {
     try {
-      const eventos = await eventoModel.listarEventos();
+      const eventos = await Evento.findAll();
       res.status(200).json(eventos);
     } catch (error) {
       console.error('Erro ao listar eventos:', error);
@@ -11,10 +11,10 @@ const eventoController = {
     }
   },
   
-  obterEventoPorId: async (req, res) => {
+  getEventoById: async (req, res) => {
     try {
       const id = req.params.id;
-      const evento = await eventoModel.obterEventoPorId(id);
+      const evento = await Evento.findById(id);
       
       if (!evento) {
         return res.status(404).json({ message: 'Evento não encontrado' });
@@ -27,51 +27,85 @@ const eventoController = {
     }
   },
   
-  criarEvento: async (req, res) => {
+  getEventosByOrganizador: async (req, res) => {
     try {
-      console.log('Dados recebidos para criar evento:', req.body);
-      
-      // Converter 'horario' para 'hora' se necessário
-      if (req.body.horario && !req.body.hora) {
-        req.body.hora = req.body.horario;
-        delete req.body.horario;
-      }
-      
-      // Validar dados obrigatórios
-      const { titulo, data, hora, local } = req.body;
-      if (!titulo || !data || !hora || !local) {
-        return res.status(400).json({ 
-          message: 'Dados incompletos. Título, data, hora e local são obrigatórios.' 
-        });
-      }
-      
-      const novoEvento = await eventoModel.criarEvento(req.body);
-      console.log('Evento criado com sucesso:', novoEvento);
-      
-      res.status(201).json(novoEvento);
+      const organizadorId = req.params.organizadorId;
+      const eventos = await Evento.findByOrganizador(organizadorId);
+      res.status(200).json(eventos);
     } catch (error) {
-      console.error('Erro ao criar evento:', error);
+      console.error('Erro ao buscar eventos do organizador:', error);
       res.status(500).json({ message: error.message });
     }
   },
   
-  atualizarEvento: async (req, res) => {
+  createEvento: async (req, res) => {
     try {
-      const id = req.params.id;
+      const { titulo, descricao, data, horario, local } = req.body;
       
-      // Converter 'horario' para 'hora' se necessário
-      if (req.body.horario && !req.body.hora) {
-        req.body.hora = req.body.horario;
-        delete req.body.horario;
+      // Validar dados obrigatórios
+      if (!titulo || !data || !horario || !local) {
+        return res.status(400).json({ 
+          message: 'Dados incompletos. Título, data, horário e local são obrigatórios.' 
+        });
+      }
+
+      // Validar formato da data
+      if (new Date(data).toString() === 'Invalid Date') {
+        return res.status(400).json({
+          message: 'Formato de data inválido'
+        });
       }
       
-      const evento = await eventoModel.obterEventoPorId(id);
+      const novoEvento = await Evento.create({
+        titulo,
+        descricao,
+        data,
+        horario,
+        local,
+        usuario_id: req.session.usuario.id // Usar ID do usuário da sessão
+      });
       
-      if (!evento) {
+      res.status(201).json(novoEvento);
+    } catch (error) {
+      console.error('Erro ao criar evento:', error);
+      res.status(500).json({ erro: 'Erro ao criar evento: ' + error.message });
+    }
+  },
+  
+  updateEvento: async (req, res) => {
+    try {
+      const id = req.params.id;
+      const { data, descricao, valor, local, horario, organizador_ID } = req.body;
+      
+      // Verificar se evento existe
+      const eventoExistente = await Evento.findById(id);
+      if (!eventoExistente) {
         return res.status(404).json({ message: 'Evento não encontrado' });
       }
       
-      const eventoAtualizado = await eventoModel.atualizarEvento(id, req.body);
+      // Validar formato da data se fornecida
+      if (data && new Date(data).toString() === 'Invalid Date') {
+        return res.status(400).json({
+          message: 'Formato de data inválido'
+        });
+      }
+
+      // Validar valor se fornecido
+      if (valor && isNaN(parseFloat(valor))) {
+        return res.status(400).json({
+          message: 'Valor deve ser um número válido'
+        });
+      }
+      
+      const eventoAtualizado = await Evento.update(id, {
+        data: data || eventoExistente.data,
+        descricao: descricao || eventoExistente.descricao,
+        valor: valor ? parseFloat(valor) : eventoExistente.valor,
+        local: local || eventoExistente.local,
+        horario: horario || eventoExistente.horario,
+        organizador_ID: organizador_ID || eventoExistente.organizador_ID
+      });
+
       res.status(200).json(eventoAtualizado);
     } catch (error) {
       console.error('Erro ao atualizar evento:', error);
@@ -79,17 +113,21 @@ const eventoController = {
     }
   },
   
-  excluirEvento: async (req, res) => {
+  deleteEvento: async (req, res) => {
     try {
       const id = req.params.id;
-      const evento = await eventoModel.obterEventoPorId(id);
       
+      // Verificar se evento existe
+      const evento = await Evento.findById(id);
       if (!evento) {
         return res.status(404).json({ message: 'Evento não encontrado' });
       }
       
-      const eventoExcluido = await eventoModel.excluirEvento(id);
-      res.status(200).json({ message: 'Evento excluído com sucesso', evento: eventoExcluido });
+      await Evento.delete(id);
+      res.status(200).json({ 
+        message: 'Evento excluído com sucesso',
+        evento
+      });
     } catch (error) {
       console.error('Erro ao excluir evento:', error);
       res.status(500).json({ message: error.message });

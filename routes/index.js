@@ -1,265 +1,205 @@
 const express = require('express');
 const router = express.Router();
-const { checkAuth, checkOrganizador, checkCliente } = require('../middleware/auth');
+const { checkAuth, checkOrganizador } = require('../middleware/auth');
+const eventoController = require('../controllers/eventoController');
+const inscricaoController = require('../controllers/inscricaoController');
+const Evento = require('../models/eventoModel');
+const profileRoutes = require('./profileRoutes');
+const apiRoutes = require('./api');
 
-// Rota principal - redirecionar para login
+// Usar as rotas de perfil
+router.use('/perfil', profileRoutes);
+
+// Rotas da API
+router.use('/api', apiRoutes);
+
+// Rota principal - redirecionar para login se não autenticado
 router.get('/', (req, res) => {
-  res.redirect('/login');
+  if (req.session.usuario) {
+    res.redirect(req.session.usuario.tipo_usuario === 'organizador' ? '/meusEventos' : '/pesquisar');
+  } else {
+    res.redirect('/login');
+  }
 });
 
-// Rotas de autenticação
-router.get('/login', (req, res) => {
-  res.render('pages/login', { pageTitle: 'TickIN - Login' });
+// Rotas de eventos
+router.get('/meusEventos', checkAuth, async (req, res) => {
+  if (req.session.usuario.tipo_usuario !== 'organizador') {
+    return res.redirect('/pesquisar');
+  }
+  try {
+    const events = await Evento.findByOrganizador(req.session.usuario.id);
+    res.render('pages/meusEventos', {
+      usuario: req.session.usuario,
+      events: events
+    });
+  } catch (error) {
+    console.error('Erro ao buscar eventos:', error);
+    res.render('pages/meusEventos', {
+      usuario: req.session.usuario,
+      events: [],
+      error: 'Erro ao carregar eventos'
+    });
+  }
 });
 
-router.get('/cadastro', (req, res) => {
-  res.render('pages/cadastro', { pageTitle: 'TickIN - Cadastro' });
-});
-
-// API de login
-router.post('/api/usuarios/login', (req, res) => {
-  const { email, password } = req.body;
-  
-  // Simulação de login
-  const isOrganizador = email.includes('org');
-  
-  // Salvar na sessão
-  req.session.userId = '12345';
-  req.session.userType = isOrganizador ? 'organizador' : 'cliente';
-  req.session.userName = isOrganizador ? 'Organizador Demo' : 'Cliente Demo';
-  
-  res.json({
-    success: true,
-    message: 'Login realizado com sucesso',
-    redirect: isOrganizador ? '/meusEventos' : '/pesquisar'
-  });
-});
-
-// API de cadastro
-router.post('/api/usuarios/register', (req, res) => {
-  // Simulação de cadastro
-  res.json({
-    success: true,
-    message: 'Cadastro realizado com sucesso',
-    redirect: '/login'
-  });
-});
-
-// API de logout
-router.post('/api/usuarios/logout', (req, res) => {
-  req.session.destroy();
-  res.json({
-    success: true,
-    message: 'Logout realizado com sucesso',
-    redirect: '/login'
-  });
-});
-
-// Rotas de pesquisa e eventos
-router.get('/pesquisar', (req, res) => {
-  res.render('pages/pesquisar', { pageTitle: 'TickIN - Pesquisar Eventos' });
-});
-
-router.get('/evento/:id', async (req, res) => {
-  // Simulação de dados do evento
-  const evento = {
-    id: req.params.id,
-    title: 'Evento de Exemplo',
-    description: 'Descrição detalhada do evento...',
-    date: '31/12/2023',
-    time: '19:00',
-    location: 'São Paulo, SP',
-    price: 50.00,
-    image: '/assets/event1.jpg',
-    organizer: {
-      name: 'Organizador Demo',
-      description: 'Organizador de eventos',
-      image: '/assets/organizer1.jpg'
-    }
-  };
-  
-  res.render('pages/detalhes', { 
-    pageTitle: `TickIN - ${evento.title}`,
-    event: evento
-  });
-});
-
-// Rotas de organizador
-router.get('/meusEventos', checkOrganizador, async (req, res) => {
-  // Simulação de eventos do organizador
-  const events = [
-    {
-      id: '101',
-      title: 'Evento de Música',
-      date: '31/12/2023',
-      time: '19:00',
-      location: 'São Paulo, SP',
-      price: 50.00,
-      image: '/assets/event1.jpg'
-    }
-  ];
-  
-  res.render('pages/meusEventos', { 
-    pageTitle: 'TickIN - Meus Eventos',
-    events: events
-  });
-});
-
-router.get('/registrar', checkOrganizador, (req, res) => {
-  res.render('pages/registrar', { 
-    pageTitle: 'TickIN - Registrar Evento',
+router.get('/registrar', checkAuth, (req, res) => {
+  if (req.session.usuario.tipo_usuario !== 'organizador') {
+    return res.redirect('/pesquisar');
+  }
+  res.render('pages/registrar', {
+    usuario: req.session.usuario,
     isEditing: false
   });
 });
 
-router.get('/editar-evento/:id', checkOrganizador, async (req, res) => {
-  // Simulação de dados do evento
-  const event = {
-    id: req.params.id,
-    title: 'Evento de Exemplo',
-    description: 'Descrição do evento',
-    date: '2023-12-31',
-    time: '19:00',
-    location: 'São Paulo, SP',
-    price: 50.00
-  };
-  
-  res.render('pages/registrar', { 
-    pageTitle: 'TickIN - Editar Evento',
-    isEditing: true,
-    event: event
+// Rotas públicas
+router.get('/login', (req, res) => {
+  if (req.session.usuario) {
+    const redirecionamento = req.session.usuario.tipo_usuario === 'organizador' ? '/meusEventos' : '/pesquisar';
+    res.redirect(redirecionamento);
+  } else {
+    res.render('pages/login', { 
+      pageTitle: 'TickIN - Login',
+      error: req.query.error
+    });
+  }
+});
+
+router.get('/cadastro', (req, res) => {
+  if (req.session.usuario) {
+    const redirecionamento = req.session.usuario.tipo_usuario === 'organizador' ? '/meusEventos' : '/pesquisar';
+    res.redirect(redirecionamento);
+  } else {
+    res.render('pages/cadastro', { 
+      pageTitle: 'TickIN - Cadastro',
+      error: req.query.error
+    });
+  }
+});
+
+// Rotas para clientes
+router.get('/pesquisar', checkAuth, (req, res) => {
+  res.render('pages/pesquisar', { 
+    usuario: req.session.usuario 
   });
+});
+
+router.get('/minhasInscricoes', checkAuth, async (req, res) => {
+  try {
+    const inscricoes = await inscricaoController.getMinhasInscricoes(req);
+    res.render('pages/minhasInscricoes', { 
+      pageTitle: 'TickIN - Minhas Inscrições',
+      currentPage: 'minhasInscricoes',
+      usuario: req.session.usuario,
+      inscricoes: inscricoes
+    });
+  } catch (error) {
+    console.error('Erro ao carregar inscrições:', error);
+    res.render('pages/minhasInscricoes', { 
+      pageTitle: 'TickIN - Minhas Inscrições',
+      currentPage: 'minhasInscricoes',
+      usuario: req.session.usuario,
+      inscricoes: [],
+      error: 'Erro ao carregar inscrições'
+    });
+  }
+});
+
+router.get('/evento/:id', checkAuth, async (req, res) => {
+  try {
+    const evento = await eventoController.getEventoById(req.params.id);
+    if (!evento) {
+      return res.status(404).render('pages/error', { 
+        pageTitle: 'TickIN - Erro',
+        message: 'Evento não encontrado'
+      });
+    }
+    
+    res.render('pages/detalhes', { 
+      pageTitle: `TickIN - ${evento.title}`,
+      evento: evento,
+      user: {
+        nome: req.session.usuario.nome,
+        tipo: req.session.usuario.tipo_usuario
+      }
+    });
+  } catch (error) {
+    console.error('Erro ao buscar evento:', error);
+    res.status(500).render('pages/error', { 
+      pageTitle: 'TickIN - Erro',
+      message: 'Erro ao carregar evento'
+    });
+  }
+});
+
+router.get('/editar-evento/:id', checkOrganizador, async (req, res) => {
+  try {
+    const evento = await eventoController.getEventoById(req.params.id);
+    if (!evento) {
+      return res.status(404).render('pages/error', { 
+        pageTitle: 'TickIN - Erro',
+        message: 'Evento não encontrado'
+      });
+    }
+    
+    // Verificar se o usuário é o organizador do evento
+    if (evento.organizador_ID !== req.session.usuario.id) {
+      return res.status(403).render('pages/error', { 
+        pageTitle: 'TickIN - Erro',
+        message: 'Você não tem permissão para editar este evento'
+      });
+    }
+    
+    res.render('pages/registrar', { 
+      pageTitle: 'TickIN - Editar Evento',
+      isEditing: true,
+      evento: evento,
+      user: {
+        nome: req.session.usuario.nome,
+        tipo: req.session.usuario.tipo_usuario
+      }
+    });
+  } catch (error) {
+    console.error('Erro ao buscar evento:', error);
+    res.status(500).render('pages/error', { 
+      pageTitle: 'TickIN - Erro',
+      message: 'Erro ao carregar evento'
+    });
+  }
 });
 
 router.get('/usuarios-inscritos/:id', checkOrganizador, async (req, res) => {
-  // Simulação de dados do evento
-  const event = {
-    id: req.params.id,
-    title: 'Evento de Exemplo',
-    date: '31/12/2023',
-    time: '19:00',
-    location: 'São Paulo, SP',
-    image: '/assets/event1.jpg'
-  };
-  
-  // Simulação de inscrições
-  const registrations = [
-    {
-      id: '1',
-      status: 'Confirmado',
-      createdAt: '2023-11-15',
-      presente: false,
+  try {
+    const evento = await eventoController.getEventoById(req.params.id);
+    if (!evento) {
+      return res.redirect('/meusEventos?error=' + encodeURIComponent('Evento não encontrado'));
+    }
+    
+    // Verificar se o usuário é o organizador do evento
+    if (evento.organizador_ID !== req.session.usuario.id) {
+      return res.redirect('/meusEventos?error=' + encodeURIComponent('Você não tem permissão para ver os inscritos deste evento'));
+    }
+    
+    const inscricoes = await inscricaoController.getInscricoesByEvento(req.params.id);
+    res.render('pages/usuariosInscritos', { 
+      pageTitle: 'TickIN - Usuários Inscritos',
+      evento: evento,
+      inscricoes: inscricoes,
       user: {
-        name: 'Cliente Demo',
-        email: 'cliente@exemplo.com',
-        avatar: '/assets/user1.jpg'
+        nome: req.session.usuario.nome,
+        tipo: req.session.usuario.tipo_usuario
       }
-    }
-  ];
-  
-  res.render('pages/usuariosInscritos', { 
-    pageTitle: 'TickIN - Usuários Inscritos',
-    event: event,
-    registrations: registrations
-  });
+    });
+  } catch (error) {
+    console.error('Erro ao buscar inscrições:', error);
+    res.redirect('/meusEventos?error=' + encodeURIComponent('Erro ao carregar inscrições'));
+  }
 });
 
-// Rotas de cliente
-router.get('/minhas-inscricoes', checkAuth, async (req, res) => {
-  // Simulação de inscrições do cliente
-  const registrations = [
-    {
-      id: '1',
-      status: 'Confirmado',
-      event: {
-        id: '101',
-        title: 'Evento de Exemplo',
-        date: '31/12/2023',
-        time: '19:00',
-        location: 'São Paulo, SP',
-        image: '/assets/event1.jpg'
-      }
-    }
-  ];
-  
-  res.render('pages/minhasInscricoes', { 
-    pageTitle: 'TickIN - Minhas Inscrições',
-    registrations: registrations
-  });
-});
-
-// API de eventos
-router.get('/api/eventos', (req, res) => {
-  const searchTerm = req.query.search || '';
-  
-  // Simulação de eventos
-  const eventos = [
-    {
-      id: '101',
-      title: 'Evento de Música',
-      date: '2023-12-31',
-      time: '19:00',
-      location: 'São Paulo, SP',
-      price: 50.00,
-      image: '/assets/event1.jpg',
-      organizer: {
-        name: 'Organizador Demo',
-        image: '/assets/organizer1.jpg'
-      }
-    },
-    {
-      id: '102',
-      title: 'Workshop de Tecnologia',
-      date: '2023-11-15',
-      time: '14:00',
-      location: 'Rio de Janeiro, RJ',
-      price: 30.00,
-      image: '/assets/event2.jpg',
-      organizer: {
-        name: 'Organizador Demo',
-        image: '/assets/organizer1.jpg'
-      }
-    }
-  ];
-  
-  // Filtrar por termo de busca
-  const filteredEvents = searchTerm 
-    ? eventos.filter(e => e.title.toLowerCase().includes(searchTerm.toLowerCase()))
-    : eventos;
-  
-  res.json(filteredEvents);
-});
-
-// API de inscrições
-router.post('/api/inscricoes', checkAuth, (req, res) => {
-  res.json({
-    success: true,
-    message: 'Inscrição realizada com sucesso',
-    redirect: '/minhas-inscricoes'
-  });
-});
-
-// API de presença
-router.post('/api/presencas', checkOrganizador, (req, res) => {
-  const { inscricaoId, presente } = req.body;
-  
-  res.json({
-    success: true,
-    message: `Presença ${presente ? 'confirmada' : 'removida'} com sucesso`,
-    inscricaoId,
-    presente
-  });
-});
-
-// API de lembretes
-router.post('/api/lembretes/enviar', checkOrganizador, (req, res) => {
-  const { usuarios, mensagem } = req.body;
-  
-  res.json({
-    success: true,
-    message: `Lembrete enviado com sucesso para ${usuarios.length} usuário(s)`,
-    enviados: usuarios
-  });
+// Página de erro 404
+router.use((req, res) => {
+  res.redirect('/?error=' + encodeURIComponent('A página que você está procurando não existe.'));
 });
 
 module.exports = router;
