@@ -37,11 +37,13 @@
       </div>
 
       <% if (registrations && registrations.length > 0) { %>
+        <!-- Modificar a tabela de inscrições para incluir controle de presença -->
         <div class="registrations-table">
           <div class="table-header">
             <div>Usuário</div>
             <div>Data de Inscrição</div>
             <div>Status</div>
+            <div>Presença</div>
             <div>Ação</div>
           </div>
           <% registrations.forEach(registration => { %>
@@ -60,6 +62,17 @@
                 </span>
               </div>
               <div>
+                <% if (registration.status === 'Confirmado') { %>
+                  <label class="presence-toggle">
+                    <input type="checkbox" onchange="markPresence('<%= registration.id %>', this.checked)" 
+                      <%= registration.presente ? 'checked' : '' %>>
+                    <span class="slider"></span>
+                  </label>
+                <% } else { %>
+                  <span>N/A</span>
+                <% } %>
+              </div>
+              <div>
                 <a href="mailto:<%= registration.user.email %>" class="action-button contact-button">
                   Contatar
                 </a>
@@ -76,6 +89,29 @@
       <% } %>
     </div>
 
+    <% if (registrations && registrations.length > 0) { %>
+      <div class="reminder-section">
+        <h2>Enviar Lembrete</h2>
+        <form id="reminderForm">
+          <div class="form-group">
+            <label for="reminderUsers">Selecionar Usuários</label>
+            <select id="reminderUsers" multiple>
+              <% registrations.filter(reg => reg.status === 'Pendente').forEach(reg => { %>
+                <option value="<%= reg.user.email %>"><%= reg.user.name %> (<%= reg.user.email %>)</option>
+              <% }); %>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="reminderMessage">Mensagem</label>
+            <textarea id="reminderMessage" placeholder="Digite sua mensagem..."></textarea>
+          </div>
+          
+          <button type="submit" class="submit-button">Enviar Lembrete</button>
+        </form>
+      </div>
+    <% } %>
+
     <script>
       // Carregar o header
       fetch('../partials/header.html')
@@ -83,6 +119,49 @@
         .then(data => {
           document.getElementById('header-placeholder').innerHTML = data;
         });
+        
+      // Enviar lembrete
+      document.getElementById('reminderForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const selectedUsers = Array.from(document.getElementById('reminderUsers').selectedOptions)
+          .map(option => option.value);
+        const message = document.getElementById('reminderMessage').value;
+        
+        if (selectedUsers.length === 0) {
+          alert('Selecione pelo menos um usuário');
+          return;
+        }
+        
+        if (!message) {
+          alert('Digite uma mensagem');
+          return;
+        }
+        
+        try {
+          // Simulação de envio de lembrete
+          alert(`Lembrete enviado com sucesso para ${selectedUsers.length} usuário(s)!`);
+          document.getElementById('reminderMessage').value = '';
+        } catch (error) {
+          console.error('Erro:', error);
+          alert('Erro ao enviar lembrete');
+        }
+      });
+
+      // Função para marcar presença
+      async function markPresence(registrationId, isPresent) {
+        try {
+          // Simulação de atualização no banco de dados
+          console.log(`Marcando presença para inscrição ${registrationId}: ${isPresent ? 'Presente' : 'Ausente'}`);
+          
+          // Simulação de sucesso
+          const currentTime = new Date().toLocaleTimeString();
+          alert(`Presença ${isPresent ? 'confirmada' : 'removida'} com sucesso! Horário: ${currentTime}`);
+        } catch (error) {
+          console.error('Erro:', error);
+          alert('Erro ao atualizar presença');
+        }
+      }
     </script>
   </body>
 </html>

@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Meus Eventos - TickIN</title>
-    <link rel="stylesheet" href="../css/my-events.css" />
+    <link rel="stylesheet" href="/css/my-events.css" />
   </head>
   <body>
     <!-- Include the header -->
-    <div id="header-placeholder"></div>
+    <%- include('../partials/header') %>
 
     <div class="container">
       <h1 class="page-title">Meus Eventos</h1>
@@ -34,6 +34,10 @@
                     <img src="/assets/location.png" alt="Local" class="info-icon">
                     <span><%= event.location %></span>
                   </div>
+                  <div class="info-item">
+                    <img src="/assets/money.png" alt="Valor" class="info-icon">
+                    <span>R$ <%= event.valor.toFixed(2) %></span>
+                  </div>
                 </div>
                 <div class="event-actions">
                   <a href="/usuarios-inscritos/<%= event.id %>" class="action-button view-button">
@@ -58,14 +62,5 @@
         </div>
       <% } %>
     </div>
-
-    <script>
-      // Carregar o header
-      fetch('../partials/header.html')
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById('header-placeholder').innerHTML = data;
-        });
-    </script>
   </body>
 </html>

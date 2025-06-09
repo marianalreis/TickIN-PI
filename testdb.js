@@ -1,54 +1,65 @@
-const pool = require('./config/database');
-const fs = require('fs');
-const path = require('path');
+const { Pool } = require('pg');
+require('dotenv').config();
 
-async function testConnection() {
-    try {
-        // Teste de conexão
-        const client = await pool.connect();
-        console.log('✅ Conexão com o banco de dados estabelecida com sucesso!');
-
-        // Ler e executar o script SQL
-        const sqlScript = fs.readFileSync(path.join(__dirname, 'database.sql'), 'utf8');
-        await client.query(sqlScript);
-        console.log('✅ Tabela de usuários criada/verificada com sucesso!');
-
-        // Testar inserção
-        const testUser = {
-            nome: 'Teste',
-            email: 'teste@teste.com',
-            telefone: '123456789',
-            senha: 'teste123',
-            tipo_usuario: 'cliente'
-        };
-
-        await client.query(`
-            INSERT INTO usuarios (nome, email, telefone, senha, tipo_usuario)
-            VALUES ($1, $2, $3, $4, $5)
-            ON CONFLICT (email) DO NOTHING
-        `, [testUser.nome, testUser.email, testUser.telefone, testUser.senha, testUser.tipo_usuario]);
-        
-        console.log('✅ Teste de inserção realizado com sucesso!');
-
-        // Verificar se a tabela existe e tem a estrutura correta
-        const tableInfo = await client.query(`
-            SELECT column_name, data_type 
-            FROM information_schema.columns 
-            WHERE table_name = 'usuarios'
-        `);
-        
-        console.log('\nEstrutura da tabela usuarios:');
-        tableInfo.rows.forEach(col => {
-            console.log(`${col.column_name}: ${col.data_type}`);
-        });
-
-        client.release();
-        console.log('\n🎉 Todos os testes completados com sucesso!');
-        process.exit(0);
-    } catch (err) {
-        console.error('❌ Erro durante os testes:', err);
-        process.exit(1);
+// Criar uma nova instância do pool
+const pool = new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
+    ssl: {
+        rejectUnauthorized: false
     }
+});
+
+async function testDatabase() {
+  console.log('Testando conexão com o banco de dados...');
+  
+  try {
+    // Testar conexão
+    const connResult = await pool.query('SELECT NOW()');
+    console.log('Conexão OK:', connResult.rows[0].now);
+    
+    // Verificar tabela de usuários
+    const tableResult = await pool.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_name = 'usuarios'
+      );
+    `);
+    console.log('Tabela usuarios existe?', tableResult.rows[0].exists);
+    
+    if (tableResult.rows[0].exists) {
+      // Listar estrutura da tabela
+      const columnsResult = await pool.query(`
+        SELECT column_name, data_type 
+        FROM information_schema.columns 
+        WHERE table_name = 'usuarios'
+      `);
+      console.log('Estrutura da tabela usuarios:');
+      columnsResult.rows.forEach(col => {
+        console.log(`- ${col.column_name} (${col.data_type})`);
+      });
+      
+      // Contar usuários
+      const countResult = await pool.query('SELECT COUNT(*) FROM usuarios');
+      console.log('Total de usuários:', countResult.rows[0].count);
+      
+      // Listar usuários (limitado a 5)
+      const usersResult = await pool.query('SELECT * FROM usuarios LIMIT 5');
+      console.log('Usuários cadastrados:');
+      usersResult.rows.forEach(user => {
+        console.log(`- ${user.nome} (${user.email})`);
+      });
+    }
+    
+    console.log('Teste concluído com sucesso!');
+  } catch (error) {
+    console.error('❌ Erro durante os testes:', error);
+  } finally {
+    pool.end();
+  }
 }
 
-testConnection(); 
+testDatabase();
