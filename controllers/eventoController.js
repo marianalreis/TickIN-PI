@@ -75,7 +75,7 @@ const eventoController = {
   updateEvento: async (req, res) => {
     try {
       const id = req.params.id;
-      const { data, descricao, valor, local, horario, organizador_ID } = req.body;
+      const { data, descricao, valor, local, horario, organizador_ID, titulo } = req.body;
       
       // Verificar se evento existe
       const eventoExistente = await Evento.findById(id);
@@ -97,18 +97,17 @@ const eventoController = {
         });
       }
       
-      const eventoAtualizado = await Evento.update(id, {
-        data: data || eventoExistente.data,
-        descricao: descricao || eventoExistente.descricao,
-        valor: valor ? parseFloat(valor) : eventoExistente.valor,
-        local: local || eventoExistente.local,
-        horario: horario || eventoExistente.horario,
-        organizador_ID: organizador_ID || eventoExistente.organizador_ID
+      // Atualizar apenas os campos enviados
+      const eventoAtualizado = await Evento.update(req.params.id, {
+        ...req.body,
+        usuario_id: req.session.usuario.id
       });
 
-      res.status(200).json(eventoAtualizado);
+      if (!eventoAtualizado) {
+        return res.status(404).json({ erro: 'Evento não encontrado ou não autorizado' });
+      }
+      res.json(eventoAtualizado);
     } catch (error) {
-      console.error('Erro ao atualizar evento:', error);
       res.status(500).json({ message: error.message });
     }
   },
@@ -123,7 +122,7 @@ const eventoController = {
         return res.status(404).json({ message: 'Evento não encontrado' });
       }
       
-      await Evento.delete(id);
+      await Evento.delete(id, req.session.usuario.id);
       res.status(200).json({ 
         message: 'Evento excluído com sucesso',
         evento

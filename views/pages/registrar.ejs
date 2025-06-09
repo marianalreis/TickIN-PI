@@ -4,8 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= locals.isEditing ? 'Editar' : 'Registrar' %> Evento - TickIN</title>
-    <link rel="stylesheet" href="/css/register-event.css" />
-    <link rel="stylesheet" href="/css/header.css" />
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/header.css" />
+    <link rel="stylesheet" href="../css/register-event.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   </head>
   <body>
@@ -24,34 +25,34 @@
         <form id="eventForm" 
               data-is-editing="<%= locals.isEditing ? 'true' : 'false' %>"
               data-evento-id="<%= locals.event ? event.id : '' %>"
-              data-api-url="/api/eventos">
+              data-api-url="<%= locals.isEditing ? `/api/eventos/${locals.event.id}` : '/api/eventos' %>">
           <div class="form-group">
             <label for="title">Nome do Evento</label>
             <input type="text" id="title" name="title" class="form-control" required 
-              value="<%= locals.event ? event.title : '' %>">
+              value="<%= locals.event ? event.titulo : '' %>">
           </div>
 
           <div class="form-group">
             <label for="description">Descrição</label>
-            <textarea id="description" name="description" class="form-control" required><%= locals.event ? event.description : '' %></textarea>
+            <textarea id="description" name="description" class="form-control" required><%= locals.event ? event.descricao : '' %></textarea>
           </div>
 
           <div class="form-group">
             <label for="date">Data</label>
             <input type="date" id="date" name="date" class="form-control" required
-              value="<%= locals.event ? event.date : '' %>">
+              value="<%= locals.event ? (typeof event.data === 'string' ? event.data.split('T')[0] : event.data.toISOString().split('T')[0]) : '' %>">
           </div>
 
           <div class="form-group">
             <label for="time">Horário</label>
             <input type="time" id="time" name="time" class="form-control" required
-              value="<%= locals.event ? event.time : '' %>">
+              value="<%= locals.event ? event.horario : '' %>">
           </div>
 
           <div class="form-group">
             <label for="location">Local</label>
             <input type="text" id="location" name="location" class="form-control" required
-              value="<%= locals.event ? event.location : '' %>">
+              value="<%= locals.event ? event.local : '' %>">
           </div>
 
           <div class="form-group">
@@ -59,13 +60,21 @@
             <div class="image-upload" onclick="document.getElementById('images').click()">
               <p>Clique ou arraste imagens aqui</p>
               <input type="file" id="images" name="images" accept="image/*" multiple style="display: none">
+              <input type="file" id="uploadImagem" accept="image/*" />
             </div>
             <div id="imagePreviewContainer"></div>
           </div>
 
+          
+
           <button type="submit" class="submit-button">
             <%= locals.isEditing ? 'Atualizar' : 'Registrar' %> Evento
           </button>
+          <% if (locals.isEditing && locals.event && locals.event.id) { %>
+          <button type="button" class="delete-button" onclick="deleteEvento('<%= locals.event.id %>')">
+            Deletar Evento
+          </button>
+          <% } %>
         </form>
       </div>
     </div>
@@ -77,9 +86,84 @@
       // Log para debug
       console.log('ID do organizador:', window.organizadorId);
       console.log('API URL:', window.apiUrl);
+
+      async function deleteEvento(eventoId) {
+        if (!confirm('Tem certeza que deseja deletar este evento?')) return;
+        try {
+          const response = await fetch(`/eventos/${eventoId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+          });
+          if (!response.ok) throw new Error('Erro ao deletar evento');
+          alert('Evento deletado com sucesso!');
+          window.location.href = '/meusEventos';
+        } catch (error) {
+          alert(error.message);
+        }
+      }
     </script>
     
     <!-- Scripts -->
-    <script src="/js/eventos.js"></script>
+    <script src="../js/eventos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"></script>
+    <script type="module">
+      const supabaseUrl = 'https://SEU-PROJETO.supabase.co'
+      const supabaseKey = 'SUA_CHAVE_ANON_PUBLICA'
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
+    
+      let imagemUrl = '';
+    
+      document.getElementById('uploadImagem').addEventListener('change', async (event) => {
+        const arquivo = event.target.files[0]
+        if (!arquivo) return;
+    
+        const nomeUnico = `${Date.now()}-${arquivo.name}`
+    
+        // Upload para o bucket
+        const { error: uploadError } = await supabase.storage
+          .from('imagens-eventos')
+          .upload(`eventos/${nomeUnico}`, arquivo)
+    
+        if (uploadError) {
+          alert('Erro ao enviar imagem!');
+          return;
+        }
+    
+        // Gerar URL pública
+        const { data: urlData } = supabase
+          .storage
+          .from('imagens-eventos')
+          .getPublicUrl(`eventos/${nomeUnico}`)
+    
+        imagemUrl = urlData.publicUrl
+        alert('Imagem enviada com sucesso!');
+      })
+
+      // Quando for enviar o formulário do evento:
+      document.getElementById('eventForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const dadosEvento = {
+          titulo: document.getElementById('title').value,
+          descricao: document.getElementById('description').value,
+          data: document.getElementById('date').value,
+          horario: document.getElementById('time').value,
+          local: document.getElementById('location').value,
+          imagem: imagemUrl
+        };
+
+        const response = await fetch('/api/eventos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dadosEvento)
+        });
+
+        if (response.ok) {
+          alert('Evento criado com sucesso!');
+        } else {
+          alert('Erro ao criar evento!');
+        }
+      })
+    </script> 
   </body>
 </html>
