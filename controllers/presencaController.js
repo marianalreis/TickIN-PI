@@ -55,6 +55,7 @@ const presencaController = {
 
   updatePresenca: async (req, res) => {
     try {
+      console.log('Recebido PUT /presenca/:id', req.params.id, req.body, req.session.usuario);
       const presenca = await Presenca.update(req.params.id, req.body);
       if (!presenca) {
         return res.status(404).json({ message: 'Registro de presença não encontrado' });
