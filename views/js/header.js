@@ -1,10 +1,10 @@
 // Função para verificar o tipo de usuário e configurar a navegação
 function setupHeader() {
     // Recuperar informações do usuário da sessão
-    const userType = sessionStorage.getItem('userType');
-    const userName = sessionStorage.getItem('userName');
+    const userType = sessionStorage.getItem('userType') || localStorage.getItem('userType');
+    const userName = sessionStorage.getItem('userName') || localStorage.getItem('userName');
 
-    // Atualizar nome do usuário no header
+    // Atualizar nome do usuário no header se existir um elemento para isso
     const userNameElement = document.getElementById('userName');
     if (userNameElement && userName) {
         userNameElement.textContent = userName;
@@ -18,64 +18,53 @@ function setupHeader() {
 
     if (userType === 'cliente') {
         // Configuração para cliente
-        inicioLink.href = '/pages/pesquisar.html';
-        eventosLink.href = '/pages/minhasInscricoes.ejs';
+        inicioLink.href = '/pesquisar';
+        eventosLink.href = '/minhas-inscricoes';
         saldoLink.href = '#'; // Não funcional por enquanto
-        perfilLink.href = '/pages/minhasInscricoes.ejs';
+        perfilLink.href = '/minhas-inscricoes';
     } else if (userType === 'organizador') {
         // Configuração para organizador
-        inicioLink.href = '/pages/registrar.html';
-        eventosLink.href = '/pages/meusEventos.ejs';
-        saldoLink.href = '/pages/usuariosInscritos.ejs';
-        perfilLink.href = '/pages/meusEventos.ejs';
+        inicioLink.href = '/registrar';
+        eventosLink.href = '/meusEventos';
+        saldoLink.href = '/usuariosInscritos';
+        perfilLink.href = '/meusEventos';
+    } else {
+        // Usuário não logado ou tipo desconhecido
+        inicioLink.href = '/';
+        eventosLink.href = '/pesquisar';
+        saldoLink.href = '/login';
+        perfilLink.href = '/login';
     }
 }
 
 // Verificar se o usuário está logado
 function checkAuth() {
-    const token = sessionStorage.getItem('token');
-    if (!token) {
-        window.location.href = '/login';  // Removido a extensão .html para usar o template .ejs
+    const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+    const userType = sessionStorage.getItem('userType') || localStorage.getItem('userType');
+    
+    // Se não estiver em uma página de autenticação e não tiver token, redirecionar
+    const isAuthPage = ['/login', '/cadastro', '/'].includes(window.location.pathname);
+    if (!isAuthPage && !userType) {
+        window.location.href = '/login';
     }
 }
 
 // Função para fazer logout
 function logout() {
     sessionStorage.clear();
-    window.location.href = '/pages/login.html';
+    localStorage.clear();
+    window.location.href = '/login';
 }
 
 // Inicializar quando o documento estiver pronto
 document.addEventListener('DOMContentLoaded', () => {
-    checkAuth();
     setupHeader();
-
-    // Links de navegação
-    const inicioLink = document.getElementById('inicioLink');
-    const eventosLink = document.getElementById('eventosLink');
-    const saldoLink = document.getElementById('saldoLink');
-    const perfilLink = document.getElementById('perfilLink');
-
-    // Configurar navegação
-    inicioLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        window.location.href = '/';
-    });
-
-    eventosLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        window.location.href = '/meusEventos';
-    });
-
-    saldoLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        window.location.href = '/saldo';
-    });
-
-    perfilLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        window.location.href = '/perfil';
-    });
+    
+    // Não verificar autenticação em páginas públicas
+    const publicPages = ['/login', '/cadastro', '/'];
+    if (!publicPages.includes(window.location.pathname)) {
+        checkAuth();
+    }
 
     // Marcar link ativo baseado na URL atual
     const currentPath = window.location.pathname;
@@ -86,4 +75,10 @@ document.addEventListener('DOMContentLoaded', () => {
             link.classList.add('active');
         }
     });
-}); 
+    
+    // Adicionar evento de logout se existir um botão para isso
+    const logoutButton = document.getElementById('logoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', logout);
+    }
+});

@@ -77,49 +77,11 @@
       // Function to fetch and display events
       async function fetchEvents(searchTerm = '') {
         try {
-          // Simulação de dados de eventos
-          const events = [
-            {
-              id: 1,
-              title: 'Workshop de Programação',
-              description: 'Aprenda a programar em JavaScript do zero.',
-              date: '2023-12-15',
-              time: '19:00',
-              location: 'Online',
-              price: 50.00,
-              image: '/assets/event1.jpg',
-              organizer: {
-                name: 'Tech Academy',
-                image: '/assets/organizer1.jpg'
-              }
-            },
-            {
-              id: 2,
-              title: 'Conferência de Tecnologia',
-              description: 'Descubra as últimas tendências em tecnologia.',
-              date: '2024-01-20',
-              time: '09:00',
-              location: 'Centro de Convenções',
-              price: 100.00,
-              image: '/assets/event2.jpg',
-              organizer: {
-                name: 'TechConf',
-                image: '/assets/organizer2.jpg'
-              }
-            }
-          ];
-          
-          // Filtrar eventos se houver termo de pesquisa
-          const filteredEvents = searchTerm 
-            ? events.filter(event => 
-                event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                event.location.toLowerCase().includes(searchTerm.toLowerCase())
-              )
-            : events;
+          const response = await fetch(`/api/events?search=${encodeURIComponent(searchTerm)}`);
+          const events = await response.json();
           
           const eventsContainer = document.getElementById('eventsContainer');
-          eventsContainer.innerHTML = filteredEvents.map(event => createEventCard(event)).join('');
+          eventsContainer.innerHTML = events.map(event => createEventCard(event)).join('');
         } catch (error) {
           console.error('Erro ao buscar eventos:', error);
         }
