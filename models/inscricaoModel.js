@@ -14,8 +14,8 @@ class Inscricao {
         JOIN usuarios u ON i.usuario_id = u.id
         ORDER BY i.data_inscricao DESC
       `;
-      const { rows } = await pool.query(query);
-      return rows;
+    const { rows } = await pool.query(query);
+    return rows;
     } catch (error) {
       console.error('Erro ao buscar inscrições:', error);
       throw error;
@@ -37,8 +37,8 @@ class Inscricao {
         JOIN usuarios u ON i.usuario_id = u.id
         WHERE i.inscricao_id = $1
       `;
-      const { rows } = await pool.query(query, [id]);
-      return rows[0];
+    const { rows } = await pool.query(query, [id]);
+    return rows[0];
     } catch (error) {
       console.error('Erro ao buscar inscrição:', error);
       throw error;
@@ -112,8 +112,8 @@ class Inscricao {
         WHERE i.evento_id = $1
         ORDER BY i.data_inscricao DESC
       `;
-      const { rows } = await pool.query(query, [eventoId]);
-      return rows;
+    const { rows } = await pool.query(query, [eventoId]);
+    return rows;
     } catch (error) {
       console.error('Erro ao buscar inscrições por evento:', error);
       throw error;
@@ -146,7 +146,7 @@ class Inscricao {
       `;
       const values = [usuario_id, evento_id, status];
       const { rows } = await pool.query(query, values);
-      return rows[0];
+    return rows[0];
     } catch (error) {
       console.error('Erro ao criar inscrição:', error);
       throw error;
@@ -176,7 +176,7 @@ class Inscricao {
         values = [status, id];
       } else if (presente !== undefined) {
         query = `
-          UPDATE inscricoes
+        UPDATE inscricoes 
           SET presente = $1
           WHERE inscricao_id = $2
           RETURNING inscricao_id, usuario_id, evento_id, status, presente, data_inscricao
@@ -187,7 +187,7 @@ class Inscricao {
       }
 
       const { rows } = await pool.query(query, values);
-      return rows[0];
+    return rows[0];
     } catch (error) {
       console.error('Erro ao atualizar inscrição:', error);
       throw error;
@@ -202,8 +202,8 @@ class Inscricao {
         WHERE inscricao_id = $1
         RETURNING inscricao_id
       `;
-      const { rows } = await pool.query(query, [id]);
-      return rows[0];
+    const { rows } = await pool.query(query, [id]);
+    return rows[0];
     } catch (error) {
       console.error('Erro ao deletar inscrição:', error);
       throw error;
