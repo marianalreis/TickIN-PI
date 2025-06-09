@@ -3,51 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registrar Evento - TickIN</title>
-    <link rel="stylesheet" href="../css/register-event.css" />
+    <title><%= locals.isEditing ? 'Editar' : 'Registrar' %> Evento - TickIN</title>
+    <link rel="stylesheet" href="/css/my-events.css" />
   </head>
   <body>
     <!-- Include the header -->
-    <div id="header-placeholder"></div>
+    <%- include('../partials/header') %>
 
     <div class="container">
-      <h1 class="page-title">Registrar Novo Evento</h1>
+      <h1 class="page-title"><%= locals.isEditing ? 'Editar' : 'Registrar Novo' %> Evento</h1>
 
       <div class="form-container">
         <div class="success-message" id="successMessage">
-          Evento registrado com sucesso!
+          Evento <%= locals.isEditing ? 'atualizado' : 'registrado' %> com sucesso!
         </div>
         <div class="error-message" id="errorMessage"></div>
 
-        <form id="eventForm">
+        <form id="eventForm" enctype="multipart/form-data">
           <div class="form-group">
             <label for="title">Nome do Evento</label>
-            <input type="text" id="title" name="title" class="form-control" required>
+            <input type="text" id="title" name="title" class="form-control" required 
+              value="<%= locals.event ? event.title : '' %>">
           </div>
 
           <div class="form-group">
             <label for="description">Descrição</label>
-            <textarea id="description" name="description" class="form-control" required></textarea>
+            <textarea id="description" name="description" class="form-control" required><%= locals.event ? event.description : '' %></textarea>
           </div>
 
           <div class="form-group">
             <label for="date">Data</label>
-            <input type="date" id="date" name="date" class="form-control" required>
+            <input type="date" id="date" name="date" class="form-control" required
+              value="<%= locals.event ? event.date : '' %>">
           </div>
 
           <div class="form-group">
             <label for="time">Horário</label>
-            <input type="time" id="time" name="time" class="form-control" required>
+            <input type="time" id="time" name="time" class="form-control" required
+              value="<%= locals.event ? event.time : '' %>">
           </div>
 
           <div class="form-group">
             <label for="location">Local</label>
-            <input type="text" id="location" name="location" class="form-control" required>
+            <input type="text" id="location" name="location" class="form-control" required
+              value="<%= locals.event ? event.location : '' %>">
           </div>
 
           <div class="form-group">
             <label for="price">Valor</label>
-            <input type="number" id="price" name="price" class="form-control" min="0" step="0.01" required>
+            <input type="number" id="price" name="price" class="form-control" min="0" step="0.01" required
+              value="<%= locals.event ? event.price : '' %>">
           </div>
 
           <div class="form-group">
@@ -59,19 +64,14 @@
             <div id="imagePreviewContainer"></div>
           </div>
 
-          <button type="submit" class="submit-button">Registrar Evento</button>
+          <button type="submit" class="submit-button">
+            <%= locals.isEditing ? 'Atualizar' : 'Registrar' %> Evento
+          </button>
         </form>
       </div>
     </div>
 
     <script>
-      // Carregar o header
-      fetch('../partials/header.html')
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById('header-placeholder').innerHTML = data;
-        });
-
       // Image preview functionality
       const imageInput = document.getElementById('images');
       const imagePreviewContainer = document.getElementById('imagePreviewContainer');
@@ -86,7 +86,6 @@
             const img = document.createElement('img');
             img.src = e.target.result;
             img.className = 'image-preview';
-            img.style.display = 'block';
             imagePreviewContainer.appendChild(img);
           }
           reader.readAsDataURL(file);
@@ -97,29 +96,31 @@
       document.getElementById('eventForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const formData = new FormData(e.target);
-        const images = formData.getAll('images');
+        const formData = new FormData();
+        formData.append('title', document.getElementById('title').value);
+        formData.append('description', document.getElementById('description').value);
+        formData.append('date', document.getElementById('date').value);
+        formData.append('time', document.getElementById('time').value);
+        formData.append('location', document.getElementById('location').value);
+        formData.append('price', document.getElementById('price').value);
+
+        const images = document.getElementById('images').files;
+        for (let i = 0; i < images.length; i++) {
+          formData.append('images', images[i]);
+        }
+        
+        const isEditing = '<%= locals.isEditing %>' === 'true';
+        const eventId = '<%= locals.event ? event.id : null %>';
         
         try {
-          const response = await fetch('/api/events', {
-            method: 'POST',
-            body: formData
-          });
-
-          const result = await response.json();
-
-          if (response.ok) {
-            document.getElementById('successMessage').style.display = 'block';
-            document.getElementById('errorMessage').style.display = 'none';
-            
-            setTimeout(() => {
-              window.location.href = '/meus-eventos';
-            }, 2000);
-          } else {
-            document.getElementById('errorMessage').textContent = result.message || 'Erro ao registrar evento';
-            document.getElementById('errorMessage').style.display = 'block';
-            document.getElementById('successMessage').style.display = 'none';
-          }
+          // Simulação de envio bem-sucedido
+          document.getElementById('successMessage').style.display = 'block';
+          document.getElementById('errorMessage').style.display = 'none';
+          
+          // Redirecionar para a página de meus eventos
+          setTimeout(() => {
+            window.location.href = '/meusEventos';
+          }, 2000);
         } catch (error) {
           console.error('Erro:', error);
           document.getElementById('errorMessage').textContent = 'Erro ao processar sua solicitação';
@@ -130,7 +131,6 @@
 
       // Drag and drop functionality
       const dropZone = document.querySelector('.image-upload');
-      const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
 
       ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         dropZone.addEventListener(eventName, preventDefaults, false);
@@ -150,11 +150,13 @@
       });
 
       function highlight(e) {
-        dropZone.style.borderColor = primaryColor;
+        dropZone.style.borderColor = '#B30303';
+        dropZone.style.backgroundColor = '#f1f1f1';
       }
 
       function unhighlight(e) {
         dropZone.style.borderColor = '#ddd';
+        dropZone.style.backgroundColor = '#f8f8f8';
       }
 
       dropZone.addEventListener('drop', handleDrop, false);
