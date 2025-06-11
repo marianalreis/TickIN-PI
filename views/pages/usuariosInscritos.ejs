@@ -18,7 +18,11 @@
 
       <div class="event-info">
         <div class="event-header">
-          <img src="<%= event.imagem || 'assets/tickIN.png' %>" alt="<%= event.titulo %>" class="event-image">
+          <img src="<%= event.imagem || '/assets/tickIN.png' %>" 
+               alt="<%= event.titulo %>" 
+               class="event-image" 
+               style="width: 200px; height: 200px; object-fit: cover; border-radius: 8px;"
+               onerror="this.onerror=null; this.src='/assets/tickIN.png';">
           <div class="event-details">
             <h2><%= event.titulo %></h2>
             <div class="event-meta">
@@ -66,8 +70,11 @@
               <div>
                 <% if (inscricao.status === 'Confirmado') { %>
                   <label class="presence-toggle">
-                    <input type="checkbox" onchange="markPresence('<%= inscricao.presenca_id %>', this.checked)" 
-                      <%= inscricao.presente ? 'checked' : '' %>>
+                    <input type="checkbox" 
+                           onchange="markPresence('<%= inscricao.presenca_id %>', this.checked, event)" 
+                           <%= inscricao.presente ? 'checked' : '' %>
+                           data-inscricao-id="<%= inscricao.inscricao_id %>"
+                           data-presenca-id="<%= inscricao.presenca_id %>">
                     <span class="slider"></span>
                   </label>
                 <% } else { %>
@@ -94,9 +101,27 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
     <script>
-      async function markPresence(presencaId, isPresent) {
+      async function markPresence(presencaId, isPresent, event) {
+        console.log('Dados recebidos:', { 
+          presencaId, 
+          isPresent, 
+          event,
+          inscricaoId: event.target.dataset.inscricaoId,
+          presencaIdFromData: event.target.dataset.presencaId
+        });
+        
+        if (!presencaId) {
+          console.error('ID da presença não fornecido');
+          alert('Erro: ID da presença não fornecido');
+          if (event && event.target) {
+            event.target.checked = !isPresent;
+          }
+          return;
+        }
+
         try {
-          const response = await fetch(`/presenca/${presencaId}`, {
+          console.log('Tentando atualizar presença:', { presencaId, isPresent });
+          const response = await fetch(`/api/presencas/${presencaId}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json'
@@ -106,14 +131,19 @@
           });
 
           if (!response.ok) {
-            throw new Error('Erro ao atualizar presença');
+            const errorData = await response.json();
+            throw new Error(errorData.erro || 'Erro ao atualizar presença');
           }
 
           const data = await response.json();
           alert(data.message || 'Presença atualizada com sucesso!');
         } catch (error) {
-          console.error('Erro:', error);
-          alert('Erro ao atualizar presença');
+          console.error('Erro ao atualizar presença:', error);
+          alert(error.message || 'Erro ao atualizar presença. Tente novamente.');
+          // Reverter o checkbox para o estado anterior
+          if (event && event.target) {
+            event.target.checked = !isPresent;
+          }
         }
       }
     </script>
