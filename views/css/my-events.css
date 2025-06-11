@@ -9,189 +9,175 @@
 
 .container {
   max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 2rem;
+  margin: 84px auto 40px;
+  padding: 0 20px;
 }
 
 .page-title {
-  font-size: 2rem;
-  font-weight: 600;
-  color: var(--text-color);
-  margin-bottom: 2rem;
+  font-size: 2em;
+  color: #333;
+  margin-bottom: 30px;
 }
 
-.events-grid {
+.grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-  padding: 1rem;
+  gap: 30px;
 }
 
-.event-card {
+.card {
   background: white;
-  border-radius: 12px;
-  overflow: hidden;
+  border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
-  margin-bottom: 1rem;
+  overflow: hidden;
+  transition: all 0.2s;
+  cursor: pointer;
+  position: relative;
 }
 
-.event-card:hover {
+.card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .event-image {
   width: 100%;
   height: 200px;
+  overflow: hidden;
+}
+
+.event-image img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.card:hover .event-image img {
+  transform: scale(1.05);
 }
 
 .event-content {
-  padding: 1.5rem;
+  padding: 20px;
 }
 
 .event-title {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.5em;
   color: #333;
-  margin-bottom: 1rem;
+  margin-bottom: 10px;
 }
 
 .event-description {
   color: #666;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  margin-bottom: 1.5rem;
+  margin-bottom: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-details {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .event-info {
-  display: grid;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.info-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 10px;
   color: #666;
 }
 
-.info-icon {
-  width: 20px;
-  height: 20px;
-  opacity: 0.7;
+.event-info i {
+  color: #B30303;
+  width: 16px;
+  text-align: center;
 }
 
 .event-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  position: relative;
+  z-index: 1;
 }
 
-.action-button {
-  flex: 1;
+.button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 500;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 5px;
   text-decoration: none;
-  transition: all 0.3s ease;
+  font-weight: 500;
+  transition: all 0.2s;
+  text-align: center;
 }
 
-.view-button {
+.button i {
+  font-size: 0.9em;
+}
+
+.button-primary {
   background-color: #B30303;
   color: white;
 }
 
-.view-button:hover {
+.button-primary:hover {
   background-color: #990000;
 }
 
-.edit-button {
-  background-color: #f8f8f8;
-  color: #666;
+.button-secondary {
+  background-color: #f8f9fa;
+  color: #333;
   border: 1px solid #ddd;
 }
 
-.edit-button:hover {
-  background-color: #f1f1f1;
-}
-
-.action-icon {
-  width: 18px;
-  height: 18px;
+.button-secondary:hover {
+  background-color: #e9ecef;
+  border-color: #B30303;
+  color: #B30303;
 }
 
 .empty-state {
   text-align: center;
-  padding: 4rem 2rem;
-  color: #666;
-}
-
-.empty-state img {
-  width: 200px;
-  margin-bottom: 2rem;
-  opacity: 0.5;
-}
-
-.empty-state h2 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: var(--text-color);
+  padding: 40px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .empty-state p {
-  margin-bottom: 2rem;
+  color: #666;
+  margin-bottom: 20px;
 }
 
-.create-button {
-  display: inline-block;
-  padding: 1rem 2rem;
-  background-color: var(--primary-color);
+.error-message {
+  background-color: #dc3545;
   color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
 }
 
-.create-button:hover {
-  background-color: #990000;
-}
-
-/* Responsividade */
 @media (max-width: 768px) {
   .container {
-    padding: 1rem;
+    margin-top: 64px;
+    padding: 20px;
   }
 
-  .page-title {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .events-grid {
+  .grid {
     grid-template-columns: 1fr;
-    padding: 0.5rem;
-  }
-
-  .event-card {
-    margin-bottom: 1rem;
-  }
-
-  .event-title {
-    font-size: 1.25rem;
   }
 
   .event-actions {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
 
-  .action-button {
-    width: 100%;
+  .button {
+    padding: 12px;
   }
 } 

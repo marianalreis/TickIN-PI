@@ -4,7 +4,8 @@ class InscricaoService {
             const response = await fetch('/api/inscricoes', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 credentials: 'include',
                 body: JSON.stringify({ evento_id: eventoId })
@@ -28,7 +29,8 @@ class InscricaoService {
                 method: 'DELETE',
                 headers: {
                     'Accept': 'application/json'
-                }
+                },
+                credentials: 'include'
             });
 
             if (!response.ok) {
@@ -68,14 +70,18 @@ class InscricaoService {
     static async listarMinhasInscricoes() {
         try {
             const response = await fetch('/api/inscricoes/minhas', {
+                method: 'GET',
                 headers: {
                     'Accept': 'application/json'
-                }
+                },
+                credentials: 'include'
             });
+
             if (!response.ok) {
                 const error = await response.json();
                 throw new Error(error.erro || 'Erro ao buscar inscrições');
             }
+
             return await response.json();
         } catch (error) {
             console.error('Erro ao buscar inscrições:', error);

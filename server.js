@@ -9,6 +9,7 @@ const usuarioRoutes = require('./routes/usuarioRoutes');
 const { router: authRouter, checkAuth, checkOrganizador } = require('./routes/auth');
 const indexRoutes = require('./routes/index');
 const eventosRoutes = require('./routes/eventosRoutes');
+const inscricaoRoutes = require('./routes/inscricaoRoutes');
 const apiRoutes = require('./routes/api');
 const Evento = require('./models/eventoModel');
 const pool = require('./config/database');
@@ -30,11 +31,7 @@ app.use(methodOverride('_method'));
 app.use('/css', express.static(path.join(__dirname, 'views/css')));
 app.use('/js', express.static(path.join(__dirname, 'views/js')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
-app.use('/images', express.static(path.join(__dirname, 'assets')));
-
-// Configurar middleware para arquivos estáticos
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/views/js', express.static(path.join(__dirname, 'views/js')));
+app.use('/images', express.static(path.join(__dirname, 'views/images')));
 
 // Configurar view engine
 app.set('view engine', 'ejs');
@@ -73,7 +70,7 @@ app.use((req, res, next) => {
     res.locals.usuario = null;
     res.locals.isAuthenticated = false;
   }
-    next();
+  next();
 });
 
 // Testar conexão com o banco de dados
@@ -88,9 +85,11 @@ pool.connect((err, client, done) => {
 
 // Configurar rotas da API
 app.use('/api', apiRoutes);
+app.use('/api/inscricoes', inscricaoRoutes);
 
 // Configurar rotas de páginas
 app.use('/', indexRoutes);
+app.use('/eventos', eventosRoutes);
 
 // Iniciar o servidor
 app.listen(port, () => {

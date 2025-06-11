@@ -16,7 +16,7 @@
 
       <div class="event-info">
         <div class="event-header">
-          <img src="<%= event.imagem %>" alt="<%= event.titulo %>" class="event-image">
+          <img src="<%= event.imagem || '/assets/tickIN.png' %>" alt="<%= event.titulo %>" class="event-image">
           <div class="event-details">
             <h2><%= event.titulo %></h2>
             <div class="event-meta">
@@ -49,7 +49,7 @@
           <% inscricoes.forEach(inscricao => { %>
             <div class="table-row">
               <div class="user-info">
-                <img src="/assets/user-default.png" alt="<%= inscricao.usuario_nome %>" class="user-avatar">
+                <img src="/assets/user.png" alt="<%= inscricao.usuario_nome %>" class="user-avatar">
                 <div>
                   <div class="user-name"><%= inscricao.usuario_nome %></div>
                   <div class="user-email"><%= inscricao.email %></div>
@@ -103,7 +103,7 @@
         </div>
       <% } else { %>
         <div class="empty-state">
-          <img src="/assets/empty-registrations.png" alt="Sem inscrições">
+          <img src="/assets/tickIN.png" alt="Sem inscrições">
           <h2>Nenhuma inscrição ainda</h2>
           <p>Compartilhe seu evento para atrair participantes!</p>
         </div>

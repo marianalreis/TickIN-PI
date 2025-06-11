@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const inscricaoController = require('../controllers/inscricaoController');
-const { checkAuth } = require('../middlewares/auth');
+const { checkAuth } = require('../middleware/auth');
 
 // Rotas protegidas por autenticação
 router.use(checkAuth);
