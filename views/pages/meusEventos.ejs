@@ -3,64 +3,219 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Meus Eventos - TickIN</title>
-    <link rel="stylesheet" href="/css/my-events.css" />
+    <title>TickIN - Meus Eventos</title>
+    <link rel="stylesheet" href="/css/global.css" />
+    <link rel="stylesheet" href="/css/header.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   </head>
   <body>
-    <!-- Include the header -->
     <%- include('../partials/header') %>
 
     <div class="container">
       <h1 class="page-title">Meus Eventos</h1>
 
-      <% if (events && events.length > 0) { %>
-        <div class="events-grid">
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="error-message" style="display: block; background-color: #ffebee; color: #c62828; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">
+          <%= error %>
+        </div>
+      <% } %>
+
+      <div class="grid">
+        <% if (events && events.length > 0) { %>
           <% events.forEach(event => { %>
-            <div class="event-card">
-              <img src="<%= event.image %>" alt="<%= event.title %>" class="event-image">
+            <div class="card">
+              <div class="event-image">
+                <img src="<%= event.imagem || '/assets/event-placeholder.png' %>" alt="<%= event.titulo %>" onerror="this.src='/assets/tickIN.png'">
+              </div>
               <div class="event-content">
-                <h3 class="event-title"><%= event.title %></h3>
-                <p class="event-description"><%= event.description %></p>
-                <div class="event-info">
-                  <div class="info-item">
-                    <img src="/assets/calendar.png" alt="Data" class="info-icon">
-                    <span><%= event.date %></span>
+                <h2 class="event-title"><%= event.titulo %></h2>
+                <p class="event-description"><%= event.descricao %></p>
+                <div class="event-details">
+                  <div class="event-info">
+                    <i class="fas fa-user"></i>
+                    <span><%= event.organizador_nome %></span>
                   </div>
-                  <div class="info-item">
-                    <img src="/assets/clock.png" alt="Horário" class="info-icon">
-                    <span><%= event.time %></span>
+                  <div class="event-info">
+                    <i class="fas fa-calendar"></i>
+                    <span><%= new Date(event.data).toLocaleDateString('pt-BR') %></span>
                   </div>
-                  <div class="info-item">
-                    <img src="/assets/location.png" alt="Local" class="info-icon">
-                    <span><%= event.location %></span>
+                  <div class="event-info">
+                    <i class="fas fa-clock"></i>
+                    <span><%= event.horario %></span>
                   </div>
-                  <div class="info-item">
-                    <img src="/assets/money.png" alt="Valor" class="info-icon">
-                    <span>R$ <%= event.valor.toFixed(2) %></span>
+                  <div class="event-info">
+                    <i class="fas fa-location-dot"></i>
+                    <span><%= event.local %></span>
                   </div>
                 </div>
                 <div class="event-actions">
-                  <a href="/usuarios-inscritos/<%= event.id %>" class="action-button view-button">
-                    <img src="/assets/users.png" alt="Ver inscritos" class="action-icon">
+                  <a href="/inscritos/<%= event.id %>" class="button">
+                    <i class="fas fa-users"></i>
                     Ver Inscritos
                   </a>
-                  <a href="/editar-evento/<%= event.id %>" class="action-button edit-button">
-                    <img src="/assets/edit.png" alt="Editar" class="action-icon">
+                  <a href="/editar-evento/<%= event.id %>" class="button button-secondary">
+                    <i class="fas fa-edit"></i>
                     Editar
                   </a>
                 </div>
               </div>
             </div>
           <% }); %>
-        </div>
-      <% } else { %>
-        <div class="empty-state">
-          <img src="/assets/empty-events.png" alt="Nenhum evento">
-          <h2>Você ainda não tem eventos</h2>
-          <p>Comece criando seu primeiro evento!</p>
-          <a href="/registrar" class="create-button">Criar Evento</a>
-        </div>
-      <% } %>
+        <% } else { %>
+          <div class="card empty-state">
+            <p>Você ainda não tem eventos cadastrados.</p>
+            <a href="/registrar" class="button">Criar Novo Evento</a>
+          </div>
+        <% } %>
+      </div>
     </div>
+
+    <style>
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .page-title {
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
+      .card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.2s;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+      }
+
+      .event-image {
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+        border-radius: 8px 8px 0 0;
+      }
+
+      .event-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .event-content {
+        padding: 20px;
+      }
+
+      .event-title {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: #333;
+      }
+
+      .event-description {
+        color: #666;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        display: -moz-box;
+        display: box;
+        line-clamp: 3;
+        -webkit-line-clamp: 3;
+        -moz-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        -moz-box-orient: vertical;
+        box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .event-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .event-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .event-info i {
+        color: #2196F3;
+      }
+
+      .event-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .button {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        background-color: #2196F3;
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.2s;
+      }
+
+      .button:hover {
+        background-color: #1976D2;
+      }
+
+      .button-secondary {
+        background-color: #4CAF50;
+      }
+
+      .button-secondary:hover {
+        background-color: #388E3C;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 3rem;
+      }
+
+      .empty-state p {
+        margin-bottom: 1rem;
+        color: #666;
+      }
+
+      @media (max-width: 768px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .event-actions {
+          flex-direction: column;
+        }
+      }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js">
+    </script>
   </body>
 </html>

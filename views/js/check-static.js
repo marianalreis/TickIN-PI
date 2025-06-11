@@ -23,8 +23,8 @@ async function checkImportantFiles() {
   const files = [
     '/css/auth.css',
     '/assets/logo_tickIN.png',
-    '/assets/icons/email.svg',
-    '/assets/icons/lock.svg'
+    '/assets/email.png',
+'/assets/lock.png'
   ];
   
   const results = {};
