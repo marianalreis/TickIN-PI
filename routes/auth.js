@@ -6,6 +6,10 @@ const bcrypt = require('bcrypt');
 // Middleware de autenticação
 const checkAuth = async (req, res, next) => {
   if (!req.session?.usuario?.id) {
+    // Se for requisição AJAX ou para /api, retorna JSON
+    if (req.path.startsWith('/api/') || req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
+      return res.status(401).json({ erro: 'Usuário não autenticado' });
+    }
     return res.redirect('/login');
   }
 
@@ -16,6 +20,9 @@ const checkAuth = async (req, res, next) => {
     const usuario = rows[0];
 
     if (!usuario) {
+      if (req.path.startsWith('/api/') || req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
+        return res.status(401).json({ erro: 'Usuário não autenticado' });
+      }
       return res.redirect('/login');
     }
 
@@ -29,6 +36,9 @@ const checkAuth = async (req, res, next) => {
     next();
   } catch (error) {
     console.error('Erro na autenticação:', error);
+    if (req.path.startsWith('/api/') || req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
+      return res.status(500).json({ erro: 'Erro na autenticação' });
+    }
     res.redirect('/login');
   }
 };

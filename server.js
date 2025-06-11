@@ -28,29 +28,24 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
-// Configurar arquivos estáticos
+// Servir arquivos estáticos corretamente
 app.use('/css', express.static(path.join(__dirname, 'views/css')));
-app.use('/js', express.static(path.join(__dirname, 'views/js')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
-app.use('/images', express.static(path.join(__dirname, 'views/images')));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({
+  secret: 'tickin-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 24 * 60 * 60 * 1000 // 24 horas
+  }
+}));
 
 // Configurar view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-// Configurar sessão
-app.use(session({
-  secret: 'sua_chave_secreta',
-  resave: true,
-  saveUninitialized: true,
-  cookie: {
-    secure: false, // Set to true in production
-    maxAge: 24 * 60 * 60 * 1000, // 24 horas
-    httpOnly: true,
-    sameSite: 'lax'
-  },
-  name: 'tickin_session'
-}));
 
 // Middleware para debug de sessão
 app.use((req, res, next) => {
@@ -71,7 +66,7 @@ app.use((req, res, next) => {
     res.locals.usuario = null;
     res.locals.isAuthenticated = false;
   }
-    next();
+  next();
 });
 
 // Testar conexão com o banco de dados
@@ -84,14 +79,13 @@ pool.connect((err, client, done) => {
   }
 });
 
-// Configurar rotas da API
-app.use('/api', apiRoutes);
-app.use('/api/inscricoes', inscricaoRoutes);
-app.use('/presenca', presencaRoutes);
-
-// Configurar rotas de páginas
+// Usar as rotas
 app.use('/', indexRoutes);
+app.use('/api', apiRoutes);
 app.use('/eventos', eventosRoutes);
+app.use('/inscricoes', inscricaoRoutes);
+app.use('/presencas', presencaRoutes);
+app.use('/usuarios', usuarioRoutes);
 
 // Iniciar o servidor
 app.listen(port, () => {

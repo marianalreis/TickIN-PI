@@ -10,6 +10,7 @@ const organizadorController = require('../controllers/organizadorController');
 const usuarioRoutes = require('./usuarioRoutes');
 const { router: authRouter } = require('./auth');
 const Evento = require('../models/eventoModel');
+const Inscricao = require('../models/inscricaoModel');
 
 // Rotas de autenticação
 router.use('/auth', authRouter);
@@ -57,11 +58,20 @@ router.post('/inscricoes', checkAuth, inscricaoController.createInscricao);
 router.delete('/inscricoes/:id', checkAuth, inscricaoController.cancelarInscricao);
 router.get('/inscricoes/minhas', checkAuth, inscricaoController.getMinhasInscricoes);
 router.get('/inscricoes/evento/:eventoId', checkAuth, inscricaoController.getInscricoesByEvento);
+router.get('/inscricoes/verificar/:eventoId', checkAuth, async (req, res) => {
+  try {
+    const inscricao = await Inscricao.findByEventoEUsuario(req.params.eventoId, req.session.usuario.id);
+    res.json({ inscrito: !!inscricao });
+  } catch (error) {
+    console.error('Erro ao verificar inscrição:', error);
+    res.status(500).json({ erro: 'Erro ao verificar inscrição' });
+  }
+});
 
 // Rotas de Presença
 router.get('/presencas/evento/:eventoId', checkOrganizador, presencaController.getPresencasByEvento);
 router.post('/presencas', checkOrganizador, presencaController.createPresenca);
-router.put('/presencas/:id', checkOrganizador, presencaController.updatePresenca);
+router.put('/presencas/:id', presencaController.updatePresenca);
 
 // Rotas de Lembrete
 router.get('/lembretes/usuario/:cpf', checkAuth, lembreteController.getLembretesByUsuario);

@@ -8,6 +8,7 @@ const profileRoutes = require('./profileRoutes');
 const apiRoutes = require('./api');
 const Inscricao = require('../models/inscricaoModel');
 const Presenca = require('../models/presencaModel');
+const pool = require('../config/database');
 
 // Usar as rotas de perfil
 router.use('/perfil', profileRoutes);
@@ -26,20 +27,30 @@ router.get('/', (req, res) => {
 
 // Rotas de eventos
 router.get('/meusEventos', checkAuth, async (req, res) => {
-  if (req.session.usuario.tipo_usuario !== 'organizador') {
-    return res.redirect('/pesquisar');
-  }
   try {
-    const events = await Evento.findByOrganizador(req.session.usuario.id);
+    let eventos = [];
+    
+    if (req.session.usuario.tipo_usuario === 'organizador') {
+      eventos = await Evento.findByOrganizador(req.session.usuario.id);
+    } else {
+      const inscricoes = await Inscricao.findByUsuario(req.session.usuario.id);
+      eventos = inscricoes.map(inscricao => ({
+        ...inscricao.evento,
+        inscricao_id: inscricao.inscricao_id,
+        status: inscricao.status
+      }));
+    }
+
     res.render('pages/meusEventos', {
+      eventos,
       usuario: req.session.usuario,
-      events: events
+      error: null
     });
   } catch (error) {
-    console.error('Erro ao buscar eventos:', error);
+    console.error('Erro ao carregar eventos:', error);
     res.render('pages/meusEventos', {
+      eventos: [],
       usuario: req.session.usuario,
-      events: [],
       error: 'Erro ao carregar eventos'
     });
   }
@@ -89,7 +100,8 @@ router.get('/pesquisar', checkAuth, (req, res) => {
 
 router.get('/minhasInscricoes', checkAuth, async (req, res) => {
   try {
-    const inscricoes = await inscricaoController.getMinhasInscricoes(req);
+    const inscricoes = await Inscricao.findByUsuario(req.session.usuario.id);
+    console.log('Inscrições encontradas:', inscricoes);
     res.render('pages/minhasInscricoes', { 
       pageTitle: 'TickIN - Minhas Inscrições',
       currentPage: 'minhasInscricoes',
@@ -218,21 +230,14 @@ router.get('/editar-evento/:id', checkOrganizador, async (req, res) => {
 });
 
 router.get('/usuarios-inscritos/:id', checkOrganizador, async (req, res) => {
-  console.log('ROTA /usuarios-inscritos/:id - req.session.usuario:', req.session.usuario);
-  const evento = await Evento.findById(req.params.id);
-  console.log('Evento encontrado:', evento);
-  console.log('Comparando IDs:', {
-    'evento.usuario_id': evento?.usuario_id,
-    'session.usuario.id': req.session.usuario.id,
-    'match': Number(evento?.usuario_id) === Number(req.session.usuario.id)
-  });
-    console.log('ROTA /usuarios-inscritos/:id - req.session.usuario:', req.session.usuario);
   console.log('==== INÍCIO DA ROTA /usuarios-inscritos/:id ====');
   console.log('ID do evento solicitado:', req.params.id);
   console.log('Usuário na sessão:', req.session.usuario);
+  
   try {
     const evento = await Evento.findById(req.params.id);
     console.log('Evento encontrado:', evento);
+    
     if (!evento) {
       return res.status(404).render('pages/error', { 
         pageTitle: 'TickIN - Erro',
@@ -259,21 +264,68 @@ router.get('/usuarios-inscritos/:id', checkOrganizador, async (req, res) => {
     
     // Buscar presenças do evento
     const presencas = await Presenca.findByEvento(req.params.id);
-    // Mapear presenças por CPF ou email (ajuste conforme o campo em comum)
+    console.log('Presenças encontradas:', presencas);
+    
+    // Mapear presenças por inscrição
     const presencaMap = {};
     presencas.forEach(p => {
-      presencaMap[p.usuario_nome + (p.email || '')] = p;
+      if (p.inscricao_id) {
+        presencaMap[p.inscricao_id] = {
+          presenca_id: p.presenca_id,
+          presente: p.presente
+        };
+      }
     });
+    
     // Adicionar presenca_id e presente em cada inscrição
-    const inscricoesComPresenca = inscricoes.map(insc => {
-      const key = insc.usuario_nome + (insc.email || '');
-      const presenca = presencaMap[key];
-      return {
+    const inscricoesComPresenca = await Promise.all(inscricoes.map(async insc => {
+      let presenca = presencaMap[insc.inscricao_id];
+      
+      // Se a inscrição está confirmada e não tem presença, criar uma
+      if (insc.status === 'Confirmado' && !presenca) {
+        try {
+          const presencaQuery = `
+            INSERT INTO presencas (inscricao_id, presente, horario_entrada)
+            VALUES ($1, false, null)
+            RETURNING presenca_id
+          `;
+          const presencaResult = await pool.query(presencaQuery, [insc.inscricao_id]);
+          console.log('Presença criada para inscrição:', {
+            inscricao_id: insc.inscricao_id,
+            presenca_id: presencaResult.rows[0].presenca_id
+          });
+          
+          presenca = {
+            presenca_id: presencaResult.rows[0].presenca_id,
+            presente: false
+          };
+          presencaMap[insc.inscricao_id] = presenca;
+        } catch (error) {
+          console.error('Erro ao criar presença:', error);
+        }
+      }
+      
+      const inscricaoComPresenca = {
         ...insc,
         presenca_id: presenca ? presenca.presenca_id : null,
         presente: presenca ? presenca.presente : false
       };
-    });
+      
+      console.log('Mapeando inscrição:', {
+        inscricao_id: insc.inscricao_id,
+        presenca: presenca,
+        inscricao_com_presenca: inscricaoComPresenca
+      });
+      
+      return inscricaoComPresenca;
+    }));
+    
+    console.log('Inscrições com presença:', inscricoesComPresenca.map(insc => ({
+      inscricao_id: insc.inscricao_id,
+      presenca_id: insc.presenca_id,
+      presente: insc.presente
+    })));
+    
     res.render('pages/usuariosInscritos', { 
       pageTitle: 'TickIN - Usuários Inscritos',
       event: evento,

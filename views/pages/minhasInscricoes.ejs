@@ -40,7 +40,7 @@
     <template id="inscricaoTemplate">
       <div class="registration-card">
         <div class="event-image">
-          <img src="" alt="">
+          <img src="" alt="" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px 8px 0 0;">
         </div>
         <div class="event-content">
           <h3 class="event-title"></h3>
@@ -64,80 +64,65 @@
       </div>
     </template>
 
+    <!-- Dados do servidor -->
+    <script type="application/json" id="inscricoesData">
+      <%- JSON.stringify(inscricoes || []) %>
+    </script>
+
     <script>
-      document.addEventListener('DOMContentLoaded', async () => {
+      document.addEventListener('DOMContentLoaded', () => {
+        const inscricoesData = JSON.parse(document.getElementById('inscricoesData').textContent);
+        console.log('Dados das inscrições:', inscricoesData);
+
         const inscricoesGrid = document.getElementById('inscricoesGrid');
-        const loading = document.getElementById('loading');
+        const template = document.getElementById('inscricaoTemplate');
         const noResults = document.getElementById('noResults');
         const errorMessage = document.getElementById('errorMessage');
-        const template = document.getElementById('inscricaoTemplate');
 
-        async function carregarInscricoes() {
-          try {
-            loading.hidden = false;
-            inscricoesGrid.hidden = true;
-            noResults.hidden = true;
-            errorMessage.hidden = true;
+        function renderInscricao(inscricao) {
+          const card = template.content.cloneNode(true);
+          
+          // Configurando a imagem
+          const imagem = card.querySelector('.event-image img');
+          imagem.src = inscricao.evento.imagem || '/assets/tickIN.png';
+          imagem.alt = inscricao.evento.titulo;
+          imagem.onerror = () => {
+            imagem.src = '/assets/tickIN.png';
+          };
 
-            const inscricoes = await InscricaoService.listarMinhasInscricoes();
-            renderizarInscricoes(inscricoes);
-          } catch (error) {
-            console.error('Erro ao carregar inscrições:', error);
-            errorMessage.hidden = false;
-          } finally {
-            loading.hidden = true;
+          // Preenchendo informações do evento
+          card.querySelector('.event-title').textContent = inscricao.evento.titulo;
+          card.querySelector('.event-date').textContent = formatarData(inscricao.evento.data) + ' às ' + inscricao.evento.horario;
+          card.querySelector('.event-location').textContent = inscricao.evento.local;
+
+          // Configurando status
+          const statusBadge = card.querySelector('.status-badge');
+          statusBadge.textContent = inscricao.status;
+          statusBadge.className = 'status-badge ' + inscricao.status.toLowerCase();
+
+          // Configurando botões de ação
+          const viewButton = card.querySelector('.view-button');
+          const cancelButton = card.querySelector('.cancel-button');
+          const confirmButton = card.querySelector('.confirm-button');
+
+          viewButton.onclick = () => {
+            window.location.href = `/evento/${inscricao.evento.id}`;
+          };
+
+          const dataEvento = new Date(inscricao.evento.data);
+          const hoje = new Date();
+
+          if (dataEvento < hoje) {
+            cancelButton.style.display = 'none';
+            confirmButton.style.display = 'none';
+            statusBadge.textContent = 'Evento Encerrado';
+            statusBadge.className = 'status-badge encerrado';
+          } else {
+            cancelButton.onclick = () => cancelarInscricao(inscricao.inscricao_id);
+            confirmButton.onclick = () => confirmarPresenca(inscricao.inscricao_id);
           }
-        }
 
-        function renderizarInscricoes(inscricoes) {
-          inscricoesGrid.innerHTML = '';
-
-          if (!inscricoes || inscricoes.length === 0) {
-            noResults.hidden = false;
-            return;
-          }
-
-          inscricoes.forEach(inscricao => {
-            const card = template.content.cloneNode(true);
-            
-            const imagem = card.querySelector('.event-image img');
-            imagem.src = inscricao.evento.imagem || '/assets/tickIN.png';
-            imagem.alt = inscricao.evento.titulo;
-            imagem.onerror = () => {
-              imagem.src = '/assets/tickIN.png';
-            };
-
-            card.querySelector('.event-title').textContent = inscricao.evento.titulo;
-            card.querySelector('.event-date').textContent = formatarData(inscricao.evento.data) + ' às ' + inscricao.evento.horario;
-            card.querySelector('.event-location').textContent = inscricao.evento.local;
-
-            const statusBadge = card.querySelector('.status-badge');
-            statusBadge.textContent = inscricao.status;
-            statusBadge.className = `status-badge status-${inscricao.status.toLowerCase()}`;
-
-            const btnView = card.querySelector('.view-button');
-            btnView.onclick = () => window.location.href = `/evento/${inscricao.evento.evento_id}`;
-
-            const btnCancel = card.querySelector('.cancel-button');
-            const btnConfirm = card.querySelector('.confirm-button');
-
-            if (inscricao.status === 'Cancelado') {
-              btnCancel.style.display = 'none';
-              btnConfirm.style.display = 'none';
-            } else {
-              btnCancel.onclick = () => handleCancelar(inscricao.inscricao_id);
-              
-              if (inscricao.status === 'Confirmado') {
-                btnConfirm.style.display = 'none';
-              } else {
-                btnConfirm.onclick = () => handleConfirmarPresenca(inscricao.inscricao_id);
-              }
-            }
-
-            inscricoesGrid.appendChild(card);
-          });
-
-          inscricoesGrid.hidden = false;
+          inscricoesGrid.appendChild(card);
         }
 
         function formatarData(data) {
@@ -150,7 +135,83 @@
           }
         }
 
-        // Carregar inscrições iniciais
+        async function cancelarInscricao(inscricaoId) {
+          console.log('Tentando cancelar inscrição:', {
+            inscricaoId,
+            inscricoesData: inscricoesData,
+            inscricaoEncontrada: inscricoesData.find(i => i.inscricao_id === inscricaoId),
+            inscricaoEncontradaDetalhada: inscricoesData.find(i => i.inscricao_id === inscricaoId) ? {
+              inscricao_id: inscricoesData.find(i => i.inscricao_id === inscricaoId).inscricao_id,
+              usuario_id: inscricoesData.find(i => i.inscricao_id === inscricaoId).usuario_id,
+              status: inscricoesData.find(i => i.inscricao_id === inscricaoId).status,
+              evento: inscricoesData.find(i => i.inscricao_id === inscricaoId).evento
+            } : null
+          });
+
+          try {
+            const response = await fetch(`/api/inscricoes/${inscricaoId}`, {
+              method: 'DELETE',
+              credentials: 'include',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+            
+            if (!response.ok) {
+              const data = await response.json();
+              console.error('Erro na resposta:', {
+                status: response.status,
+                statusText: response.statusText,
+                data,
+                inscricaoId,
+                inscricaoEncontrada: inscricoesData.find(i => i.inscricao_id === inscricaoId)
+              });
+              throw new Error(data.erro || 'Erro ao cancelar inscrição');
+            }
+            
+            window.location.reload();
+          } catch (error) {
+            console.error('Erro:', error);
+            alert(error.message || 'Erro ao cancelar inscrição. Tente novamente.');
+          }
+        }
+
+        async function confirmarPresenca(inscricaoId) {
+          try {
+            const response = await fetch(`/api/inscricoes/${inscricaoId}/confirmar`, {
+              method: 'POST'
+            });
+            if (response.ok) {
+              window.location.reload();
+            } else {
+              throw new Error('Erro ao confirmar presença');
+            }
+          } catch (error) {
+            console.error('Erro:', error);
+            alert('Erro ao confirmar presença. Tente novamente.');
+          }
+        }
+
+        async function carregarInscricoes() {
+          try {
+            inscricoesGrid.innerHTML = '';
+            noResults.style.display = 'none';
+            errorMessage.style.display = 'none';
+
+            if (!inscricoesData || inscricoesData.length === 0) {
+              noResults.style.display = 'block';
+              return;
+            }
+
+            inscricoesData.forEach(inscricao => {
+              renderInscricao(inscricao);
+            });
+          } catch (error) {
+            console.error('Erro ao carregar inscrições:', error);
+            errorMessage.style.display = 'block';
+          }
+        }
+
         carregarInscricoes();
       });
     </script>
