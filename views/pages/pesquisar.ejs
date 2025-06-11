@@ -61,27 +61,29 @@
 
     <template id="eventoTemplate">
       <div class="event-card">
-        <div class="event-image">
-          <img src="" alt="">
-        </div>
-        <div class="event-content">
-          <h3 class="event-title"></h3>
-          <div class="event-info">
-            <div class="info-item">
-              <img src="/assets/calendar.png" alt="Data" class="info-icon">
-              <span class="event-date"></span>
-            </div>
-            <div class="info-item">
-              <img src="/assets/location.png" alt="Local" class="info-icon">
-              <span class="event-location"></span>
-            </div>
+        <a href="#" class="event-link">
+          <div class="event-image">
+            <img src="" alt="">
           </div>
-          <div class="organizer">
-            <img src="/assets/user.png" alt="Organizador" class="organizer-icon">
-            <span class="organizer-info"></span>
+          <div class="event-content">
+            <h3 class="event-title"></h3>
+            <div class="event-info">
+              <div class="info-item">
+                <img src="/assets/calendar.png" alt="Data" class="info-icon">
+                <span class="event-date"></span>
+              </div>
+              <div class="info-item">
+                <img src="/assets/location.png" alt="Local" class="info-icon">
+                <span class="event-location"></span>
+              </div>
+            </div>
+            <div class="organizer">
+              <img src="/assets/user.png" alt="Organizador" class="organizer-icon">
+              <span class="organizer-info"></span>
+            </div>
+            <button class="event-button">Inscrever-se</button>
           </div>
-          <button class="event-button">Inscrever-se</button>
-        </div>
+        </a>
       </div>
     </template>
 
@@ -144,6 +146,9 @@
               imagem.src = '/assets/tickIN.png';
             };
 
+            const link = card.querySelector('.event-link');
+            link.href = `/evento/${evento.id}`;
+
             card.querySelector('.event-title').textContent = evento.titulo;
             card.querySelector('.event-date').textContent = formatarData(evento.data) + ' às ' + evento.horario;
             card.querySelector('.event-location').textContent = evento.local;
@@ -157,7 +162,10 @@
               btnInscricao.textContent = 'Evento Encerrado';
               btnInscricao.classList.add('disabled');
             } else {
-              btnInscricao.onclick = () => handleInscrever(evento.id);
+              btnInscricao.onclick = (e) => {
+                e.preventDefault();
+                handleInscrever(evento.id);
+              };
             }
 
             eventosGrid.appendChild(card);

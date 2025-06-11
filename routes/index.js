@@ -6,6 +6,7 @@ const inscricaoController = require('../controllers/inscricaoController');
 const Evento = require('../models/eventoModel');
 const profileRoutes = require('./profileRoutes');
 const apiRoutes = require('./api');
+const Inscricao = require('../models/inscricaoModel');
 
 // Usar as rotas de perfil
 router.use('/perfil', profileRoutes);
@@ -108,26 +109,51 @@ router.get('/minhasInscricoes', checkAuth, async (req, res) => {
 
 router.get('/evento/:id', checkAuth, async (req, res) => {
   try {
-    const evento = await eventoController.getEventoById(req.params.id);
+    const evento = await Evento.findById(req.params.id);
     if (!evento) {
       return res.status(404).render('pages/error', { 
-        pageTitle: 'TickIN - Erro',
         message: 'Evento não encontrado'
       });
     }
     
-    res.render('pages/detalhes', { 
-      pageTitle: `TickIN - ${evento.title}`,
-      evento: evento,
-      user: {
-        nome: req.session.usuario.nome,
-        tipo: req.session.usuario.tipo_usuario
-      }
+    // Verifica se o usuário logado é o organizador do evento
+    console.log('Dados do usuário:', {
+      session: req.session,
+      usuario: req.session.usuario,
+      id: req.session.usuario?.id,
+      tipo: req.session.usuario?.tipo_usuario
+    });
+    
+    console.log('Dados do evento:', {
+      evento_completo: evento,
+      id: evento.id,
+      usuario_id: evento.usuario_id
+    });
+    
+    const isOrganizador = req.session.usuario && 
+                         req.session.usuario.tipo_usuario === 'organizador' &&
+                         evento.usuario_id && 
+                         Number(evento.usuario_id) === Number(req.session.usuario.id);
+    
+    console.log('Comparação:', {
+      usuario_logado: req.session.usuario?.id,
+      tipo_usuario: req.session.usuario?.tipo_usuario,
+      usuario_evento: evento.usuario_id,
+      isOrganizador: isOrganizador
+    });
+    
+    // Renderiza a view apropriada baseado no tipo de usuário
+    const template = isOrganizador ? 'pages/detalhesOrganizador' : 'pages/detalhes';
+    
+    console.log('Template selecionado:', template);
+    
+    res.render(template, { 
+      event: evento,
+      usuario: req.session.usuario
     });
   } catch (error) {
     console.error('Erro ao buscar evento:', error);
     res.status(500).render('pages/error', { 
-      pageTitle: 'TickIN - Erro',
       message: 'Erro ao carregar evento'
     });
   }
@@ -166,34 +192,6 @@ router.get('/editar-evento/:id', checkOrganizador, async (req, res) => {
       pageTitle: 'TickIN - Erro',
       message: 'Erro ao carregar evento'
     });
-  }
-});
-
-router.get('/usuarios-inscritos/:id', checkOrganizador, async (req, res) => {
-  try {
-    const evento = await eventoController.getEventoById(req.params.id);
-    if (!evento) {
-      return res.redirect('/meusEventos?error=' + encodeURIComponent('Evento não encontrado'));
-    }
-    
-    // Verificar se o usuário é o organizador do evento
-    if (evento.organizador_ID !== req.session.usuario.id) {
-      return res.redirect('/meusEventos?error=' + encodeURIComponent('Você não tem permissão para ver os inscritos deste evento'));
-    }
-    
-    const inscricoes = await inscricaoController.getInscricoesByEvento(req.params.id);
-    res.render('pages/usuariosInscritos', { 
-      pageTitle: 'TickIN - Usuários Inscritos',
-      evento: evento,
-      inscricoes: inscricoes,
-      user: {
-        nome: req.session.usuario.nome,
-        tipo: req.session.usuario.tipo_usuario
-      }
-    });
-  } catch (error) {
-    console.error('Erro ao buscar inscrições:', error);
-    res.redirect('/meusEventos?error=' + encodeURIComponent('Erro ao carregar inscrições'));
   }
 });
 
