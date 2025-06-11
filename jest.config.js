@@ -1,12 +1,16 @@
+// jest.config.js
 module.exports = {
-    testEnvironment: 'node',
-    collectCoverage: true,
-    collectCoverageFrom: [
-      'controllers/**/*.js',
-      'models/**/*.js',
-      'routes/**/*.js',
-      '!**/node_modules/**',
-    ],
-    coverageDirectory: 'coverage',
-  };
+  testMatch: ['**/tests/**/*.test.js'],
+  testEnvironment: 'node',
+  clearMocks: true,
+  coverageDirectory: 'coverage',
+  collectCoverageFrom: [
+    'controllers/**/*.js',
+    'models/**/*.js',
+    '!**/node_modules/**'
+  ],
+  verbose: true,
+  setupFiles: ['dotenv/config']
+};
+
   

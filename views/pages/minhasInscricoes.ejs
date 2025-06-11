@@ -4,88 +4,155 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Minhas Inscrições - TickIN</title>
-    <link rel="stylesheet" href="../css/my-registrations.css" />
+    <link rel="stylesheet" href="/css/global.css" />
+    <link rel="stylesheet" href="/css/header.css" />
+    <link rel="stylesheet" href="/css/my-registrations.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="/js/inscritos.js"></script>
   </head>
   <body>
-    <!-- Include the header -->
-    <div id="header-placeholder"></div>
+    <%- include('../partials/header', { currentPage: 'minhas-inscricoes' }) %>
 
-    <div class="container">
-      <h1 class="page-title">Minhas Inscrições</h1>
+    <main>
+      <div class="container">
+        <h1 class="page-title">Minhas Inscrições</h1>
+        <div id="inscricoesGrid" class="registrations-grid"></div>
 
-      <% if (registrations && registrations.length > 0) { %>
-        <div class="registrations-grid">
-          <% registrations.forEach(registration => { %>
-            <div class="registration-card">
-              <img src="<%= registration.event.image %>" alt="<%= registration.event.title %>" class="event-image">
-              <div class="event-content">
-                <h3 class="event-title"><%= registration.event.title %></h3>
-                <div class="event-info">
-                  <div class="info-item">
-                    <img src="/assets/calendar.png" alt="Data" class="info-icon">
-                    <span><%= registration.event.date %></span>
-                  </div>
-                  <div class="info-item">
-                    <img src="/assets/clock.png" alt="Horário" class="info-icon">
-                    <span><%= registration.event.time %></span>
-                  </div>
-                  <div class="info-item">
-                    <img src="/assets/location.png" alt="Local" class="info-icon">
-                    <span><%= registration.event.location %></span>
-                  </div>
-                </div>
-                <div class="status-badge status-<%= registration.status.toLowerCase() %>">
-                  <%= registration.status %>
-                </div>
-                <div class="action-buttons">
-                  <a href="/evento/<%= registration.event.id %>" class="action-button view-button">
-                    Ver Evento
-                  </a>
-                  <% if (registration.status !== 'Cancelado') { %>
-                    <button 
-                      class="action-button cancel-button"
-                      onclick="cancelRegistration('<%= registration.id %>')"
-                    >
-                      Cancelar
-                    </button>
-                  <% } %>
-                </div>
-              </div>
-            </div>
-          <% }); %>
+        <div id="loading" class="loading-spinner" hidden>
+          <img src="/assets/loading.gif" alt="Carregando...">
+          <p>Carregando inscrições...</p>
         </div>
-      <% } else { %>
-        <div class="empty-state">
-          <img src="/assets/empty-state.png" alt="Nenhuma inscrição">
+
+        <div id="noResults" class="empty-state" hidden>
+          <img src="/assets/no-results.png" alt="Sem inscrições">
           <h2>Você ainda não tem inscrições</h2>
           <p>Explore nossos eventos e encontre algo que você goste!</p>
-          <a href="/eventos" class="browse-button">Explorar Eventos</a>
+          <a href="/pesquisar" class="browse-button">Explorar Eventos</a>
         </div>
-      <% } %>
-    </div>
+
+        <div id="errorMessage" class="error-message" hidden>
+          <img src="/assets/error.png" alt="Erro">
+          <p>Ocorreu um erro ao carregar suas inscrições. Tente novamente.</p>
+        </div>
+      </div>
+    </main>
+
+    <template id="inscricaoTemplate">
+      <div class="registration-card">
+        <div class="event-image">
+          <img src="" alt="">
+        </div>
+        <div class="event-content">
+          <h3 class="event-title"></h3>
+          <div class="event-info">
+            <div class="info-item">
+              <img src="/assets/calendar.png" alt="Data" class="info-icon">
+              <span class="event-date"></span>
+            </div>
+            <div class="info-item">
+              <img src="/assets/location.png" alt="Local" class="info-icon">
+              <span class="event-location"></span>
+            </div>
+          </div>
+          <div class="status-badge"></div>
+          <div class="action-buttons">
+            <button class="action-button view-button">Ver Evento</button>
+            <button class="action-button cancel-button">Cancelar</button>
+            <button class="action-button confirm-button">Confirmar Presença</button>
+          </div>
+        </div>
+      </div>
+    </template>
 
     <script>
-      // Carregar o header
-      fetch('../partials/header.html')
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById('header-placeholder').innerHTML = data;
-        });
+      document.addEventListener('DOMContentLoaded', async () => {
+        const inscricoesGrid = document.getElementById('inscricoesGrid');
+        const loading = document.getElementById('loading');
+        const noResults = document.getElementById('noResults');
+        const errorMessage = document.getElementById('errorMessage');
+        const template = document.getElementById('inscricaoTemplate');
 
-      async function cancelRegistration(registrationId) {
-        if (!confirm('Tem certeza que deseja cancelar sua inscrição?')) {
-          return;
+        async function carregarInscricoes() {
+          try {
+            loading.hidden = false;
+            inscricoesGrid.hidden = true;
+            noResults.hidden = true;
+            errorMessage.hidden = true;
+
+            const inscricoes = await InscricaoService.listarMinhasInscricoes();
+            renderizarInscricoes(inscricoes);
+          } catch (error) {
+            console.error('Erro ao carregar inscrições:', error);
+            errorMessage.hidden = false;
+          } finally {
+            loading.hidden = true;
+          }
         }
 
-        try {
-          // Simulação de cancelamento bem-sucedido
-          alert('Inscrição cancelada com sucesso!');
-          window.location.reload();
-        } catch (error) {
-          console.error('Erro:', error);
-          alert('Erro ao processar sua solicitação');
+        function renderizarInscricoes(inscricoes) {
+          inscricoesGrid.innerHTML = '';
+
+          if (!inscricoes || inscricoes.length === 0) {
+            noResults.hidden = false;
+            return;
+          }
+
+          inscricoes.forEach(inscricao => {
+            const card = template.content.cloneNode(true);
+            
+            const imagem = card.querySelector('.event-image img');
+            imagem.src = inscricao.evento.imagem || '/assets/tickIN.png';
+            imagem.alt = inscricao.evento.titulo;
+            imagem.onerror = () => {
+              imagem.src = '/assets/tickIN.png';
+            };
+
+            card.querySelector('.event-title').textContent = inscricao.evento.titulo;
+            card.querySelector('.event-date').textContent = formatarData(inscricao.evento.data) + ' às ' + inscricao.evento.horario;
+            card.querySelector('.event-location').textContent = inscricao.evento.local;
+
+            const statusBadge = card.querySelector('.status-badge');
+            statusBadge.textContent = inscricao.status;
+            statusBadge.className = `status-badge status-${inscricao.status.toLowerCase()}`;
+
+            const btnView = card.querySelector('.view-button');
+            btnView.onclick = () => window.location.href = `/evento/${inscricao.evento.evento_id}`;
+
+            const btnCancel = card.querySelector('.cancel-button');
+            const btnConfirm = card.querySelector('.confirm-button');
+
+            if (inscricao.status === 'Cancelado') {
+              btnCancel.style.display = 'none';
+              btnConfirm.style.display = 'none';
+            } else {
+              btnCancel.onclick = () => handleCancelar(inscricao.inscricao_id);
+              
+              if (inscricao.status === 'Confirmado') {
+                btnConfirm.style.display = 'none';
+              } else {
+                btnConfirm.onclick = () => handleConfirmarPresenca(inscricao.inscricao_id);
+              }
+            }
+
+            inscricoesGrid.appendChild(card);
+          });
+
+          inscricoesGrid.hidden = false;
         }
-      }
+
+        function formatarData(data) {
+          if (!data) return '';
+          try {
+            return new Date(data).toLocaleDateString('pt-BR');
+          } catch (error) {
+            console.error('Erro ao formatar data:', error);
+            return data;
+          }
+        }
+
+        // Carregar inscrições iniciais
+        carregarInscricoes();
+      });
     </script>
   </body>
 </html>

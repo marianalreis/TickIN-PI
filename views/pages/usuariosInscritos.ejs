@@ -4,40 +4,40 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Usuários Inscritos - TickIN</title>
-    <link rel="stylesheet" href="../css/registered-users.css" />
+    <link rel="stylesheet" href="/css/registered-users.css" />
+    <link rel="stylesheet" href="/css/header.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   </head>
   <body>
-    <!-- Include the header -->
-    <div id="header-placeholder"></div>
+    <%- include('../partials/header') %>
 
     <div class="container">
       <h1 class="page-title">Usuários Inscritos</h1>
 
       <div class="event-info">
         <div class="event-header">
-          <img src="<%= event.image %>" alt="<%= event.title %>" class="event-image">
+          <img src="<%= event.imagem %>" alt="<%= event.titulo %>" class="event-image">
           <div class="event-details">
-            <h2><%= event.title %></h2>
+            <h2><%= event.titulo %></h2>
             <div class="event-meta">
               <div class="meta-item">
                 <img src="/assets/calendar.png" alt="Data" class="meta-icon">
-                <span><%= event.date %></span>
+                <span><%= new Date(event.data).toLocaleDateString('pt-BR') %></span>
               </div>
               <div class="meta-item">
                 <img src="/assets/clock.png" alt="Horário" class="meta-icon">
-                <span><%= event.time %></span>
+                <span><%= event.horario %></span>
               </div>
               <div class="meta-item">
                 <img src="/assets/location.png" alt="Local" class="meta-icon">
-                <span><%= event.location %></span>
+                <span><%= event.local %></span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <% if (registrations && registrations.length > 0) { %>
-        <!-- Modificar a tabela de inscrições para incluir controle de presença -->
+      <% if (inscricoes && inscricoes.length > 0) { %>
         <div class="registrations-table">
           <div class="table-header">
             <div>Usuário</div>
@@ -46,26 +46,26 @@
             <div>Presença</div>
             <div>Ação</div>
           </div>
-          <% registrations.forEach(registration => { %>
+          <% inscricoes.forEach(inscricao => { %>
             <div class="table-row">
               <div class="user-info">
-                <img src="<%= registration.user.avatar || '/assets/user-default.png' %>" alt="<%= registration.user.name %>" class="user-avatar">
+                <img src="/assets/user-default.png" alt="<%= inscricao.usuario_nome %>" class="user-avatar">
                 <div>
-                  <div class="user-name"><%= registration.user.name %></div>
-                  <div class="user-email"><%= registration.user.email %></div>
+                  <div class="user-name"><%= inscricao.usuario_nome %></div>
+                  <div class="user-email"><%= inscricao.email %></div>
                 </div>
               </div>
-              <div><%= new Date(registration.createdAt).toLocaleDateString('pt-BR') %></div>
+              <div><%= new Date(inscricao.data_inscricao).toLocaleDateString('pt-BR') %></div>
               <div>
-                <span class="status-badge status-<%= registration.status.toLowerCase() %>">
-                  <%= registration.status %>
+                <span class="status-badge status-<%= inscricao.status.toLowerCase() %>">
+                  <%= inscricao.status %>
                 </span>
               </div>
               <div>
-                <% if (registration.status === 'Confirmado') { %>
+                <% if (inscricao.status === 'Confirmado') { %>
                   <label class="presence-toggle">
-                    <input type="checkbox" onchange="markPresence('<%= registration.id %>', this.checked)" 
-                      <%= registration.presente ? 'checked' : '' %>>
+                    <input type="checkbox" onchange="markPresence('<%= inscricao.inscricao_id %>', this.checked)" 
+                      <%= inscricao.presente ? 'checked' : '' %>>
                     <span class="slider"></span>
                   </label>
                 <% } else { %>
@@ -73,12 +73,33 @@
                 <% } %>
               </div>
               <div>
-                <a href="mailto:<%= registration.user.email %>" class="action-button contact-button">
+                <a href="mailto:<%= inscricao.email %>" class="action-button contact-button">
                   Contatar
                 </a>
               </div>
             </div>
           <% }); %>
+        </div>
+
+        <div class="reminder-section">
+          <h2>Enviar Lembrete</h2>
+          <form id="reminderForm" onsubmit="sendReminder(event)">
+            <div class="form-group">
+              <label for="reminderUsers">Selecionar Usuários</label>
+              <select id="reminderUsers" multiple>
+                <% inscricoes.filter(insc => insc.status === 'Pendente').forEach(insc => { %>
+                  <option value="<%= insc.email %>"><%= insc.usuario_nome %> (<%= insc.email %>)</option>
+                <% }); %>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="reminderMessage">Mensagem</label>
+              <textarea id="reminderMessage" placeholder="Digite sua mensagem..."></textarea>
+            </div>
+            
+            <button type="submit" class="submit-button">Enviar Lembrete</button>
+          </form>
         </div>
       <% } else { %>
         <div class="empty-state">
@@ -89,40 +110,31 @@
       <% } %>
     </div>
 
-    <% if (registrations && registrations.length > 0) { %>
-      <div class="reminder-section">
-        <h2>Enviar Lembrete</h2>
-        <form id="reminderForm">
-          <div class="form-group">
-            <label for="reminderUsers">Selecionar Usuários</label>
-            <select id="reminderUsers" multiple>
-              <% registrations.filter(reg => reg.status === 'Pendente').forEach(reg => { %>
-                <option value="<%= reg.user.email %>"><%= reg.user.name %> (<%= reg.user.email %>)</option>
-              <% }); %>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label for="reminderMessage">Mensagem</label>
-            <textarea id="reminderMessage" placeholder="Digite sua mensagem..."></textarea>
-          </div>
-          
-          <button type="submit" class="submit-button">Enviar Lembrete</button>
-        </form>
-      </div>
-    <% } %>
-
     <script>
-      // Carregar o header
-      fetch('../partials/header.html')
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById('header-placeholder').innerHTML = data;
-        });
-        
-      // Enviar lembrete
-      document.getElementById('reminderForm')?.addEventListener('submit', async (e) => {
-        e.preventDefault();
+      async function markPresence(inscricaoId, isPresent) {
+        try {
+          const response = await fetch(`/api/inscricoes/${inscricaoId}/presenca`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ presente: isPresent })
+          });
+
+          if (!response.ok) {
+            throw new Error('Erro ao atualizar presença');
+          }
+
+          const data = await response.json();
+          alert(data.message || 'Presença atualizada com sucesso!');
+        } catch (error) {
+          console.error('Erro:', error);
+          alert('Erro ao atualizar presença');
+        }
+      }
+
+      async function sendReminder(event) {
+        event.preventDefault();
         
         const selectedUsers = Array.from(document.getElementById('reminderUsers').selectedOptions)
           .map(option => option.value);
@@ -139,27 +151,27 @@
         }
         
         try {
-          // Simulação de envio de lembrete
-          alert(`Lembrete enviado com sucesso para ${selectedUsers.length} usuário(s)!`);
+          const response = await fetch('/api/eventos/reminder', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              users: selectedUsers,
+              message: message
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error('Erro ao enviar lembrete');
+          }
+
+          alert('Lembrete enviado com sucesso!');
           document.getElementById('reminderMessage').value = '';
+          document.getElementById('reminderUsers').selectedIndex = -1;
         } catch (error) {
           console.error('Erro:', error);
           alert('Erro ao enviar lembrete');
-        }
-      });
-
-      // Função para marcar presença
-      async function markPresence(registrationId, isPresent) {
-        try {
-          // Simulação de atualização no banco de dados
-          console.log(`Marcando presença para inscrição ${registrationId}: ${isPresent ? 'Presente' : 'Ausente'}`);
-          
-          // Simulação de sucesso
-          const currentTime = new Date().toLocaleTimeString();
-          alert(`Presença ${isPresent ? 'confirmada' : 'removida'} com sucesso! Horário: ${currentTime}`);
-        } catch (error) {
-          console.error('Erro:', error);
-          alert('Erro ao atualizar presença');
         }
       }
     </script>

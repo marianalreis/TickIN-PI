@@ -1,5 +1,5 @@
 const Usuario = require("../models/usuarioModel");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 
 const usuarioController = {
   getAllUsuarios: async (req, res) => {
@@ -14,7 +14,7 @@ const usuarioController = {
 
   getUsuarioByEmail: async (req, res) => {
     try {
-      const usuario = await Usuario.findByEmail(req.params.email);
+      const usuario = await Usuario.buscarPorEmail(req.params.email);
       if (!usuario) {
         return res.status(404).json({ message: "Usuário não encontrado" });
       }
@@ -25,14 +25,24 @@ const usuarioController = {
     }
   },
 
+  verificarEmail: async (req, res) => {
+    try {
+      const usuario = await Usuario.buscarPorEmail(req.params.email);
+      res.json({ exists: !!usuario });
+    } catch (error) {
+      console.error('Erro ao verificar email:', error);
+      res.status(500).json({ message: error.message });
+    }
+  },
+
   createUsuario: async (req, res) => {
     try {
       console.log('Dados recebidos:', req.body);
       
       // Validação básica
-      if (!req.body.name || !req.body.email || !req.body.password || !req.body.userType) {
+      if (!req.body.nome || !req.body.email || !req.body.senha || !req.body.tipo_usuario || !req.body.cpf) {
         return res.status(400).json({ 
-          message: "Dados incompletos. Nome, email, senha e tipo de usuário são obrigatórios." 
+          message: "Dados incompletos. Nome, CPF, email, senha e tipo de usuário são obrigatórios." 
         });
       }
 
@@ -42,19 +52,28 @@ const usuarioController = {
         return res.status(400).json({ message: "Email já cadastrado" });
       }
 
+      // Verificar se o CPF já existe
+      const existingCPF = await Usuario.findByCPF(req.body.cpf);
+      if (existingCPF) {
+        return res.status(400).json({ message: "CPF já cadastrado" });
+      }
+
       const usuario = await Usuario.create({
-        nome: req.body.name,
+        nome: req.body.nome,
+        cpf: req.body.cpf,
         email: req.body.email,
-        telefone: req.body.phone || '',
-        senha: req.body.password,
-        tipo_usuario: req.body.userType
+        telefone: req.body.telefone || '',
+        senha: req.body.senha,
+        tipo_usuario: req.body.tipo_usuario
       });
 
       // Iniciar sessão após o cadastro
-      req.session.userId = usuario.id;
-      req.session.userEmail = usuario.email;
-      req.session.userName = usuario.nome;
-      req.session.userType = usuario.tipo_usuario;
+      req.session.usuario = {
+        id: usuario.id,
+        nome: usuario.nome,
+        email: usuario.email,
+        tipo_usuario: usuario.tipo_usuario
+      };
       
       res.status(201).json({
         message: "Usuário criado com sucesso",
@@ -94,37 +113,55 @@ const usuarioController = {
 
   loginUsuario: async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { email, senha } = req.body;
+
+      // Validação básica
+      if (!email || !senha) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Email e senha são obrigatórios"
+        });
+      }
 
       // Buscar usuário por email
       const usuario = await Usuario.findByEmail(email);
-
       if (!usuario) {
-        return res.status(401).json({ message: "Email ou senha incorretos" });
+        return res.status(401).json({ 
+          success: false, 
+          message: "Email ou senha incorretos"
+        });
       }
 
       // Validar senha
-      const senhaValida = await Usuario.validatePassword(password, usuario.senha);
+      const senhaValida = await bcrypt.compare(senha, usuario.senha);
       if (!senhaValida) {
-        return res.status(401).json({ message: "Email ou senha incorretos" });
+        return res.status(401).json({ 
+          success: false, 
+          message: "Email ou senha incorretos"
+        });
       }
 
       // Login bem-sucedido - salvar na sessão
-      req.session.userId = usuario.id;
-      req.session.userEmail = usuario.email;
-      req.session.userName = usuario.nome;
-      req.session.userType = usuario.tipo_usuario;
+      req.session.usuario = {
+        id: usuario.id,
+        nome: usuario.nome,
+        email: usuario.email,
+        tipo_usuario: usuario.tipo_usuario
+      };
 
-      // Remove a senha do objeto retornado
-      delete usuario.senha;
-
+      // Redirecionar baseado no tipo de usuário
+      const redirecionamento = usuario.tipo_usuario === 'organizador' ? '/meusEventos' : '/pesquisar';
       res.json({
-        message: "Login realizado com sucesso",
-        user: usuario
+        success: true, 
+        redirect: redirecionamento 
       });
+
     } catch (error) {
       console.error('Erro ao fazer login:', error);
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ 
+        success: false, 
+        message: "Erro ao fazer login. Por favor, tente novamente."
+      });
     }
   },
 

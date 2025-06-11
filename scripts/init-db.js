@@ -1,74 +1,35 @@
 const pool = require('../config/database');
 
 async function initDatabase() {
-  console.log('Iniciando configuração do banco de dados...');
-  
   try {
-    // Verificar se a tabela de usuários existe
-    const checkTable = await pool.query(`
-      SELECT EXISTS (
-        SELECT FROM information_schema.tables 
-        WHERE table_name = 'usuarios'
+    console.log('Iniciando configuração do banco de dados...');
+
+    // Drop and recreate usuarios table
+    await pool.query(`
+      DROP TABLE IF EXISTS usuarios CASCADE;
+      
+      CREATE TABLE usuarios (
+        id SERIAL PRIMARY KEY,
+        cpf VARCHAR(14) UNIQUE NOT NULL,
+        nome VARCHAR(255) NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        telefone VARCHAR(20),
+        senha VARCHAR(255) NOT NULL,
+        tipo_usuario VARCHAR(20) NOT NULL CHECK (tipo_usuario IN ('cliente', 'organizador')),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+
+      CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email);
+      CREATE INDEX IF NOT EXISTS idx_usuarios_cpf ON usuarios(cpf);
     `);
+
+    console.log('Tabela usuarios criada com sucesso!');
     
-    const tableExists = checkTable.rows[0].exists;
-    console.log('Tabela de usuários existe?', tableExists);
-    
-    if (!tableExists) {
-      console.log('Criando tabela de usuários...');
-      
-      await pool.query(`
-        CREATE TABLE usuarios (
-          CPF VARCHAR(11) PRIMARY KEY,
-          nome VARCHAR(100) NOT NULL,
-          email VARCHAR(100) UNIQUE NOT NULL,
-          endereco VARCHAR(200),
-          telefone VARCHAR(20),
-          senha VARCHAR(100) NOT NULL,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-      `);
-      
-      console.log('Tabela de usuários criada com sucesso!');
-    }
-    
-    // Verificar se a tabela de organizadores existe
-    const checkOrgTable = await pool.query(`
-      SELECT EXISTS (
-        SELECT FROM information_schema.tables 
-        WHERE table_name = 'organizadores'
-      );
-    `);
-    
-    const orgTableExists = checkOrgTable.rows[0].exists;
-    console.log('Tabela de organizadores existe?', orgTableExists);
-    
-    if (!orgTableExists) {
-      console.log('Criando tabela de organizadores...');
-      
-      await pool.query(`
-        CREATE TABLE organizadores (
-          id SERIAL PRIMARY KEY,
-          nome VARCHAR(100) NOT NULL,
-          funcao VARCHAR(100),
-          CPF VARCHAR(11) REFERENCES usuarios(CPF),
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-      `);
-      
-      console.log('Tabela de organizadores criada com sucesso!');
-    }
-    
-    console.log('Configuração do banco de dados concluída!');
-    
+    process.exit(0);
   } catch (error) {
     console.error('Erro ao configurar banco de dados:', error);
-  } finally {
-    // Fechar pool de conexões
-    pool.end();
+    process.exit(1);
   }
 }
 
-// Executar a função
 initDatabase();

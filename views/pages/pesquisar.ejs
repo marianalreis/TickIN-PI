@@ -4,102 +4,190 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pesquisar Eventos - TickIN</title>
-    <link rel="stylesheet" href="../css/events.css" />
+    <link rel="stylesheet" href="/css/global.css" />
+    <link rel="stylesheet" href="/css/header.css" />
+    <link rel="stylesheet" href="/css/events.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="/js/inscritos.js"></script>
   </head>
   <body>
-    <!-- Include the header -->
-    <div id="header-placeholder"></div>
+    <%- include('../partials/header', { currentPage: 'pesquisar' }) %>
 
-    <div class="search-container">
-      <div class="search-box">
-        <input 
-          type="text" 
-          placeholder="Pesquisar eventos..." 
-          class="search-input" 
-          id="searchInput"
-        >
-        <button class="search-button" aria-label="Buscar">
-          <img src="/assets/search.png" alt="Buscar">
-        </button>
+    <main>
+      <div class="search-container">
+        <div class="search-box">
+          <input 
+            type="text" 
+            id="searchInput" 
+            class="search-input" 
+            placeholder="Pesquisar eventos..."
+            autocomplete="off"
+          >
+          <button class="search-button" aria-label="Buscar">
+            <img src="/assets/search.png" alt="Buscar">
+          </button>
+        </div>
+
+        <div class="filters">
+          <select id="statusFilter" class="filter-select">
+            <option value="">Todos os status</option>
+            <option value="aberto">Abertos</option>
+            <option value="fechado">Fechados</option>
+          </select>
+          <select id="orderBy" class="filter-select">
+            <option value="data">Data</option>
+            <option value="nome">Nome</option>
+          </select>
+        </div>
+
+        <div id="eventosGrid" class="events-grid"></div>
+
+        <div id="loading" class="loading-spinner" hidden>
+          <img src="/assets/loading.gif" alt="Carregando...">
+          <p>Carregando eventos...</p>
+        </div>
+
+        <div id="noResults" class="no-results" hidden>
+          <img src="/assets/no-results.png" alt="Sem resultados">
+          <p>Nenhum evento encontrado</p>
+        </div>
+
+        <div id="errorMessage" class="error-message" hidden>
+          <img src="/assets/error.png" alt="Erro">
+          <p>Ocorreu um erro ao carregar os eventos. Tente novamente.</p>
+        </div>
       </div>
-    </div>
+    </main>
 
-    <div class="events-grid" id="eventsContainer">
-      <!-- Events will be dynamically inserted here -->
-    </div>
-
-    <script>
-      // Carregar o header
-      fetch('../partials/header.html')
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById('header-placeholder').innerHTML = data;
-        });
-
-      // Function to format date
-      function formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('pt-BR', {
-          day: '2-digit',
-          month: 'long',
-          year: 'numeric'
-        });
-      }
-
-      // Function to create event card
-      function createEventCard(event) {
-        return `
-          <div class="event-card">
-            <img src="${event.image}" alt="${event.title}" class="event-image">
-            <div class="event-content">
-              <h3 class="event-title">${event.title}</h3>
-              <p class="event-details">
-                🗓 Data: ${formatDate(event.date)}<br>
-                🕖 Horário: ${event.time}<br>
-                📍 Local: ${event.location}
-              </p>
-              <div class="event-price">R$ ${event.price.toFixed(2)}</div>
-              <button class="event-button" onclick="window.location.href='/evento/${event.id}'">
-                Inscrever-se
-              </button>
-              <div class="organizer">
-                <img src="${event.organizer.image}" alt="${event.organizer.name}">
-                <div class="organizer-info">
-                  <div>Organizado por</div>
-                  <div><strong>${event.organizer.name}</strong></div>
-                </div>
-              </div>
+    <template id="eventoTemplate">
+      <div class="event-card">
+        <div class="event-image">
+          <img src="" alt="">
+        </div>
+        <div class="event-content">
+          <h3 class="event-title"></h3>
+          <div class="event-info">
+            <div class="info-item">
+              <img src="/assets/calendar.png" alt="Data" class="info-icon">
+              <span class="event-date"></span>
+            </div>
+            <div class="info-item">
+              <img src="/assets/location.png" alt="Local" class="info-icon">
+              <span class="event-location"></span>
             </div>
           </div>
-        `;
-      }
+          <div class="organizer">
+            <img src="/assets/user.png" alt="Organizador" class="organizer-icon">
+            <span class="organizer-info"></span>
+          </div>
+          <button class="event-button">Inscrever-se</button>
+        </div>
+      </div>
+    </template>
 
-      // Function to fetch and display events
-      async function fetchEvents(searchTerm = '') {
-        try {
-          const response = await fetch(`/api/events?search=${encodeURIComponent(searchTerm)}`);
-          const events = await response.json();
-          
-          const eventsContainer = document.getElementById('eventsContainer');
-          eventsContainer.innerHTML = events.map(event => createEventCard(event)).join('');
-        } catch (error) {
-          console.error('Erro ao buscar eventos:', error);
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const orderBy = document.getElementById('orderBy');
+        const eventosGrid = document.getElementById('eventosGrid');
+        const loading = document.getElementById('loading');
+        const noResults = document.getElementById('noResults');
+        const errorMessage = document.getElementById('errorMessage');
+        const template = document.getElementById('eventoTemplate');
+
+        let timeoutId;
+
+        async function buscarEventos() {
+          try {
+            loading.hidden = false;
+            eventosGrid.hidden = true;
+            noResults.hidden = true;
+            errorMessage.hidden = true;
+
+            const filtros = {
+              termo: searchInput.value,
+              status: statusFilter.value,
+              ordem: orderBy.value
+            };
+
+            const response = await fetch(`/api/eventos/publicos?${new URLSearchParams(filtros)}`);
+            if (!response.ok) {
+              throw new Error('Erro ao buscar eventos');
+            }
+            const eventos = await response.json();
+            renderizarEventos(eventos);
+          } catch (error) {
+            console.error('Erro ao buscar eventos:', error);
+            errorMessage.hidden = false;
+            eventosGrid.hidden = true;
+          } finally {
+            loading.hidden = true;
+          }
         }
-      }
 
-      // Search functionality
-      const searchInput = document.getElementById('searchInput');
-      let searchTimeout;
+        function renderizarEventos(eventos) {
+          eventosGrid.innerHTML = '';
 
-      searchInput.addEventListener('input', (e) => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-          fetchEvents(e.target.value);
-        }, 300);
+          if (!eventos || eventos.length === 0) {
+            noResults.hidden = false;
+            return;
+          }
+
+          eventos.forEach(evento => {
+            const card = template.content.cloneNode(true);
+            
+            const imagem = card.querySelector('.event-image img');
+            imagem.src = evento.imagem || '/assets/tickIN.png';
+            imagem.alt = evento.titulo;
+            imagem.onerror = () => {
+              imagem.src = '/assets/tickIN.png';
+            };
+
+            card.querySelector('.event-title').textContent = evento.titulo;
+            card.querySelector('.event-date').textContent = formatarData(evento.data) + ' às ' + evento.horario;
+            card.querySelector('.event-location').textContent = evento.local;
+            card.querySelector('.organizer-info').textContent = 'Organizado por ' + evento.organizador_nome;
+
+            const btnInscricao = card.querySelector('.event-button');
+            const dataEvento = new Date(evento.data);
+            
+            if (dataEvento < new Date()) {
+              btnInscricao.disabled = true;
+              btnInscricao.textContent = 'Evento Encerrado';
+              btnInscricao.classList.add('disabled');
+            } else {
+              btnInscricao.onclick = () => handleInscrever(evento.id);
+            }
+
+            eventosGrid.appendChild(card);
+          });
+
+          eventosGrid.hidden = false;
+        }
+
+        function formatarData(data) {
+          if (!data) return '';
+          try {
+            return new Date(data).toLocaleDateString('pt-BR');
+          } catch (error) {
+            console.error('Erro ao formatar data:', error);
+            return data;
+          }
+        }
+
+        // Event listeners
+        searchInput.addEventListener('input', () => {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(buscarEventos, 300);
+        });
+
+        statusFilter.addEventListener('change', buscarEventos);
+        orderBy.addEventListener('change', buscarEventos);
+
+        // Carregar eventos iniciais
+        buscarEventos();
       });
-
-      // Initial load
-      fetchEvents();
     </script>
   </body>
 </html>

@@ -1,56 +1,52 @@
 /* Importar fonte Poppins */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
-/* Authentication Pages Styles */
-:root {
-  --primary-color: #B30303;
-  --secondary-color: #F88379;
-  --text-color: #FFFFFF;
-  --input-bg: rgba(245, 245, 245, 0.54);
-  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
 * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  background-color: var(--primary-color);
+  background-color: #B30303;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  color: white;
+}
+
+.container {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 2rem;
-  flex: 1;
 }
 
 .logo {
-  width: 350px;
+  width: 200px;
   margin-bottom: 2rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .auth-box {
-  background-color: rgba(0, 0, 0, 0.7);
-  border-radius: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
   padding: 2rem;
+  border-radius: 20px;
   width: 100%;
-  max-width: 500px;
 }
 
-.auth-title {
-  color: var(--text-color);
+h1 {
+  color: white;
   text-align: center;
-  font-size: 2.5rem;
   margin-bottom: 2rem;
-  font-weight: 600;
+  font-size: 2rem;
 }
 
 .form-group {
@@ -59,138 +55,149 @@ body {
 
 .form-group label {
   display: block;
-  color: var(--text-color);
   margin-bottom: 0.5rem;
-  font-size: 1.1rem;
+  color: white;
 }
 
 .input-group {
   position: relative;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 50px;
+  padding: 0.5rem 1rem;
   display: flex;
   align-items: center;
 }
 
 .input-group input {
   width: 100%;
-  padding: 1rem;
-  padding-left: 3rem;
+  background: none;
   border: none;
-  border-radius: 40px;
-  background-color: var(--input-bg);
+  padding: 0.5rem;
+  color: #333;
   font-size: 1rem;
-  color: #000;
 }
 
 .input-group input::placeholder {
-  color: rgba(0, 0, 0, 0.6);
+  color: #666;
+}
+
+.input-group input:focus {
+  outline: none;
 }
 
 .input-group .icon {
-  position: absolute;
-  left: 1rem;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
+  margin-right: 0.5rem;
 }
 
 .radio-group {
   display: flex;
   gap: 2rem;
   justify-content: center;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
-.radio-group label {
+.radio-label {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--text-color);
   cursor: pointer;
 }
 
-.radio-group input[type="radio"] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--text-color);
-  border-radius: 50%;
-  margin: 0;
+.radio-label input[type="radio"] {
+  width: 16px;
+  height: 16px;
   cursor: pointer;
-}
-
-.radio-group input[type="radio"]:checked {
-  background-color: var(--secondary-color);
-  border-color: var(--secondary-color);
 }
 
 .submit-button {
   width: 100%;
   padding: 1rem;
-  background-color: var(--secondary-color);
-  color: var(--text-color);
+  background: #FF9494;
+  color: white;
   border: none;
-  border-radius: 40px;
-  font-size: 1.2rem;
+  border-radius: 50px;
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  margin-top: 2rem;
-  transition: background-color 0.3s ease;
+  margin-top: 1rem;
 }
 
 .submit-button:hover {
-  background-color: #ff9289;
+  background: #ff8080;
 }
 
-.auth-footer {
+.auth-link {
+  margin-top: 1.5rem;
   text-align: center;
-  margin-top: 2rem;
-}
-
-.auth-footer a {
-  color: var(--text-color);
-  text-decoration: none;
-  font-size: 1rem;
-}
-
-.auth-footer a:hover {
-  text-decoration: underline;
-}
-
-.error-message, .success-message {
-  display: none;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-.error-message {
-  background-color: rgba(255, 0, 0, 0.2);
-  color: #ff0000;
-}
-
-.success-message {
-  background-color: rgba(76, 175, 80, 0.9);
   color: white;
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-  .logo {
-    width: 280px;
+.auth-link a {
+  color: white;
+  text-decoration: none;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
+}
+
+.success-message,
+.error-message {
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  display: none;
+  text-align: center;
+}
+
+.success-message {
+  background: rgba(212, 237, 218, 0.9);
+  color: #155724;
+}
+
+.error-message {
+  background: rgba(248, 215, 218, 0.9);
+  color: #721c24;
+}
+
+.loading-spinner {
+  display: none;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.loading-spinner::after {
+  content: "";
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem;
   }
-  
+
   .auth-box {
     padding: 1.5rem;
   }
 
-  .auth-title {
-    font-size: 2rem;
+  .logo {
+    width: 150px;
   }
 
-  .radio-group {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+  h1 {
+    font-size: 1.75rem;
   }
 } 
