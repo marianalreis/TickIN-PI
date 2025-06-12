@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Detalhes do Evento - TickIN</title>
-    <link rel="stylesheet" href="/css/global.css" />
+    <link rel="stylesheet" href="../css/global.css" />
     <link rel="stylesheet" href="../css/header.css" />
     <link rel="stylesheet" href="../css/event-details.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
@@ -15,20 +15,20 @@
 
     <div class="event-container">
       <div class="event-details">
-        <img src="<%= event.imagem || '/assets/tickIN.png' %>" alt="<%= event.titulo %>" class="event-image" onerror="this.src='/assets/tickIN.png'">
+        <img src="<%= event.imagem || 'assets/tickIN.png' %>" alt="<%= event.titulo %>" class="event-image" onerror="this.src='assets/tickIN.png'">
         <div class="event-content">
           <h1 class="event-title"><%= event.titulo %></h1>
           <div class="event-info">
             <div class="info-item">
-              <img src="/assets/calendar.png" alt="Data" class="info-icon">
+              <i class="fas fa-calendar"></i>
               <span><%= new Date(event.data).toLocaleDateString('pt-BR') %></span>
             </div>
             <div class="info-item">
-              <img src="/assets/clock.png" alt="Horário" class="info-icon">
+              <i class="fas fa-clock"></i>
               <span><%= event.horario %></span>
             </div>
             <div class="info-item">
-              <img src="/assets/location.png" alt="Local" class="info-icon">
+              <i class="fas fa-location-dot"></i>
               <span><%= event.local %></span>
             </div>
           </div>
@@ -38,7 +38,7 @@
           <div class="organizer-section">
             <h2 class="organizer-header">Organizador do Evento</h2>
             <div class="organizer-card">
-              <img src="/assets/user.png" alt="<%= event.organizador_nome %>" class="organizer-image">
+              <i class="fas fa-user organizer-image"></i>
               <div class="organizer-info">
                 <h3><%= event.organizador_nome %></h3>
                 <p>Organizador do evento</p>
@@ -53,11 +53,11 @@
           Operação realizada com sucesso!
         </div>
         <div class="organizer-actions">
-          <a href="/eventos/editar/<%= event.id %>" class="action-button edit-button">
+          <a href="/editar-evento/<%= event.id %>" class="action-button edit-button">
             <i class="fas fa-edit"></i>
             Editar Evento
           </a>
-          <a href="/eventos/inscritos/<%= event.id %>" class="action-button view-registrations-button">
+          <a href="/usuarios-inscritos/<%= event.id %>" class="action-button view-registrations-button">
             <i class="fas fa-users"></i>
             Ver Inscritos
           </a>
@@ -67,6 +67,13 @@
         </p>
       </div>
     </div>
+
+    <script>
+      const eventoData = JSON.parse('<%= JSON.stringify(event || {}) %>');
+      const usuarioData = JSON.parse('<%= JSON.stringify(usuario || {}) %>');
+      console.log('Dados do evento (organizador):', eventoData);
+      console.log('Dados do usuário (organizador):', usuarioData);
+    </script>
 
     <style>
       .organizer-actions {

@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TickIN - Meus Eventos</title>
-    <link rel="stylesheet" href="/css/global.css" />
-    <link rel="stylesheet" href="/css/header.css" />
-    <link rel="stylesheet" href="/css/my-events.css" />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/my-events.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   </head>
@@ -25,9 +25,9 @@
       <div class="grid">
         <% if (events && events.length > 0) { %>
           <% events.forEach(event => { %>
-            <div class="card" onclick="window.location.href='/evento/<%= event.id %>'">
+            <div class="card" id="evento-<%= event.id %>" onclick="window.location.href='/evento/<%= event.id %>'">
               <div class="event-image">
-                <img src="<%= event.imagem || '/assets/event-placeholder.png' %>" alt="<%= event.titulo %>" onerror="this.src='/assets/tickIN.png'">
+                <img src="<%= event.imagem || 'assets/tickIN.png' %>" alt="<%= event.titulo %>" onerror="this.src='assets/tickIN.png'">
               </div>
               <div class="event-content">
                 <h2 class="event-title"><%= event.titulo %></h2>
@@ -51,14 +51,18 @@
                   </div>
                 </div>
                 <div class="event-actions" onclick="event.stopPropagation()">
-                  <a href="/eventos/inscritos/<%= event.id %>" class="button button-secondary">
+                  <a href="/usuarios-inscritos/<%= event.id %>" class="button button-secondary">
                     <i class="fas fa-users"></i>
                     Ver Inscritos
                   </a>
-                  <a href="/eventos/editar/<%= event.id %>" class="button button-secondary">
+                  <a href="/editar-evento/<%= event.id %>" class="button button-secondary">
                     <i class="fas fa-edit"></i>
                     Editar
                   </a>
+                  <button type="button" class="button button-danger" onclick="deleteEvento('<%= event.id %>'); event.stopPropagation();">
+                    <i class="fas fa-trash"></i>
+                    Deletar
+                  </button>
                 </div>
               </div>
             </div>
@@ -66,12 +70,30 @@
         <% } else { %>
           <div class="empty-state">
             <p>Você ainda não tem eventos cadastrados.</p>
-            <a href="/registrar" class="button">Criar Novo Evento</a>
+            <a href="registrar" class="button">Criar Novo Evento</a>
           </div>
         <% } %>
       </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <script>
+      async function deleteEvento(eventoId) {
+        if (!confirm('Tem certeza que deseja deletar este evento?')) return;
+        try {
+          const response = await fetch(`/api/eventos/${eventoId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+          });
+          if (!response.ok) throw new Error('Erro ao deletar evento');
+          // Remover o card do DOM
+          const card = document.getElementById(`evento-${eventoId}`);
+          if (card) card.remove();
+          alert('Evento deletado com sucesso!');
+        } catch (error) {
+          alert(error.message);
+        }
+      }
+    </script>
   </body>
 </html>

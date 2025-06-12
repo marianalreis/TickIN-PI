@@ -135,7 +135,7 @@ const inscricaoController = {
         return res.status(403).render('error', { 
           message: 'Você não tem permissão para ver os inscritos deste evento' 
         });
-      }
+    }
 
       // Buscar todas as inscrições do evento
       const inscricoes = await Inscricao.findByEvento(eventoId);

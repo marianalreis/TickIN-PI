@@ -190,9 +190,8 @@ class Evento {
       const { titulo, descricao, data, horario, local, imagem } = evento;
       const query = `
         UPDATE eventos
-        SET titulo = $1, descricao = $2, data = $3, horario = $4, local = $5, imagem = $6,
-            updated_at = CURRENT_TIMESTAMP
-        WHERE id = $7 AND usuario_id = $8
+        SET titulo = $1, descricao = $2, data = $3, horario = $4, local = $5, imagem = $6
+        WHERE evento_id = $7 AND usuario_id = $8
         RETURNING *
       `;
       const values = [titulo, descricao, data, horario, local, imagem, id, evento.usuario_id];
@@ -203,7 +202,6 @@ class Evento {
       return rows[0];
     } catch (error) {
       console.error('Erro ao atualizar evento:', error);
-      console.error('Stack trace:', error.stack);
       throw new Error('Erro ao atualizar evento: ' + error.message);
     }
   }
@@ -213,7 +211,7 @@ class Evento {
     try {
       console.log('Deletando evento:', { id, usuario_id });
       
-      const query = 'DELETE FROM eventos WHERE id = $1 AND usuario_id = $2 RETURNING *';
+      const query = 'DELETE FROM eventos WHERE evento_id = $1 AND usuario_id = $2 RETURNING *';
       const { rows } = await pool.query(query, [id, usuario_id]);
       
       console.log('Evento deletado:', rows[0]);

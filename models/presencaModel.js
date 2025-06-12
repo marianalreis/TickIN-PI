@@ -55,11 +55,11 @@ class Presenca {
   static async findByEvento(eventoId) {
     try {
       const query = `
-        SELECT p.*, i.CPF, u.nome as usuario_nome
+        SELECT p.*, i.inscricao_id, u.nome as usuario_nome, u.email
         FROM presencas p
-        JOIN inscricoes i ON p.compra_ID = i.compra_ID
-        JOIN usuarios u ON i.CPF = u.CPF
-        WHERE i.evento_ID = $1
+        JOIN inscricoes i ON p.inscricao_id = i.inscricao_id
+        JOIN usuarios u ON i.usuario_id = u.id
+        WHERE i.evento_id = $1
       `;
       const { rows } = await pool.query(query, [eventoId]);
       return rows;

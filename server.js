@@ -13,6 +13,7 @@ const inscricaoRoutes = require('./routes/inscricaoRoutes');
 const apiRoutes = require('./routes/api');
 const Evento = require('./models/eventoModel');
 const pool = require('./config/database');
+const presencaRoutes = require('./routes/presencaRoutes');
 
 // Inicializar o app Express
 const app = express();
@@ -70,7 +71,7 @@ app.use((req, res, next) => {
     res.locals.usuario = null;
     res.locals.isAuthenticated = false;
   }
-  next();
+    next();
 });
 
 // Testar conexão com o banco de dados
@@ -86,6 +87,7 @@ pool.connect((err, client, done) => {
 // Configurar rotas da API
 app.use('/api', apiRoutes);
 app.use('/api/inscricoes', inscricaoRoutes);
+app.use('/presenca', presencaRoutes);
 
 // Configurar rotas de páginas
 app.use('/', indexRoutes);
