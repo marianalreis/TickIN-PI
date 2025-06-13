@@ -98,19 +98,57 @@ const inscricaoController = {
   cancelarInscricao: async (req, res) => {
     try {
       if (!req.session?.usuario?.id) {
+        console.error('Tentativa de cancelar inscrição sem autenticação');
         return res.status(401).json({ erro: 'Usuário não autenticado' });
       }
 
+      console.log('Tentando cancelar inscrição:', {
+        inscricaoId: req.params.id,
+        usuarioId: req.session.usuario.id,
+        session: req.session,
+        sessionUsuario: req.session.usuario
+      });
+
       const inscricao = await Inscricao.findById(req.params.id);
       if (!inscricao) {
+        console.error('Inscrição não encontrada:', req.params.id);
         return res.status(404).json({ erro: 'Inscrição não encontrada' });
       }
 
-      if (inscricao.usuario_id !== req.session.usuario.id) {
+      console.log('Inscrição encontrada:', {
+        inscricao,
+        inscricaoUsuarioId: inscricao.usuario_id,
+        sessionUsuarioId: req.session.usuario.id,
+        tipos: {
+          inscricaoUsuarioId: typeof inscricao.usuario_id,
+          sessionUsuarioId: typeof req.session.usuario.id
+        },
+        valores: {
+          inscricaoUsuarioId: inscricao.usuario_id,
+          sessionUsuarioId: req.session.usuario.id,
+          comparacao: Number(inscricao.usuario_id) === Number(req.session.usuario.id)
+        }
+      });
+
+      if (Number(inscricao.usuario_id) !== Number(req.session.usuario.id)) {
+        console.error('Tentativa de cancelar inscrição de outro usuário:', {
+          inscricaoUsuarioId: inscricao.usuario_id,
+          sessionUsuarioId: req.session.usuario.id,
+          tipos: {
+            inscricaoUsuarioId: typeof inscricao.usuario_id,
+            sessionUsuarioId: typeof req.session.usuario.id
+          },
+          valores: {
+            inscricaoUsuarioId: inscricao.usuario_id,
+            sessionUsuarioId: req.session.usuario.id,
+            comparacao: Number(inscricao.usuario_id) === Number(req.session.usuario.id)
+          }
+        });
         return res.status(403).json({ erro: 'Você não tem permissão para cancelar esta inscrição' });
       }
 
       await Inscricao.delete(req.params.id);
+      console.log('Inscrição cancelada com sucesso:', req.params.id);
       res.status(200).json({ mensagem: 'Inscrição cancelada com sucesso' });
     } catch (error) {
       console.error('Erro ao cancelar inscrição:', error);
