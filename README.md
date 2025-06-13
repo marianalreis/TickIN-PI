@@ -52,7 +52,36 @@ npm install
 3. **Configurar o arquivo `.env`:**
     
 Renomeie o arquivo `.env.example` para `.env` e configure as variáveis de ambiente necessárias, como as configurações do banco de dados PostgreSQL.
-    
+
+
+## Como Executar o Sistema
+
+Após seguir os passos de instalação acima, execute o sistema localmente com os seguintes comandos:
+
+1. **(Opcional) Inicialize o banco de dados:**
+   Se for a primeira vez rodando, crie as tabelas executando:
+   ```bash
+   npm run init-db
+   ```
+   (ou rode manualmente o script SQL em `sql/` ou `database/` no seu PostgreSQL)
+
+2. **Inicie o servidor:**
+   ```bash
+   npm start
+   ```
+   ou, para desenvolvimento com recarregamento automático:
+   ```bash
+   npm run dev
+   ```
+
+3. **Acesse a aplicação:**
+   Abra o navegador e acesse:
+   [http://localhost:3000](http://localhost:3000)
+
+4. **Login e uso:**
+   - Crie uma conta ou faça login.
+   - Explore as funcionalidades de criação de eventos, inscrições e registro de presença.
+
 
 Configuração do Banco de Dados
 -----------------------------
@@ -69,41 +98,46 @@ npm run init-db
     
 Isso criará as tabelas definidas no schema SQL (`modelo-dados.sql`) conforme o modelo físico do banco de dados da aplicação, incluindo entidades como `usuários`, `eventos`, `inscricoes`, entre outras.
 
-    
-
-
 Estrutura de Diretórios
 -----------------------
 ```
-meu-projeto/
+TickIN-PI/
 │
-├── config/                # Arquivos de configuração (ex: conexão com banco)
+├── assets/                # Imagens e arquivos públicos
+├── config/                # Configurações do banco e ambiente
 │   └── database.js
 ├── controllers/           # Lógica de controle das requisições
-│   └── HomeController.js
-├── documents/             # Arquivos relacionados ao WAD(Web Design Document)
-│   └── assets/            # Assets do WAD
-│   └── PI-WAD.md         
-├── models/                # Definição de modelos de dados (estrutura do banco)
-│   └── User.js
+├── css/                   # Arquivos CSS do sistema
+├── database/              # Scripts e arquivos auxiliares do banco
+├── middleware/            # Middlewares de autenticação e outros
+├── models/                # Modelos de dados (estrutura do banco)
+├── node_modules/          # Dependências do Node.js
 ├── routes/                # Definição das rotas do sistema
-│   └── index.js
+├── scripts/               # Scripts utilitários e de inicialização
 ├── services/              # Serviços auxiliares do sistema
-│   └── userService.js
-├── assets/                # Arquivos públicos como imagens e fontes
-├── scripts/               # Arquivos de JavaScript públicos
-├── styles/                # Arquivos CSS públicos
-├── views/                 #  Views da aplicação (se aplicável)
-├── tests/                 # Arquivos de testes unitários
-│   └── example.test.js
+├── sql/                   # Scripts SQL para estrutura e migração
+├── views/                 # Views EJS da aplicação
+│   └── pages/             # Páginas principais
+│   └── partials/          # Partes reutilizáveis (header, footer, etc)
 ├── .gitignore             # Arquivo para ignorar arquivos no Git
-├── .env.example           # Arquivo de exemplo para variáveis de ambiente
-├── jest.config.js         # Arquivo de configuração do Jest
-├── package-lock.json      # Gerenciador de dependências do Node.js
+├── Comp_Ponderada3.md     # Documentação complementar
+├── Comp_Ponderada4.md     # Documentação complementar
+├── database.sql           # Script SQL principal
+├── fix_eventos.sql        # Script de correção de eventos
+├── index.html             # Página inicial estática (opcional)
+├── instrução.md           # Instruções do projeto
+├── migration.sql          # Script de migração do banco
 ├── package.json           # Gerenciador de dependências do Node.js
-├── README.md              # Documentação do projeto (Markdown)
+├── package-lock.json      # Lockfile do Node.js
+├── PI-WAD.md              # Documento WAD do projeto
+├── README.md              # Documentação do projeto
+├── recreate_eventos.sql   # Script de recriação de eventos
 ├── rest.http              # Teste de endpoints (opcional)
-└── server.js              # Arquivo principal que inicializa o servidor
+├── server.js              # Arquivo principal que inicializa o servidor
+├── verify_structure.sql   # Script de verificação de estrutura
+└── ... (outros arquivos e pastas)
+```
+
 ```
 
 Contribuição
