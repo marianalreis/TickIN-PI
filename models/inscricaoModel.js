@@ -25,11 +25,18 @@ class Inscricao {
   // Buscar inscrição por ID
   static async findById(id) {
     try {
+      console.log('Buscando inscrição por ID:', id);
       const query = `
         SELECT 
-          i.inscricao_id, i.status, i.data_inscricao,
-          e.titulo as evento_titulo, e.data as evento_data,
-          e.horario as evento_horario, e.local as evento_local,
+          i.inscricao_id, 
+          i.status, 
+          i.data_inscricao, 
+          i.usuario_id,
+          i.evento_id,
+          e.titulo as evento_titulo, 
+          e.data as evento_data,
+          e.horario as evento_horario, 
+          e.local as evento_local,
           e.imagem as evento_imagem,
           u.nome as usuario_nome
         FROM inscricoes i
@@ -37,8 +44,9 @@ class Inscricao {
         JOIN usuarios u ON i.usuario_id = u.id
         WHERE i.inscricao_id = $1
       `;
-    const { rows } = await pool.query(query, [id]);
-    return rows[0];
+      const { rows } = await pool.query(query, [id]);
+      console.log('Resultado da busca:', rows[0]);
+      return rows[0];
     } catch (error) {
       console.error('Erro ao buscar inscrição:', error);
       throw error;
@@ -53,6 +61,7 @@ class Inscricao {
           i.inscricao_id,
           i.status,
           i.data_inscricao,
+          i.usuario_id,
           e.evento_id,
           e.titulo,
           e.descricao,
@@ -74,6 +83,7 @@ class Inscricao {
         inscricao_id: row.inscricao_id,
         status: row.status,
         inscricao_data: row.data_inscricao,
+        usuario_id: row.usuario_id,
         evento: {
           id: row.evento_id,
           titulo: row.titulo,
@@ -154,40 +164,29 @@ class Inscricao {
   }
 
   // Atualizar inscrição
-  static async update(id, { status, presente }) {
+  static async update(id, inscricao) {
     try {
-      let query, values;
-      
-      if (status !== undefined && presente !== undefined) {
-        query = `
-          UPDATE inscricoes
-          SET status = $1, presente = $2
-          WHERE inscricao_id = $3
-          RETURNING inscricao_id, usuario_id, evento_id, status, presente, data_inscricao
-        `;
-        values = [status, presente, id];
-      } else if (status !== undefined) {
-        query = `
-          UPDATE inscricoes
-          SET status = $1
-          WHERE inscricao_id = $2
-          RETURNING inscricao_id, usuario_id, evento_id, status, presente, data_inscricao
-        `;
-        values = [status, id];
-      } else if (presente !== undefined) {
-        query = `
+      const { status } = inscricao;
+      const query = `
         UPDATE inscricoes 
-          SET presente = $1
-          WHERE inscricao_id = $2
-          RETURNING inscricao_id, usuario_id, evento_id, status, presente, data_inscricao
+        SET status = $1
+        WHERE inscricao_id = $2 
+        RETURNING *
+      `;
+      const { rows } = await pool.query(query, [status, id]);
+      
+      // Se a inscrição foi confirmada, criar uma presença
+      if (status === 'Confirmado' && rows[0]) {
+        const presencaQuery = `
+          INSERT INTO presencas (inscricao_id, presente, hora_entrada)
+          VALUES ($1, false, null)
+          RETURNING presenca_id
         `;
-        values = [presente, id];
-      } else {
-        throw new Error('Nenhum campo para atualizar foi fornecido');
+        const presencaResult = await pool.query(presencaQuery, [id]);
+        console.log('Presença criada:', presencaResult.rows[0]);
       }
-
-      const { rows } = await pool.query(query, values);
-    return rows[0];
+      
+      return rows[0];
     } catch (error) {
       console.error('Erro ao atualizar inscrição:', error);
       throw error;

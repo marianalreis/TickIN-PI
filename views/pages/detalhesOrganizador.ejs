@@ -15,7 +15,7 @@
 
     <div class="event-container">
       <div class="event-details">
-        <img src="<%= event.imagem || 'assets/tickIN.png' %>" alt="<%= event.titulo %>" class="event-image" onerror="this.src='assets/tickIN.png'">
+        <img src="<%= event.imagem %>" alt="<%= event.titulo %>" class="event-image" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px;" onerror="console.error('Erro ao carregar imagem:', this.src); this.src='/assets/tickIN.png'">
         <div class="event-content">
           <h1 class="event-title"><%= event.titulo %></h1>
           <div class="event-info">
@@ -68,11 +68,34 @@
       </div>
     </div>
 
+    <!-- Dados do servidor -->
+    <script type="application/json" id="eventoData">
+      <%- JSON.stringify(event || {}) %>
+    </script>
+    <script type="application/json" id="usuarioData">
+      <%- JSON.stringify(usuario || {}) %>
+    </script>
+
     <script>
-      const eventoData = JSON.parse('<%= JSON.stringify(event || {}) %>');
-      const usuarioData = JSON.parse('<%= JSON.stringify(usuario || {}) %>');
-      console.log('Dados do evento (organizador):', eventoData);
-      console.log('Dados do usuário (organizador):', usuarioData);
+      document.addEventListener('DOMContentLoaded', () => {
+        try {
+          // Usando data attributes para passar os dados
+          const eventoData = JSON.parse(document.getElementById('eventoData').textContent);
+          const usuarioData = JSON.parse(document.getElementById('usuarioData').textContent);
+          
+          // Verificar se os dados são válidos antes de usar
+          if (eventoData && Object.keys(eventoData).length > 0) {
+            console.log('Dados do evento (organizador):', eventoData);
+            console.log('URL da imagem:', eventoData.imagem);
+          }
+          
+          if (usuarioData && Object.keys(usuarioData).length > 0) {
+            console.log('Dados do usuário (organizador):', usuarioData);
+          }
+        } catch (error) {
+          console.error('Erro ao processar dados:', error);
+        }
+      });
     </script>
 
     <style>

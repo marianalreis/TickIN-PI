@@ -14,7 +14,7 @@
 
     <div class="event-container">
       <div class="event-details">
-        <img src="<%= event.imagem || '/assets/tickIN.png' %>" alt="<%= event.titulo %>" class="event-image" onerror="this.src='/assets/tickIN.png'">
+        <img src="<%= event.imagem %>" alt="<%= event.titulo %>" class="event-image" onerror="this.src='/assets/tickIN.png'" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px;">
         <div class="event-content">
           <h1 class="event-title"><%= event.titulo %></h1>
           <div class="event-info">
@@ -61,39 +61,50 @@
       </div>
     </div>
 
+    <!-- Dados do servidor -->
+    <script type="application/json" id="eventoData">
+      <%- JSON.stringify(event || {}) %>
+    </script>
+
     <script>
-      document.getElementById('registerButton').addEventListener('click', async () => {
-        try {
-          const response = await fetch('/api/inscricoes', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              evento_id: '<%= event.id %>'
-            })
-          });
+      document.addEventListener('DOMContentLoaded', () => {
+        // Usando data attributes para passar os dados
+        const eventoData = JSON.parse(document.getElementById('eventoData').textContent);
+        console.log('Dados do evento:', eventoData);
 
-          if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.erro || 'Erro ao realizar inscrição');
+        document.getElementById('registerButton').addEventListener('click', async () => {
+          try {
+            const response = await fetch('/api/inscricoes', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                evento_id: eventoData.id
+              })
+            });
+
+            if (!response.ok) {
+              const error = await response.json();
+              throw new Error(error.erro || 'Erro ao realizar inscrição');
+            }
+
+            const successMessage = document.getElementById('successMessage');
+            const registerButton = document.getElementById('registerButton');
+            
+            successMessage.style.display = 'block';
+            registerButton.disabled = true;
+            registerButton.textContent = 'Inscrito';
+            registerButton.style.backgroundColor = '#4CAF50';
+            
+            setTimeout(() => {
+              window.location.href = '/minhas-inscricoes';
+            }, 2000);
+          } catch (error) {
+            console.error('Erro:', error);
+            alert(error.message || 'Erro ao realizar inscrição. Por favor, tente novamente.');
           }
-
-          const successMessage = document.getElementById('successMessage');
-          const registerButton = document.getElementById('registerButton');
-          
-          successMessage.style.display = 'block';
-          registerButton.disabled = true;
-          registerButton.textContent = 'Inscrito';
-          registerButton.style.backgroundColor = '#4CAF50';
-          
-          setTimeout(() => {
-            window.location.href = '/minhas-inscricoes';
-          }, 2000);
-        } catch (error) {
-          console.error('Erro:', error);
-          alert(error.message || 'Erro ao realizar inscrição. Por favor, tente novamente.');
-        }
+        });
       });
     </script>
   </body>

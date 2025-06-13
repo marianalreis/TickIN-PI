@@ -118,7 +118,7 @@
               throw new Error('Erro ao buscar eventos');
             }
             const eventos = await response.json();
-            renderizarEventos(eventos);
+            await renderizarEventos(eventos);
           } catch (error) {
             console.error('Erro ao buscar eventos:', error);
             errorMessage.hidden = false;
@@ -128,7 +128,50 @@
           }
         }
 
-        function renderizarEventos(eventos) {
+        async function verificarInscricao(eventoId) {
+          try {
+            const response = await fetch(`/api/inscricoes/verificar/${eventoId}`);
+            if (!response.ok) {
+              throw new Error('Erro ao verificar inscrição');
+            }
+            const data = await response.json();
+            return data.inscrito;
+          } catch (error) {
+            console.error('Erro ao verificar inscrição:', error);
+            return false;
+          }
+        }
+
+        async function handleInscrever(eventoId) {
+          try {
+            const inscrito = await verificarInscricao(eventoId);
+            if (inscrito) {
+              alert('Você já está inscrito neste evento!');
+              return;
+            }
+
+            const response = await fetch('/api/inscricoes', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ evento_id: eventoId })
+            });
+
+            if (!response.ok) {
+              const error = await response.json();
+              throw new Error(error.erro || 'Erro ao realizar inscrição');
+            }
+
+            alert('Inscrição realizada com sucesso!');
+            buscarEventos(); // Atualiza a lista de eventos
+          } catch (error) {
+            console.error('Erro ao inscrever:', error);
+            alert(error.message || 'Erro ao realizar inscrição. Tente novamente.');
+          }
+        }
+
+        async function renderizarEventos(eventos) {
           eventosGrid.innerHTML = '';
 
           if (!eventos || eventos.length === 0) {
@@ -136,7 +179,7 @@
             return;
           }
 
-          eventos.forEach(evento => {
+          for (const evento of eventos) {
             const card = template.content.cloneNode(true);
             
             const imagem = card.querySelector('.event-image img');
@@ -162,14 +205,21 @@
               btnInscricao.textContent = 'Evento Encerrado';
               btnInscricao.classList.add('disabled');
             } else {
-              btnInscricao.onclick = (e) => {
-                e.preventDefault();
-                handleInscrever(evento.id);
-              };
+              const inscrito = await verificarInscricao(evento.id);
+              if (inscrito) {
+                btnInscricao.disabled = true;
+                btnInscricao.textContent = 'Já Inscrito';
+                btnInscricao.classList.add('disabled');
+              } else {
+                btnInscricao.onclick = (e) => {
+                  e.preventDefault();
+                  handleInscrever(evento.id);
+                };
+              }
             }
 
             eventosGrid.appendChild(card);
-          });
+          }
 
           eventosGrid.hidden = false;
         }

@@ -30,7 +30,7 @@ Ao integrar as perspectivas tanto dos participantes quanto dos organizadores, o 
 
 ### 2.1. Personas (Semana 01)
 
-Personas são arquétipos detalhados de usuários que capturam padrões de comportamento, motivações, objetivos e necessidades, criados a partir da análise de dados qualitativos e quantitativos, como entrevistas, observações e análises de mercado; ao traduzirem dados complexos em perfis humanos compreensíveis, facilitam a criação de produtos mais centrados no usuário, impactando diretamente a eficácia de projetos de design e tecnologia, sendo que, segundo a Interaction Design Foundation[¹](#5-referências), o uso de personas pode aumentar em até 18 % a taxa de adoção de novos produtos e melhorar a retenção de usuários em projetos digitais.
+Personas são arquétipos detalhados de usuários que capturam padrões de comportamento, motivações, objetivos e necessidades, criados a partir da análise de dados qualitativos e quantitativos, como entrevistas, observações e análises de mercado; ao traduzirem dados complexos em perfis humanos compreensíveis, facilitam a criação de produtos mais centrados no usuário, impactando diretamente a eficácia de projetos de design e tecnologia, sendo que, segundo a Interaction Design Foundation[¹](#5-referências), o uso de personas pode aumentar em até 18  % a taxa de adoção de novos produtos e melhorar a retenção de usuários em projetos digitais.
 <div align="center">
   <sub>FIGURA 1 - Persona 1</sub><br>
   <img src= "assets/Persona1-PI.png" width="100%" 
@@ -273,7 +273,7 @@ Esse diagrama representa a estrutura em camadas da aplicação, demonstrando o f
 
 ### 3.3. Wireframes (Semana 03)
 
-Wireframe é uma representação visual simplificada da estrutura de uma interface, utilizada no processo de design para mapear a disposição e hierarquia dos elementos de navegação, entrada e saída de dados em uma aplicação digital. Essa técnica permite que equipes de desenvolvimento, design e stakeholders validem rapidamente a lógica de funcionamento do sistema antes da implementação gráfica ou técnica. Os wireframes podem variar em fidelidade, de esboços manuais até versões digitais mais detalhadas, e são fundamentais para garantir clareza, eficiência e alinhamento entre os envolvidos no projeto. Segundo a Interaction Design Foundation[⁴](#5-referências), wireframes funcionam como o “esqueleto” de uma interface, ajudando a identificar problemas de usabilidade ainda nas fases iniciais do desenvolvimento, o que reduz retrabalho e melhora a experiência do usuário final.
+Wireframe é uma representação visual simplificada da estrutura de uma interface, utilizada no processo de design para mapear a disposição e hierarquia dos elementos de navegação, entrada e saída de dados em uma aplicação digital. Essa técnica permite que equipes de desenvolvimento, design e stakeholders validem rapidamente a lógica de funcionamento do sistema antes da implementação gráfica ou técnica. Os wireframes podem variar em fidelidade, de esboços manuais até versões digitais mais detalhadas, e são fundamentais para garantir clareza, eficiência e alinhamento entre os envolvidos no projeto. Segundo a Interaction Design Foundation[⁴](#5-referências), wireframes funcionam como o "esqueleto" de uma interface, ajudando a identificar problemas de usabilidade ainda nas fases iniciais do desenvolvimento, o que reduz retrabalho e melhora a experiência do usuário final.
 
 <div align="center">
   <sub>FIGURA X - Wireframes do TickIN</sub><br>
@@ -391,7 +391,7 @@ O logotipo foi aplicado em variações com fundo transparente e versões em bran
 
 ### 3.5. Protótipo de alta fidelidade (Semana 05)
 
-Protótipos são representações interativas de uma interface digital, utilizadas para simular a navegação, o comportamento e a experiência do usuário em um produto ainda em desenvolvimento. Eles variam em fidelidade, desde fluxos simples com links clicáveis até simulações completas com transições, microinterações e respostas dinâmicas. Prototipar permite validar decisões de design, testar fluxos de uso, comunicar ideias de forma visual e reduzir falhas antes da implementação técnica. Segundo a Interaction Design Foundation⁶, protótipos funcionam como “laboratórios visuais” que facilitam a descoberta de problemas de usabilidade, fortalecem o alinhamento entre equipes e usuários e tornam o processo iterativo mais eficiente e acessível.
+Protótipos são representações interativas de uma interface digital, utilizadas para simular a navegação, o comportamento e a experiência do usuário em um produto ainda em desenvolvimento. Eles variam em fidelidade, desde fluxos simples com links clicáveis até simulações completas com transições, microinterações e respostas dinâmicas. Prototipar permite validar decisões de design, testar fluxos de uso, comunicar ideias de forma visual e reduzir falhas antes da implementação técnica. Segundo a Interaction Design Foundation⁶, protótipos funcionam como "laboratórios visuais" que facilitam a descoberta de problemas de usabilidade, fortalecem o alinhamento entre equipes e usuários e tornam o processo iterativo mais eficiente e acessível.
 
 <div align="center">
   <sub>FIGURA X - Protótipos de alta fidelidade</sub><br>
@@ -416,135 +416,56 @@ O fluxo contempla:
 
 O protótipo foi desenvolvido com foco em clareza visual, fluxo objetivo e usabilidade, simulando a jornada real de usuários em um sistema de ingressos digital.
 
-### 3.6. WebAPI e endpoints (Semana 05)
+### 3.6. Testes (Semana 05)
 
-A API do sistema TickIN foi desenvolvida seguindo os princípios RESTful, com endpoints organizados por recursos e operações CRUD. Abaixo estão os principais endpoints implementados:
+Os testes do TickIN foram realizados em diferentes níveis:
 
-#### Usuários
+1. **Testes de Usabilidade**
+   - Realizados com 5 usuários
+   - Foco em fluxos principais:
+     - Inscrição em eventos
+     - Criação de eventos
+     - Gerenciamento de inscritos
+   - Métricas coletadas:
+     - Taxa de conclusão de tarefas
+     - Tempo de execução
+     - Nível de satisfação
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/usuarios` | Retorna todos os usuários cadastrados |
-| GET | `/api/usuarios/:id` | Retorna um usuário específico por ID |
-| POST | `/api/usuarios` | Cria um novo usuário |
-| PUT | `/api/usuarios/:id` | Atualiza dados de um usuário existente |
-| DELETE | `/api/usuarios/:id` | Remove um usuário do sistema |
+2. **Testes de Integração**
+   - Validação da integração com Supabase
+   - Testes de upload de imagens
+   - Verificação de fluxos de autenticação
 
-#### Eventos
+3. **Testes de Performance**
+   - Tempo de carregamento das páginas
+   - Performance do upload de imagens
+   - Responsividade em diferentes dispositivos
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/eventos` | Lista todos os eventos disponíveis |
-| GET | `/api/eventos/:id` | Retorna detalhes de um evento específico |
-| GET | `/api/eventos/busca` | Busca eventos por termo ou categoria |
-| POST | `/api/eventos` | Cria um novo evento |
-| PUT | `/api/eventos/:id` | Atualiza informações de um evento |
-| DELETE | `/api/eventos/:id` | Remove um evento do sistema |
+### 3.7. Deploy (Semana 05)
 
-#### Inscrições
+O deploy do TickIN foi realizado utilizando as seguintes tecnologias e plataformas:
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/inscricoes` | Lista todas as inscrições |
-| GET | `/api/inscricoes/usuario/:id` | Retorna inscrições de um usuário específico |
-| GET | `/api/inscricoes/evento/:id` | Retorna inscrições para um evento específico |
-| POST | `/api/inscricoes` | Realiza uma nova inscrição |
-| PUT | `/api/inscricoes/:id` | Atualiza status de uma inscrição |
-| DELETE | `/api/inscricoes/:id` | Cancela uma inscrição |
+1. **Backend**
+   - Hospedado no Render
+   - Configuração de variáveis de ambiente
+   - Integração contínua com GitHub
 
-#### Presenças
+2. **Banco de Dados**
+   - PostgreSQL no Supabase
+   - Backup automático configurado
+   - Políticas de segurança implementadas
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/presencas/evento/:id` | Lista presenças confirmadas em um evento |
-| POST | `/api/presencas` | Registra presença de um participante |
-| DELETE | `/api/presencas/:id` | Remove registro de presença |
+3. **Armazenamento**
+   - Supabase Storage para imagens
+   - Configuração de CORS
+   - Políticas de acesso definidas
 
-A autenticação é realizada via tokens JWT, com endpoints específicos para login e refresh token:
+4. **Monitoramento**
+   - Logs de erro configurados
+   - Métricas de performance
+   - Alertas de disponibilidade
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/api/auth/login` | Realiza autenticação e retorna token JWT |
-| POST | `/api/auth/refresh` | Atualiza token JWT expirado |
-| POST | `/api/auth/logout` | Invalida token atual |
-
-<div align="center">
-  <sub>FIGURA X - Documentação da API no Postman</sub><br>
-  <img src="assets/api-docs.png" width="100%" alt="Documentação da API no Postman"><br>
-  <sup>Fonte: Material produzido pela autora, 2025</sup>
-</div>
-
-### 3.7 Interface e Navegação (Semana 07)
-
-A interface do TickIN foi desenvolvida seguindo o guia de estilos definido anteriormente, com foco em usabilidade e experiência do usuário. O frontend foi implementado utilizando HTML5, CSS3 e JavaScript, com templates EJS para renderização dinâmica das páginas.
-
-#### Principais telas implementadas:
-
-1. **Login e Cadastro**: Formulários de autenticação e registro de novos usuários, com validação de campos e feedback visual.
-
-<div align="center">
-  <sub>FIGURA X - Tela de Login</sub><br>
-  <img src="assets/login.png" width="100%" alt="Tela de Login do TickIN"><br>
-  <sup>Fonte: Material produzido pela autora, 2025</sup>
-</div>
-
-<div align="center">
-  <sub>FIGURA X - Tela de Login</sub><br>
-  <img src="assets/cadastro.1.png" width="100%" alt="Tela de Login do TickIN">
-   <img src="assets/cadastro.2.png" width="100%" alt="Tela de Login do TickIN"> <br>
-  <sup>Fonte: Material produzido pela autora, 2025</sup>
-</div>
-
-2. **Tela de registro**: Interface destinada exclusivamente ao organizador, permitindo o cadastro de novos eventos. Nessa tela, o organizador insere informações essenciais como nome do evento, data, local e descrição. Após o registro, os eventos passam a ser exibidos no Dashboard dos participantes elegíveis para inscrição. A tela possui validação de campos obrigatórios e confirmações visuais de sucesso ou erro no processo de cadastro.
-
-<div align="center">
-  <sub>FIGURA X - Registro evento</sub><br>
-  <img src="assets/registrar.png" width="100%" alt="Dashboard do TickIN"><br>
-  <sup>Fonte: Material produzido pela autora, 2025</sup>
-</div>
-
-3. **Listagem de Eventos**: Exibição de eventos disponíveis com filtros e busca, permitindo inscrição rápida.
-
-<div align="center">
-  <sub>FIGURA X - Listagem de Eventos</sub><br>
-  <img src="assets/listagem-eventos.png" width="100%" alt="Listagem de Eventos do TickIN"><br>
-  <sup>Fonte: Material produzido pela autora, 2025</sup>
-</div>
-
-4. **Detalhes do Evento**: Visualização completa das informações de um evento, com opção de inscrição e compartilhamento.
-
-<div align="center">
-  <sub>FIGURA X - Detalhes do Evento</sub><br>
-  <img src="assets/detalhes.png" width="100%" alt="Detalhes do Evento no TickIN"><br>
-  <sup>Fonte: Material produzido pela autora, 2025</sup>
-</div>
-
-5. **Gerenciamento de Inscrições**: Painel para visualização e controle das inscrições do usuário.
-
-<div align="center">
-  <sub>FIGURA X - Gerenciamento de Inscrições</sub><br>
-  <img src="assets/minhas-inscricoes.png" width="100%" alt="Gerenciamento de Inscrições no TickIN"><br>
-  <sup>Fonte: Material produzido pela autora, 2025</sup>
-</div>
-
-
-6. **Gestão de Participantes**: Interface para organizadores visualizarem e gerenciarem inscritos em seus eventos.
-
-<div align="center">
-  <sub>FIGURA X - Gestão de Participantes</sub><br>
-  <img src="assets/participantes.png" width="100%" alt="Gestão de Participantes no TickIN"><br>
-  <sup>Fonte: Material produzido pela autora, 2025</sup>
-</div>
-
-#### Recursos de Frontend Implementados:
-
-- **Responsividade**: Layout adaptável para diferentes tamanhos de tela (desktop, tablet e mobile)
-- **Validação de Formulários**: Verificação em tempo real dos campos preenchidos pelo usuário
-- **Feedback Visual**: Mensagens de sucesso, erro e carregamento para melhorar a experiência
-- **Animações e Transições**: Elementos visuais que tornam a navegação mais fluida e agradável
-- **Integração com API**: Comunicação assíncrona com o backend via Fetch API
-
-O código frontend foi estruturado seguindo boas práticas de organização, com separação de arquivos CSS, JavaScript e templates EJS. A implementação priorizou a performance e acessibilidade, garantindo uma experiência consistente para todos os usuários.
+[Clique aqui para acessar a aplicação em produção](https://tickin.onrender.com)
 
 ---
 
@@ -572,7 +493,7 @@ O código frontend foi estruturado seguindo boas práticas de organização, com
 ³ UNIVERSIDADE DE SÃO PAULO. Instituto de Ciências Matemáticas e de Computação – Banco de Dados I. São Carlos: ICMC-USP, 2021. Disponível em: https://www.icmc.usp.br. Acesso em: 8 maio 2025.
 <br>
 
-⁴ INTERACTION DESIGN FOUNDATION. Wireframing: The Beginner’s Guide. 2023. Disponível em: https://www.interaction-design.org/literature/topics/wireframing. Acesso em: 13 maio 2025.
+⁴ INTERACTION DESIGN FOUNDATION. Wireframing: The Beginner's Guide. 2023. Disponível em: https://www.interaction-design.org/literature/topics/wireframing. Acesso em: 13 maio 2025.
 
 ⁵ NIELSEN NORMAN GROUP. Style Guides for Interfaces. 2007. Disponível em: https://www.nngroup.com/articles/style-guides/. Acesso em: 22 maio 2025.
 
